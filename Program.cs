@@ -4,9 +4,11 @@ namespace App
 {
     class Program
     {
-        static void Main(string[] args)
+        public void blabla()
         {
             Console.WriteLine("Hello World!");
         }
+            
+        
     }
 }
