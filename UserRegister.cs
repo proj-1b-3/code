@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace App
 {
+	using System;
+	using System.Collections.Generic;
+
 	enum Role {
 		Owner,
 		CafeManager,

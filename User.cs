@@ -1,7 +1,7 @@
-using System;
-
 namespace App
 {
+	using System;
+
 	class User
 	{
 		private Int32 _Id;

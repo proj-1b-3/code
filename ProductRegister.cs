@@ -1,27 +1,24 @@
-using System;
-
 namespace App
 {
-		class Product
-	{
-		private Int32 _Id;
-		public Int32 Id {
-			get { return _Id; }
-		}
+	using System;
 
-		private Int32 _Price;
-		public Int32 Price {
-			get { return _Price; }
-		}
+	class Product
+	{
+		public Int32 Id;
+
+		public Int32 Price;
 
 		public String Name;
+
 		public String Discription;
 	}
 
 	class EscapeRoom : Product
 	{
 		public String Theme;
+
 		public Int32 Capacity;
+
 		public Int32 Booked;
 
 		public Boolean IsFull()
@@ -29,7 +26,12 @@ namespace App
 			return Capacity > Booked;			
 		}
 	}
-	
+
+	class Consumable : Product
+	{
+		public Consumable[] Items;
+	}
+
 	class ProductRegister
 	{
 		
