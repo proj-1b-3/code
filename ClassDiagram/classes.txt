@@ -1,0 +1,110 @@
+@startuml
+skinparam defaultFontSize 16
+skinparam defaultFontName IBM Plex Mono
+skinparam classAttributeIconSize 0
+
+class UserRecord {
+	+ Name : String + Password : String
+	+ Perms : Role
+	+ Active : Bool
+}
+
+class User {
+	- Id : Int32
+	- Name : String
+	- Token : Byte[]
+	____
+	+ get_Id() : Int32
+	+ get_Name() : String
+}
+
+enum Role {
+	Owner
+	CafeManager
+	Manager
+	Consumer
+}
+
+class Reservation {
+	- Id : Int32
+	- Owner : User
+	- Room : EscapeRoom
+	- Size: Int32
+	- EndDate : Date
+	____
+	get_Id() : Int32
+	____
+	IsValid(): Bool
+}
+
+class Product {
+	- Id : Int32
+	+ Name : String
+	+ Discription : String
+	- Price : Int32
+	____
+	+ get_Id() : Int32
+	+ get_Price() : Int32
+	____
+}
+
+together {
+	class EscapeRoom {
+		+ Theme : String
+		+ Capacity : Int32
+		+ Booked : Int32
+		___
+		+ IsFull(): Bool
+	}
+
+	class Consumable {
+		+ Items : Consumable[]
+	}
+}
+
+together {
+	class UserRegister {
+		- NameToId : Dictionary<String, Int32>
+		- Users : Dictionary<Int32, UserRecord>
+		____
+		+ UserNameToId(name : String): Int32
+		+ IsActive(id : Int32): Bool
+		+ Login(name : String, password : String): User
+		+ Logout(name : String) : Void
+		+ Register(name : String, password : String): Void
+	}
+
+	class ProductRegister {
+		NameToId : Dictionary<String, Int32>
+		ProductById : Dictionary<Int32, Product>
+		____
+		get_Product(Int32): Product
+		____
+		ProductNameToId(name : String) : Int32
+		AddProduct(Product): Void
+		RemoveProduct(Int32): Void
+	}
+
+	class ReservationRegister {
+		ReservationById : Dictionary<Int32, Reservation>
+		____
+		get_Reservation(Int32): Reservation
+		____
+		AddReservation(Reservation): Void
+		DelReservation(Int32): Void
+	}
+}
+
+ProductRegister ..> Product
+UserRegister ..> UserRecord
+UserRegister ..> User
+UserRegister ..> Role
+ReservationRegister ..> Reservation
+
+UserRecord .down.> Role
+EscapeRoom -up-|> Product
+Consumable -right-|> Product
+Reservation .right.> EscapeRoom
+User <.. Reservation
+
+@enduml
