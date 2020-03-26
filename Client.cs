@@ -20,22 +20,6 @@ namespace App
 					Server.Register
 				},
 				{
-					"reserve",
-					Server.Reserve
-				},
-				{
-					"CancelReservation",
-					Server.DelReservation
-				},
-				{
-					"AddProduct",
-					Server.AddProduct
-				},
-				{
-					"RemoveProduct",
-					Server.DelProduct
-				},
-				{
 					"logout",
 					Server.Logout
 				}
