@@ -13,15 +13,15 @@ namespace App
 			{
 				{
 					"login",
-					Server.Login
+					Client.Login
 				},
 				{
 					"Register",
-					Server.Register
+					Client.Register
 				},
 				{
 					"logout",
-					Server.Logout
+					Client.Logout
 				}
 			};
 
