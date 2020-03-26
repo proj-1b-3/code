@@ -13,15 +13,31 @@ namespace App
 			{
 				{
 					"login",
-					UserRegister.LogI
+					Server.Login
+				},
+				{
+					"Register",
+					Server.Register
 				},
 				{
 					"reserve",
-					UserRegister.LogI
+					Server.Reserve
+				},
+				{
+					"CancelReservation",
+					Server.DelReservation
+				},
+				{
+					"AddProduct",
+					Server.AddProduct
+				},
+				{
+					"RemoveProduct",
+					Server.DelProduct
 				},
 				{
 					"logout",
-					UserRegister.LogO
+					Server.Logout
 				}
 			};
 
