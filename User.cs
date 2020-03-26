@@ -4,19 +4,10 @@ namespace App
 
 	class User
 	{
-		private Int32 _Id;
-		public Int32 Id {
-			get { return _Id; }
-		}
+		public Int32 Id;
 
-		private String _Name;
-		public String Name {
-			get { return _Name; }
-		}
+		public String Name;
 
-		private Byte[] _Token;
-		public Byte[] Token {
-			get { return _Token; }
-		}
+		public Byte[] Token;
 	}
 }

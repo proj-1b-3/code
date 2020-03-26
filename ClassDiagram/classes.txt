@@ -42,7 +42,7 @@ class Reservation {
 }
 
 together {
-		class Product {
+	class Product {
 		- Id : Int32
 		+ Name : String
 		+ Discription : String
@@ -53,12 +53,10 @@ together {
 		____
 	}
 
-	class EscapeRoom {
-		+ Theme : String
-		+ Capacity : Int32
-		+ Booked : Int32
-		___
-		+ IsFull(): Bool
+	class Ticket {
+		EscapeRoomId : Int32
+		UserName : String
+		EndDate : Date
 	}
 
 	class Consumable {
@@ -66,7 +64,7 @@ together {
 	}
 
 	Consumable -up-|> Product
-	EscapeRoom -up-|> Product
+	Ticket -up-|> Product
 }
 
 together {
@@ -80,6 +78,8 @@ together {
 		+ Logout(name : String) : Void
 		+ Register(name : String, password : String): Void
 	}
+
+	UserRegister .up.> UserRecord
 
 	class ProductRegister {
 		NameToId : Dictionary<String, Int32>

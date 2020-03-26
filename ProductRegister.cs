@@ -34,6 +34,5 @@ namespace App
 
 	class ProductRegister
 	{
-		
 	}
 }

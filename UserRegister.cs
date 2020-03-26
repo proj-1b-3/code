@@ -20,8 +20,8 @@ namespace App
 
 	class UserRegister
 	{
-		private static Dictionary<String, Int32> NameToId;
-		private static Dictionary<Int32, UserRecord> Users;
+		public static Dictionary<String, Int32> NameToId;
+		public static Dictionary<Int32, UserRecord> Users;
 		
 		public static Int32 UserNameToId(String name)
 		{
@@ -33,24 +33,14 @@ namespace App
 			}
 		}
 		
-		public static Boolean IsActive(Int32 id)
+		public static Boolean IsUserActive(Int32 id)
 		{
-			UserRecord value;
-			if (Users.TryGetValue(id, out value)) {
-				return value.Active;
+			UserRecord user;
+			if (Users.TryGetValue(id, out user)) {
+				return user.Active;
 			} else {
 				return false;
 			}
-		}
-
-		public static void LogI(object user, String[] args)
-		{
-			return;
-		}
-		
-		public static void LogO(object none, String[] args)
-		{
-			return;
 		}
 	}
 }
