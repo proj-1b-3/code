@@ -3,6 +3,21 @@ using System.Collections.Generic;
 
 namespace App
 {
+	enum Role {
+		Owner,
+		CafeManager,
+		Manager,
+		Consumer
+	}
+
+	class UserRecord
+	{
+		public String Name;
+		public String Password;
+		public Role Perms;
+		public Boolean Active;
+	}
+
 	class UserRegister
 	{
 		private static Dictionary<String, Int32> NameToId;
