@@ -18,6 +18,10 @@ class User {
 	+ get_Name() : String
 }
 
+class Server
+
+class Client
+
 enum Role {
 	Owner
 	CafeManager
@@ -37,18 +41,18 @@ class Reservation {
 	IsValid(): Bool
 }
 
-class Product {
-	- Id : Int32
-	+ Name : String
-	+ Discription : String
-	- Price : Int32
-	____
-	+ get_Id() : Int32
-	+ get_Price() : Int32
-	____
-}
-
 together {
+		class Product {
+		- Id : Int32
+		+ Name : String
+		+ Discription : String
+		- Price : Int32
+		____
+		+ get_Id() : Int32
+		+ get_Price() : Int32
+		____
+	}
+
 	class EscapeRoom {
 		+ Theme : String
 		+ Capacity : Int32
@@ -60,6 +64,9 @@ together {
 	class Consumable {
 		+ Items : Consumable[]
 	}
+
+	Consumable -up-|> Product
+	EscapeRoom -up-|> Product
 }
 
 together {
@@ -95,16 +102,12 @@ together {
 	}
 }
 
-ProductRegister ..> Product
-UserRegister ..> UserRecord
-UserRegister ..> User
-UserRegister ..> Role
-ReservationRegister ..> Reservation
+Server .up.> ProductRegister
+Server .up.> UserRegister
+Server .up.> ReservationRegister
 
-UserRecord .down.> Role
-EscapeRoom -up-|> Product
-Consumable -right-|> Product
-Reservation .right.> EscapeRoom
-User <.. Reservation
+Client .down.> User
+
+Server -down- Client
 
 @enduml
