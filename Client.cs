@@ -1,6 +1,7 @@
 namespace App
 {
 	using System;
+	using System.Collections.Generic;
 
 	class Client
 	{
@@ -29,7 +30,4 @@ namespace App
 			return; 
         }
     }
-}
-
-	}
 }
