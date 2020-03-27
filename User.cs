@@ -8,6 +8,10 @@ namespace App
 
 		public String Name;
 
-		public Byte[] Token;
+		public User (Int32 id, String name)
+		{
+			Id = id;
+			Name = name;
+		}
 	}
 }

@@ -10,33 +10,29 @@ namespace App
 		Consumer
 	}
 
-	class UserRecord
+	class UserData
 	{
 		public String Name;
 		public String Password;
-		public Role Perms;
-		public Boolean Active;
+		public Role Perms = Role.Consumer;
+		public Boolean Active = false;
+
+		public UserData (String username, String password) {
+			Name = username;
+			Password = password;
+		}
 	}
 
 	class UserRegister
 	{
-		public static Dictionary<String, Int32> NameToId;
-		public static Dictionary<Int32, UserRecord> Users;
+		public static Dictionary<Int32, UserData> Users =
+			new Dictionary<Int32, UserData>();
 		
-		public static Int32 UserNameToId(String name)
+		public static Boolean IsUserActive (Int32 id)
 		{
-			Int32 value = 0;
-			if (NameToId.TryGetValue(name, out value)) {
-				return value;
-			} else {
-				return -1;
-			}
-		}
-		
-		public static Boolean IsUserActive(Int32 id)
-		{
-			UserRecord user;
-			if (Users.TryGetValue(id, out user)) {
+			UserData user;
+
+			if (Users.TryGetValue (id, out user)) {
 				return user.Active;
 			} else {
 				return false;
