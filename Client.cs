@@ -38,67 +38,76 @@ namespace App
 			return Console.ReadLine();
 		}
 
-		public static void Login ()
+		public static void Login()
 		{
 			String username = ReadInput("username: ");
 			String password = ReadInput("password: ");
+
+			if (username == "" || password == "") {
+				Console.WriteLine("Leave no field empty!");
+				return;
+			}
 
 			if (! Server.TryLogin(username, password, out CurrentUser)) {
-				Console.WriteLine("Failed.");
+				Console.WriteLine("Wrong username or password");
 				return;
 			}
-			
-			Console.WriteLine("Secceeded.");
 			
 			return;
 		}
 
-		public static void Logout ()
+		public static void Logout()
 		{
 			if (CurrentUser == null) {
-				Console.WriteLine(
-					"Failed, you must be logged in to logout");
+				Console.WriteLine("You must be logged in to logout");
 				return;
 			}
 			
-			if (! Server.TryLogout(CurrentUser.Id)) {
-				Console.WriteLine("Failed");
+			if (! Server.TryLogout(CurrentUser.Name)) {
+				Console.WriteLine("Something went wrong, please try again");
 				return;
 			}
 
 			CurrentUser = null;
-			Console.WriteLine("Succeeded.");
 
 			return;
 		}
 
-		public static void Register ()
+		public static void Register()
 		{
 			String username = ReadInput("username: ");
 			String password = ReadInput("password: ");
 
-			if (! Server.TryRegister(username, password)) {
-				Console.WriteLine("Registration failed.");
+			if (username == "" || password == "") {
+				Console.WriteLine("Leave no field empty!");
 				return;
 			}
-			
-			Console.WriteLine("Registration succeeded.");
+
+			if (! Server.TryRegister(username, password)) {
+				Console.WriteLine("The username is already in use");
+				return;
+			}
 
 			return;
 		}
 
-		public static void Deregister ()
+		public static void Deregister()
 		{
 			if (CurrentUser == null) {
-				Console.WriteLine(
-					"Failed, you must be logged in to deregister");
+				Console.WriteLine("You must be logged in to deregister");
 				return;
 			}
 
+			String username = CurrentUser.Name;
 			String password = ReadInput("password: ");
 
-			if (! Server.TryDeregister(CurrentUser.Id, password)) {
-				Console.WriteLine("Failed");
+			if (username == "" || password == "") {
+				Console.WriteLine("Leave no field empty!");
+				return;
+			}
+
+			if (! Server.TryDeregister(username, password)) {
+				Console.WriteLine("Something went wrong, please try again");
 				return;
 			}
 
@@ -107,7 +116,7 @@ namespace App
 			return;
 		}
 
-		static void Exit ()
+		static void Exit()
 		{
 			Environment.Exit(0);
 		}

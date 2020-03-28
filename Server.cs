@@ -4,10 +4,9 @@ namespace App
 {
 	class Server
 	{
-		public static Boolean TryLogin (
-			String username, String password, out User response)
+		public static Boolean TryLogin(String username, String password,
+			out User response)
 		{
-			Int32 id;
 			UserData userdata;
 
 			response = null;
@@ -16,7 +15,7 @@ namespace App
 				return false;
 			}
 
-			id = username.GetHashCode();
+			Int32 id = username.GetHashCode();
 
 			if (! UserRegister.Users.TryGetValue (id, out userdata) ||
 					userdata.Password != password) {
@@ -29,9 +28,10 @@ namespace App
 			return true;
 		}
 
-		public static Boolean TryLogout (Int32 id)
+		public static Boolean TryLogout(String username)
 		{
 			UserData userdata;
+			Int32 id = username.GetHashCode();
 
 			if (! UserRegister.Users.TryGetValue (id, out userdata)) {
 				return false;
@@ -42,16 +42,13 @@ namespace App
 			return true;
 		}
 
-		public static Boolean TryRegister (
-			String username, String password)
+		public static Boolean TryRegister(String username, String password)
 		{
-			Int32 id;
-
 			if (username == "" || password == "") {
 				return false;
 			}
 
-			id = username.GetHashCode();
+			Int32 id = username.GetHashCode();
 
 			if (UserRegister.Users.ContainsKey(id)) {
 				return false;
@@ -62,9 +59,15 @@ namespace App
 			return true;
 		}
 
-		public static Boolean TryDeregister (Int32 id, String password)
+		public static Boolean TryDeregister(String username, String password)
 		{
 			UserData userdata;
+
+			if (username == "") {
+				return false;
+			}
+
+			Int32 id = username.GetHashCode();
 
 			if (! UserRegister.Users.TryGetValue(id, out userdata) ||
 					userdata.Password != password) {
