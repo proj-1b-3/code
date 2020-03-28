@@ -4,14 +4,14 @@ namespace App
 
 	class User
 	{
-		public Int32 Id;
-
 		public String Name;
 
-		public User (Int32 id, String name)
+		public Guid SessionToken;
+
+		public User (String name, Guid session_token)
 		{
-			Id = id;
 			Name = name;
+			SessionToken = session_token;
 		}
 	}
 }
