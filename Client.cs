@@ -16,6 +16,7 @@ namespace App
 				{ "register", Client.Register },
 				{ "deregister", Client.Deregister },
 				{ "logout", Client.Logout },
+				{ "help", Client.Help },
 				{ "exit", Client.Exit }
 			};
 
@@ -37,7 +38,7 @@ namespace App
 			Console.Write(text);
 			return Console.ReadLine();
 		}
-
+		
 		public static void Login()
 		{
 			String username = ReadInput("username: ");
@@ -71,6 +72,16 @@ namespace App
 			CurrentUser = null;
 
 			return;
+		}
+
+		public static void Help()
+		{
+			System.Console.WriteLine("You can use the following commands : 1-login");
+			System.Console.WriteLine("                                     2-register");
+			System.Console.WriteLine("                                     3-logout");
+			System.Console.WriteLine("                                     4-deregister");
+			System.Console.WriteLine("                                     5-help");
+			System.Console.WriteLine("                                     6-exit");
 		}
 
 		public static void Register()
