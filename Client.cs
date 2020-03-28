@@ -7,7 +7,7 @@ namespace App
 	{
 		private static User CurrentUser;
 
-		public delegate void Command ();
+		public delegate void Command();
 
 		public static readonly Dictionary<String, Command>
 			Commands = new Dictionary<String, Command>
@@ -63,7 +63,7 @@ namespace App
 				return;
 			}
 			
-			if (! Server.TryLogout(CurrentUser.Name)) {
+			if (! Server.TryLogout(CurrentUser.SessionToken)) {
 				Console.WriteLine("Something went wrong, please try again");
 				return;
 			}
@@ -98,15 +98,14 @@ namespace App
 				return;
 			}
 
-			String username = CurrentUser.Name;
 			String password = ReadInput("password: ");
 
-			if (username == "" || password == "") {
+			if (password == "") {
 				Console.WriteLine("Leave no field empty!");
 				return;
 			}
 
-			if (! Server.TryDeregister(username, password)) {
+			if (! Server.TryDeregister(CurrentUser.SessionToken, password)) {
 				Console.WriteLine("Something went wrong, please try again");
 				return;
 			}

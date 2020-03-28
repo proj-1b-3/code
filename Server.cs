@@ -2,42 +2,47 @@ using System;
 
 namespace App
 {
+	using System;
+	using System.Collections.Generic;
+
 	class Server
 	{
+		private static Dictionary<String, UserData> RegisteredUsers =
+			new Dictionary<string, UserData>();
+		
+		private static Dictionary<Guid, UserData> ActiveUsers =
+			new Dictionary<Guid, UserData>();
+		
 		public static Boolean TryLogin(String username, String password,
-			out User response)
+			out User user)
 		{
 			UserData userdata;
 
-			response = null;
+			user = null;
 
 			if (username == "" || password == "") {
 				return false;
 			}
 
-			Int32 id = username.GetHashCode();
-
-			if (! UserRegister.Users.TryGetValue (id, out userdata) ||
+			if (! RegisteredUsers.TryGetValue (username, out userdata) ||
 					userdata.Password != password) {
 				return false;
 			}
 
-			userdata.Active = true;
-			response = new User(id, username);
+			Guid session_token = Guid.NewGuid();
+			ActiveUsers.Add(session_token, userdata);
+			user = new User(username, session_token);
 
 			return true;
 		}
 
-		public static Boolean TryLogout(String username)
+		public static Boolean TryLogout(Guid session_token)
 		{
-			UserData userdata;
-			Int32 id = username.GetHashCode();
-
-			if (! UserRegister.Users.TryGetValue (id, out userdata)) {
+			if (! ActiveUsers.ContainsKey (session_token)) {
 				return false;
 			}
 
-			userdata.Active = false;
+			ActiveUsers.Remove(session_token);
 
 			return true;
 		}
@@ -48,33 +53,30 @@ namespace App
 				return false;
 			}
 
-			Int32 id = username.GetHashCode();
-
-			if (UserRegister.Users.ContainsKey(id)) {
+			if (RegisteredUsers.ContainsKey(username)) {
 				return false;
 			}
 
-			UserRegister.Users.Add(id, new UserData(username, password));
+			RegisteredUsers.Add(username, new UserData(username, password));
 
 			return true;
 		}
 
-		public static Boolean TryDeregister(String username, String password)
+		public static Boolean TryDeregister(Guid session_token, String password)
 		{
 			UserData userdata;
 
-			if (username == "") {
+			if (password == "") {
 				return false;
 			}
 
-			Int32 id = username.GetHashCode();
-
-			if (! UserRegister.Users.TryGetValue(id, out userdata) ||
+			if (! ActiveUsers.TryGetValue(session_token, out userdata) ||
 					userdata.Password != password) {
 				return false;
 			}
 
-			UserRegister.Users.Remove(id);
+			ActiveUsers.Remove(session_token);
+			RegisteredUsers.Remove(userdata.Name);
 
 			return true;
 		}
