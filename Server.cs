@@ -7,7 +7,7 @@ namespace App
 
 	class Server
 	{
-		private static Dictionary<String, UserData> RegisteredUsers =
+		private static Dictionary<String, UserData> Users =
 			new Dictionary<string, UserData>();
 		
 		private static Dictionary<Guid, UserData> ActiveUsers =
@@ -24,7 +24,7 @@ namespace App
 				return false;
 			}
 
-			if (! RegisteredUsers.TryGetValue (username, out userdata) ||
+			if (! Users.TryGetValue (username, out userdata) ||
 					userdata.Password != password) {
 				return false;
 			}
@@ -38,7 +38,7 @@ namespace App
 
 		public static Boolean TryLogout(Guid session_token)
 		{
-			if (! ActiveUsers.ContainsKey (session_token)) {
+			if (! ActiveUsers.ContainsKey(session_token)) {
 				return false;
 			}
 
@@ -53,11 +53,11 @@ namespace App
 				return false;
 			}
 
-			if (RegisteredUsers.ContainsKey(username)) {
+			if (Users.ContainsKey(username)) {
 				return false;
 			}
 
-			RegisteredUsers.Add(username, new UserData(username, password));
+			Users.Add(username, new UserData(username, password));
 
 			return true;
 		}
@@ -76,7 +76,7 @@ namespace App
 			}
 
 			ActiveUsers.Remove(session_token);
-			RegisteredUsers.Remove(userdata.Name);
+			Users.Remove(userdata.Name);
 
 			return true;
 		}

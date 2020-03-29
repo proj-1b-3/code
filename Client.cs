@@ -9,8 +9,8 @@ namespace App
 
 		public delegate void Command();
 
-		public static readonly Dictionary<String, Command>
-			Commands = new Dictionary<String, Command>
+		public static readonly Dictionary<String, Command> Commands =
+			new Dictionary<String, Command>
 			{
 				{ "login", Client.Login },
 				{ "register", Client.Register },
@@ -22,12 +22,12 @@ namespace App
 
 		public static void Main (string[] args)
 		{
-			String[] input;
+			String input;
 			Command cmd;
 
 			for (;;) {
-				input = ReadInput(">>> ").ToLower().Split(' ');
-				if (Commands.TryGetValue(input[0], out cmd)) {
+				input = ReadInput(">>> ").ToLower().Trim();
+				if (Commands.TryGetValue(input, out cmd)) {
 					cmd();
 				}
 			}

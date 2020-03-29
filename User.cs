@@ -8,7 +8,7 @@ namespace App
 
 		public Guid SessionToken;
 
-		public User (String name, Guid session_token)
+		public User(String name, Guid session_token)
 		{
 			Name = name;
 			SessionToken = session_token;

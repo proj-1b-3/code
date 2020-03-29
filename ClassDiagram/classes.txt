@@ -18,9 +18,24 @@ class User {
 	+ get_Name() : String
 }
 
-class Server
+class Server {
+	RegisteredUsers : Dictionary<String, UserData>
+	ActiveUsers : Dictionary<Guid, UserData>
+	____
+	TryLogin(username, password : String, user : out User) : Boolean
+	TryLogout(session_token : Guid) : Boolean
+	TryRegister(username, password : String) : Boolean
+	TryDeregister(session_token : Guid, password : String): Boolean
+}
 
-class Client
+class Client {
+	CurrentUser : User
+	____
+	Login()
+	Logout()
+	Register()
+	Deregister()
+}
 
 enum Role {
 	Owner
@@ -68,19 +83,6 @@ together {
 }
 
 together {
-	class UserRegister {
-		- NameToId : Dictionary<String, Int32>
-		- Users : Dictionary<Int32, UserRecord>
-		____
-		+ UserNameToId(name : String): Int32
-		+ IsActive(id : Int32): Bool
-		+ Login(name : String, password : String): User
-		+ Logout(name : String) : Void
-		+ Register(name : String, password : String): Void
-	}
-
-	UserRegister .up.> UserRecord
-
 	class ProductRegister {
 		NameToId : Dictionary<String, Int32>
 		ProductById : Dictionary<Int32, Product>
@@ -103,7 +105,6 @@ together {
 }
 
 Server .up.> ProductRegister
-Server .up.> UserRegister
 Server .up.> ReservationRegister
 
 Client .down.> User
