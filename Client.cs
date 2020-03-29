@@ -85,12 +85,12 @@ namespace App
 			string tickets = ReadInput("Please enter the amount of tickets you want to buy:");
 			Int32 ntickets = 0;
 			if (!Int32.TryParse(tickets, out ntickets)) {
-				Console.WriteLine("Please use numbers");
+				Console.WriteLine("We couldn't process this reservation, Please Try again and use a valid number");
 				return;
 			}
 			string escaperoom = ReadInput("Choose one of our escape room programs: \n\tEscape1\n\tEscape2\n\tEscape3\n");
-			if (escaperoom != "Escape1" || escaperoom != "Escape2" || escaperoom != "Escape3") {
-				Console.WriteLine("Please enter a valid input");
+			if (escaperoom != "Escape1" & escaperoom != "Escape2" & escaperoom != "Escape3") {
+				Console.WriteLine("We couldn't process this reservation, Please Try again");
 				return;
 			}
 		}
