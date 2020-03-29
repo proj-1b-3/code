@@ -3,14 +3,37 @@ skinparam defaultFontSize 16
 skinparam defaultFontName IBM Plex Mono
 skinparam classAttributeIconSize 0
 
-class UserRecord {
-	+ Name : String + Password : String
-	+ Perms : Role
-	+ Active : Bool
+class Server {
+	- Users : Dictionary<String, UserData>
+	- ActiveUsers : Dictionary<Guid, UserData>
+	____
+	+ Server()
+	____
+	+ TryLogin(username, password : String, user : out User) : Boolean
+	+ TryLogout(session_token : Guid) : Boolean
+	+ TryRegister(username, password : String) : Boolean
+	+ TryDeregister(session_token : Guid, password : String): Boolean
+	- LoadData()
+	- SaveData()
 }
 
+Server .up.> UserData
+Server -down- Client
+
+class Client {
+	- CurrentUser : User
+	____
+	Help()
+	Login()
+	Logout()
+	Register()
+	Deregister()
+	Reserve()
+}
+
+Client ..> User
+
 class User {
-	- Id : Int32
 	- Name : String
 	- Token : Byte[]
 	____
@@ -18,23 +41,10 @@ class User {
 	+ get_Name() : String
 }
 
-class Server {
-	RegisteredUsers : Dictionary<String, UserData>
-	ActiveUsers : Dictionary<Guid, UserData>
-	____
-	TryLogin(username, password : String, user : out User) : Boolean
-	TryLogout(session_token : Guid) : Boolean
-	TryRegister(username, password : String) : Boolean
-	TryDeregister(session_token : Guid, password : String): Boolean
-}
-
-class Client {
-	CurrentUser : User
-	____
-	Login()
-	Logout()
-	Register()
-	Deregister()
+class UserData {
+	+ Name : String
+	+ Password : String
+	+ Perms : Role
 }
 
 enum Role {
@@ -65,13 +75,12 @@ together {
 		____
 		+ get_Id() : Int32
 		+ get_Price() : Int32
-		____
 	}
 
 	class Ticket {
-		EscapeRoomId : Int32
-		UserName : String
-		EndDate : Date
+		+ EscapeRoomId : Int32
+		+ UserName : String
+		+ EndDate : Date
 	}
 
 	class Consumable {
@@ -81,34 +90,5 @@ together {
 	Consumable -up-|> Product
 	Ticket -up-|> Product
 }
-
-together {
-	class ProductRegister {
-		NameToId : Dictionary<String, Int32>
-		ProductById : Dictionary<Int32, Product>
-		____
-		get_Product(Int32): Product
-		____
-		ProductNameToId(name : String) : Int32
-		AddProduct(Product): Void
-		RemoveProduct(Int32): Void
-	}
-
-	class ReservationRegister {
-		ReservationById : Dictionary<Int32, Reservation>
-		____
-		get_Reservation(Int32): Reservation
-		____
-		AddReservation(Reservation): Void
-		DelReservation(Int32): Void
-	}
-}
-
-Server .up.> ProductRegister
-Server .up.> ReservationRegister
-
-Client .down.> User
-
-Server -down- Client
 
 @enduml

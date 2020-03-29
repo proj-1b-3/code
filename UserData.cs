@@ -17,9 +17,13 @@ namespace App
 
 	class UserData
 	{
-		public String Name;
-		public String Password;
-		public Role Perms;
+		public String Name { get; set; }
+		public String Password { get; set; }
+		public Role Perms { get; set; }
+
+		public UserData()
+		{
+		}
 
 		public UserData(String username, String password)
 		{

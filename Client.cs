@@ -6,10 +6,12 @@ namespace App
 	class Client
 	{
 		private static User CurrentUser;
+		private static Boolean Stop = false;
+		private static Server Connection = Server.Connect();
 
-		public delegate void Command();
+		private delegate void Command();
 
-		public static readonly Dictionary<String, Command> Commands =
+		private static readonly Dictionary<String, Command> Commands =
 			new Dictionary<String, Command>
 			{
 				{ "login", Client.Login },
@@ -21,16 +23,18 @@ namespace App
 				{ "exit", Client.Exit }
 			};
 
-		public static void Main (string[] args)
+		public static void Main(string[] args)
 		{
 			String input;
-			Command cmd;
+			Command command;
 
 			for (;;) {
 				input = ReadInput(">>> ").ToLower().Trim();
-				if (Commands.TryGetValue(input, out cmd)) {
-					cmd();
+				if (! Commands.TryGetValue(input, out command)) {
+					Console.WriteLine("Invalid command");
 				}
+
+				command();
 			}
 		}
 
@@ -50,10 +54,12 @@ namespace App
 				return;
 			}
 
-			if (! Server.TryLogin(username, password, out CurrentUser)) {
+			if (! Connection.TryLogin(username, password, out CurrentUser)) {
 				Console.WriteLine("Wrong username or password");
 				return;
 			}
+
+			Console.WriteLine("Login successful");
 			
 			return;
 		}
@@ -65,11 +71,12 @@ namespace App
 				return;
 			}
 			
-			if (! Server.TryLogout(CurrentUser.SessionToken)) {
+			if (! Connection.TryLogout(CurrentUser.SessionToken)) {
 				Console.WriteLine("Something went wrong, please try again");
 				return;
 			}
 
+			Console.WriteLine("Logout successful");
 			CurrentUser = null;
 
 			return;
@@ -97,15 +104,12 @@ namespace App
 
 		public static void Help()
 		{
-			System.Console.WriteLine("Commands");
-			System.Console.WriteLine("\tlogin");
-			System.Console.WriteLine("\tregister");
-			System.Console.WriteLine("\tlogout");
-			System.Console.WriteLine("\tderegister");
-			System.Console.WriteLine("\thelp");
-			System.Console.WriteLine("\texit");
+			System.Console.Write("Commands:\n\tlogin\n\tregister\n\tlogout" +
+				"\n\tderegister\n\thelp\n\texit\n");
+
+			return;
 		}
-		
+
 		public static void Register()
 		{
 			String username = ReadInput("username: ");
@@ -116,10 +120,12 @@ namespace App
 				return;
 			}
 
-			if (! Server.TryRegister(username, password)) {
+			if (! Connection.TryRegister(username, password)) {
 				Console.WriteLine("The username is already in use");
 				return;
 			}
+
+			Console.WriteLine("Registration successful");
 
 			return;
 		}
@@ -138,7 +144,7 @@ namespace App
 				return;
 			}
 
-			if (! Server.TryDeregister(CurrentUser.SessionToken, password)) {
+			if (! Connection.TryDeregister(CurrentUser.SessionToken, password)) {
 				Console.WriteLine("Something went wrong, please try again");
 				return;
 			}
@@ -150,6 +156,7 @@ namespace App
 
 		static void Exit()
 		{
+			Connection.Disconnect();
 			Environment.Exit(0);
 		}
 	}

@@ -4,17 +4,33 @@ namespace App
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Text.Json;
+	using System.IO;
+
+	using StringToUserData = System.Collections.Generic.Dictionary<String, UserData>;
+	using GuidToUserData = System.Collections.Generic.Dictionary<Guid, UserData>;
 
 	class Server
 	{
-		private static Dictionary<String, UserData> Users =
-			new Dictionary<string, UserData>();
+		private StringToUserData Users;
+		private GuidToUserData ActiveUsers;
 		
-		private static Dictionary<Guid, UserData> ActiveUsers =
-			new Dictionary<Guid, UserData>();
-		
-		public static Boolean TryLogin(String username, String password,
-			out User user)
+		public static Server Connect()
+		{
+			var server = new Server();
+
+			server.ActiveUsers = new GuidToUserData();
+			server.LoadData();
+
+			return server;
+		}
+
+		public void Disconnect()
+		{
+			SaveData();
+		}
+
+		public Boolean TryLogin(String username, String password, out User user)
 		{
 			UserData userdata;
 
@@ -36,7 +52,7 @@ namespace App
 			return true;
 		}
 
-		public static Boolean TryLogout(Guid session_token)
+		public Boolean TryLogout(Guid session_token)
 		{
 			if (! ActiveUsers.ContainsKey(session_token)) {
 				return false;
@@ -47,7 +63,7 @@ namespace App
 			return true;
 		}
 
-		public static Boolean TryRegister(String username, String password)
+		public Boolean TryRegister(String username, String password)
 		{
 			if (username == "" || password == "") {
 				return false;
@@ -62,7 +78,7 @@ namespace App
 			return true;
 		}
 
-		public static Boolean TryDeregister(Guid session_token, String password)
+		public Boolean TryDeregister(Guid session_token, String password)
 		{
 			UserData userdata;
 
@@ -81,12 +97,33 @@ namespace App
 			return true;
 		}
 	
-		private static void Load()
+		private void LoadData()
 		{
+			String file_name = "data/users.json";
+			
+			if (! File.Exists(file_name)) {
+				return;
+			}
+
+			ReadOnlySpan<Byte> users_json = File.ReadAllBytes(file_name);
+
+			Users = JsonSerializer.Deserialize<StringToUserData>(users_json);
+
+			return;
 		}
 
-		private static void Save()
+		private void SaveData()
 		{
+			String file_name = "data/users.json";
+			Byte[] users_json = JsonSerializer.SerializeToUtf8Bytes(Users);
+
+			if (! File.Exists(file_name)) {
+				File.Create(file_name);
+			}
+
+			File.WriteAllBytes(file_name, users_json);
+
+			return;
 		}
 	}
 }
