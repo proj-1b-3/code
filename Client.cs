@@ -77,13 +77,14 @@ namespace App
 		public static void Help()
 		{
 			System.Console.WriteLine("Commands");
-			System.Console.WriteLine("	login");
-			System.Console.WriteLine("	register");
-			System.Console.WriteLine("	logout");
-			System.Console.WriteLine("	deregister");
-			System.Console.WriteLine("	help");
-			System.Console.WriteLine("	exit");
+			System.Console.WriteLine("\tlogin");
+			System.Console.WriteLine("\tregister");
+			System.Console.WriteLine("\tlogout");
+			System.Console.WriteLine("\tderegister");
+			System.Console.WriteLine("\thelp");
+			System.Console.WriteLine("\texit");
 		}
+		
 		public static void Register()
 		{
 			String username = ReadInput("username: ");

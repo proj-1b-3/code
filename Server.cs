@@ -80,5 +80,13 @@ namespace App
 
 			return true;
 		}
+	
+		private static void Load()
+		{
+		}
+
+		private static void Save()
+		{
+		}
 	}
 }
