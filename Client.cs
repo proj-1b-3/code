@@ -16,6 +16,7 @@ namespace App
 				{ "register", Client.Register },
 				{ "deregister", Client.Deregister },
 				{ "logout", Client.Logout },
+				{ "reserve", Client.Reserve },
 				{ "help", Client.Help },
 				{ "exit", Client.Exit }
 			};
@@ -72,6 +73,26 @@ namespace App
 			CurrentUser = null;
 
 			return;
+		}
+
+		public static void Reserve()
+		{
+			if (CurrentUser == null) {
+				Console.WriteLine("You must be logged in to make a reservation");
+				return;
+			}
+
+			string tickets = ReadInput("Please enter the amount of tickets you want to buy:");
+			Int32 ntickets = 0;
+			if (!Int32.TryParse(tickets, out ntickets)) {
+				Console.WriteLine("Please use numbers");
+				return;
+			}
+			string escaperoom = ReadInput("Choose one of our escape room programs: \n\tEscape1\n\tEscape2\n\tEscape3\n");
+			if (escaperoom != "Escape1" || escaperoom != "Escape2" || escaperoom != "Escape3") {
+				Console.WriteLine("Please enter a valid input");
+				return;
+			}
 		}
 
 		public static void Help()
