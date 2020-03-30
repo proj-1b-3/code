@@ -26,7 +26,6 @@ namespace App
 		{
 			LoadData<StringToUserData>("data/users.json", out Users);
 			LoadData<Dictionary<String, EscapeRoom>>("data/rooms.json", out Rooms);
-			Rooms.Add("test room 1", new EscapeRoom("test room 1", "none", "this is a escape room", 4));
 		}
 
 		public void Stop()
