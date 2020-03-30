@@ -4,13 +4,14 @@ namespace App
 
 	class User
 	{
-		public String Name;
+		private String _Name;
+		public String Name { get { return _Name; } }
 
 		public Guid SessionToken;
 
 		public User(String name, Guid session_token)
 		{
-			Name = name;
+			_Name = name;
 			SessionToken = session_token;
 		}
 	}

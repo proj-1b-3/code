@@ -26,7 +26,8 @@ namespace App
 		{
 			LoadData();
 			Rooms = new Dictionary<string, EscapeRoom>();
-			Rooms.Add("escape_room1", new EscapeRoom("escape_room1", "normal", "", 4));
+			Rooms.Add("escape room 1", new EscapeRoom("escape room 1", "normal", "", 4));
+			Rooms.Add("escape room 2", new EscapeRoom("escape room 2", "not normal", "", 6));
 		}
 
 		public void Stop()
