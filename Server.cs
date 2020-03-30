@@ -24,15 +24,15 @@ namespace App
 
 		public void Start()
 		{
-			LoadData();
-			Rooms = new Dictionary<string, EscapeRoom>();
-			Rooms.Add("escape room 1", new EscapeRoom("escape room 1", "normal", "", 4));
-			Rooms.Add("escape room 2", new EscapeRoom("escape room 2", "not normal", "", 6));
+			LoadData<StringToUserData>("data/users.json", out Users);
+			LoadData<Dictionary<String, EscapeRoom>>("data/rooms.json", out Rooms);
+			Rooms.Add("test room 1", new EscapeRoom("test room 1", "none", "this is a escape room", 4));
 		}
 
 		public void Stop()
 		{
-			SaveData();
+			SaveData<StringToUserData>("data/users.json", Users);
+			SaveData<Dictionary<String, EscapeRoom>>("data/rooms.json", Rooms);
 		}
 
 		public Boolean TryLogin(String username, String password, out User user)
@@ -102,31 +102,26 @@ namespace App
 			return true;
 		}
 	
-		private void LoadData()
+		private void LoadData<T>(String file_name, out T obj)
+			where T : new()
 		{
-			String file_name = "data/users.json";
-			
 			if (! File.Exists(file_name)) {
+				obj = new T();
 				return;
 			}
 
-			ReadOnlySpan<Byte> users_json = File.ReadAllBytes(file_name);
-
-			Users = JsonSerializer.Deserialize<StringToUserData>(users_json);
+			obj = JsonSerializer.Deserialize<T>(File.ReadAllBytes(file_name));
 
 			return;
 		}
 
-		private void SaveData()
+		private void SaveData<T>(String file_name, in T obj)
 		{
-			String file_name = "data/users.json";
-			Byte[] users_json = JsonSerializer.SerializeToUtf8Bytes(Users);
-
 			if (! File.Exists(file_name)) {
 				File.Create(file_name);
 			}
 
-			File.WriteAllBytes(file_name, users_json);
+			File.WriteAllBytes(file_name, JsonSerializer.SerializeToUtf8Bytes<T>(obj));
 
 			return;
 		}
