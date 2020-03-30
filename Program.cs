@@ -21,6 +21,7 @@ namespace App
 
 				if (! client.Commands.TryGetValue(input, out command)) {
 					Console.WriteLine("Invalid command");
+					continue;
 				}
 
 				command();
