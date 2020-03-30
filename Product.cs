@@ -10,9 +10,11 @@ namespace App
 
 	class Ticket : Product
 	{
+
 	}
 
 	class Consumable : Product
 	{
+		
 	}
 }
