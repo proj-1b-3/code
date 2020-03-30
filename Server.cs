@@ -15,7 +15,7 @@ namespace App
 		private StringToUserData Users;
 		private GuidToUserData ActiveUsers;
 
-		private Dictionary<String, EscapeRoom> Rooms;
+		public Dictionary<String, EscapeRoom> Rooms;
 		
 		public Server()
 		{
@@ -26,7 +26,7 @@ namespace App
 		{
 			LoadData();
 			Rooms = new Dictionary<string, EscapeRoom>();
-			Rooms.Add("escaperoom1", new EscapeRoom());
+			Rooms.Add("escape_room1", new EscapeRoom("escape_room1", "normal", "", 4));
 		}
 
 		public void Stop()

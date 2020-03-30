@@ -22,6 +22,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
+				{ "list rooms", ListEscapeRoom },
 				{ "help", Help },
 				{ "exit", Exit }
 			};
@@ -155,6 +156,16 @@ namespace App
 			CurrentUser = null;
 
 			return;
+		}
+
+		public void ListEscapeRoom()
+		{
+			foreach(var item in Connection.Rooms) {
+				Console.WriteLine("{0} | {1} | {2}",	
+					item.Value.Name,
+					item.Value.Theme,
+					item.Value.Discription);
+			}
 		}
 
 		public void Exit()
