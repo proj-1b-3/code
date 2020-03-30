@@ -160,11 +160,13 @@ namespace App
 
 		public void ListEscapeRoom()
 		{
-			foreach(var item in Connection.Rooms) {
-				Console.WriteLine("{0} | {1} | {2}",	
+			foreach (var item in Connection.Rooms) {
+				Console.WriteLine(
+					"name: {0}\ntheme: {1}\ndiscription: {2}\ncapacity: {3}\n",
 					item.Value.Name,
 					item.Value.Theme,
-					item.Value.Discription);
+					item.Value.Discription,
+					item.Value.Capacity);
 			}
 		}
 
