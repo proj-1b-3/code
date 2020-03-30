@@ -1,0 +1,96 @@
+@startuml
+skinparam defaultFontSize 16
+skinparam defaultFontName IBM Plex Mono
+skinparam classAttributeIconSize 0
+
+class Server {
+	- Users : Dictionary<String, UserData>
+	- ActiveUsers : Dictionary<Guid, UserData>
+	____
+	+ Server()
+	____
+	+ TryLogin(username, password : String, user : out User) : Boolean
+	+ TryLogout(session_token : Guid) : Boolean
+	+ TryRegister(username, password : String) : Boolean
+	+ TryDeregister(session_token : Guid, password : String): Boolean
+	- LoadData()
+	- SaveData()
+}
+
+Server .up.> UserData
+Server -down- Client
+
+class Client {
+	- CurrentUser : User
+	- Commands : Dictionary<String, Command>
+	____
+	ReadInput(text : String) : String
+	Help()
+	Login()
+	Logout()
+	Register()
+	Deregister()
+	Reserve()
+}
+
+Client ..> User
+
+class User {
+	- Name : String
+	- Token : Byte[]
+	____
+	+ get_Id() : Int32
+	+ get_Name() : String
+}
+
+class UserData {
+	+ Name : String
+	+ Password : String
+	+ Perms : Role
+}
+
+enum Role {
+	Owner
+	CafeManager
+	Manager
+	Consumer
+}
+
+class Reservation {
+	- Id : Int32
+	- Owner : User
+	- Room : EscapeRoom
+	- Size: Int32
+	- EndDate : Date
+	____
+	get_Id() : Int32
+	____
+	IsValid(): Bool
+}
+
+together {
+	class Product {
+		- Id : Int32
+		+ Name : String
+		+ Discription : String
+		- Price : Int32
+		____
+		+ get_Id() : Int32
+		+ get_Price() : Int32
+	}
+
+	class Ticket {
+		+ EscapeRoomId : Int32
+		+ UserName : String
+		+ EndDate : Date
+	}
+
+	class Consumable {
+		+ Items : Consumable[]
+	}
+
+	Consumable -up-|> Product
+	Ticket -up-|> Product
+}
+
+@enduml
