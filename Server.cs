@@ -7,30 +7,27 @@ namespace App
 	using System.Text.Json;
 	using System.IO;
 
-	using StringToUserData = System.Collections.Generic.Dictionary<String, UserData>;
-	using GuidToUserData = System.Collections.Generic.Dictionary<Guid, UserData>;
-
 	class Server
 	{
-		private StringToUserData Users;
-		private GuidToUserData ActiveUsers;
-
+		private Dictionary<String, UserData> Users;
 		public Dictionary<String, EscapeRoom> Rooms;
+
+		private Dictionary<Guid, UserData> ActiveUsers;
 		
 		public Server()
 		{
-			ActiveUsers = new GuidToUserData();
+			ActiveUsers = new Dictionary<Guid, UserData>();
 		}
 
 		public void Start()
 		{
-			LoadData<StringToUserData>("data/users.json", out Users);
+			LoadData<Dictionary<String, UserData>>("data/users.json", out Users);
 			LoadData<Dictionary<String, EscapeRoom>>("data/rooms.json", out Rooms);
 		}
 
 		public void Stop()
 		{
-			SaveData<StringToUserData>("data/users.json", Users);
+			SaveData<Dictionary<String, UserData>>("data/users.json", Users);
 			SaveData<Dictionary<String, EscapeRoom>>("data/rooms.json", Rooms);
 		}
 
