@@ -5,49 +5,44 @@ namespace App
 
 	class Client
 	{
-		private static User CurrentUser;
-		private static Boolean Stop = false;
-		private static Server Connection = Server.Connect();
+		public Boolean Stop = false;
+		private User CurrentUser;
+		private Server Connection = new Server();
 
-		private delegate void Command();
+		public delegate void Command();
 
-		private static readonly Dictionary<String, Command> Commands =
-			new Dictionary<String, Command>
+		public Dictionary<String, Command> Commands;
+
+		public Client()
+		{
+			Commands = new Dictionary<String, Command>
 			{
-				{ "login", Client.Login },
-				{ "register", Client.Register },
-				{ "deregister", Client.Deregister },
-				{ "logout", Client.Logout },
-				{ "reserve", Client.Reserve },
-				{ "help", Client.Help },
-				{ "exit", Client.Exit }
+				{ "login", Login },
+				{ "register", Register },
+				{ "deregister", Deregister },
+				{ "logout", Logout },
+				{ "buy ticket", BuyTicket },
+				{ "help", Help },
+				{ "exit", Exit }
 			};
-
-		public static void Main(string[] args)
-		{
-			String input;
-			Command command;
-
-			for (;;) {
-				input = ReadInput(">>> ").ToLower().Trim();
-				if (! Commands.TryGetValue(input, out command)) {
-					Console.WriteLine("Invalid command");
-				}
-
-				command();
-			}
-		}
-
-		public static String ReadInput(String text)
-		{
-			Console.Write(text);
-			return Console.ReadLine();
 		}
 		
-		public static void Login()
+		public void Connect()
 		{
-			String username = ReadInput("username: ");
-			String password = ReadInput("password: ");
+			Connection.Connect();
+		}
+
+		public void Disconnect()
+		{
+			Connection.Disconnect();
+		}
+
+		public void Login()
+		{
+			Console.Write("username: ");
+			String username = Console.ReadLine();
+			Console.Write("password: ");
+			String password = Console.ReadLine();
 
 			if (username == "" || password == "") {
 				Console.WriteLine("Leave no field empty!");
@@ -64,7 +59,7 @@ namespace App
 			return;
 		}
 
-		public static void Logout()
+		public void Logout()
 		{
 			if (CurrentUser == null) {
 				Console.WriteLine("You must be logged in to logout");
@@ -72,7 +67,7 @@ namespace App
 			}
 			
 			if (! Connection.TryLogout(CurrentUser.SessionToken)) {
-				Console.WriteLine("Something went wrong, please try again");
+				Console.WriteLine("Something went wrong");
 				return;
 			}
 
@@ -82,38 +77,45 @@ namespace App
 			return;
 		}
 
-		public static void Reserve()
+		public void BuyTicket()
 		{
 			if (CurrentUser == null) {
-				Console.WriteLine("You must be logged in to make a reservation");
+				Console.WriteLine("You must be logged in to buy a ticket");
 				return;
 			}
 
-			string tickets = ReadInput("Please enter the amount of tickets you want to buy:");
+			Console.Write("amount: ");
+			String tickets = Console.ReadLine();
 			Int32 ntickets = 0;
+
 			if (!Int32.TryParse(tickets, out ntickets)) {
-				Console.WriteLine("We couldn't process this reservation, Please Try again and use a valid number");
+				Console.WriteLine("Invalid number");
 				return;
 			}
-			string escaperoom = ReadInput("Choose one of our escape room programs: \n\tEscape1\n\tEscape2\n\tEscape3\n");
-			if (escaperoom != "Escape1" & escaperoom != "Escape2" & escaperoom != "Escape3") {
-				Console.WriteLine("We couldn't process this reservation, Please Try again");
+
+			Console.Write("escaperoom: ");
+			string escaperoom = Console.ReadLine().ToLower();
+
+			if (escaperoom != "escape1" && escaperoom != "escape2" && escaperoom != "escape3") {
+				Console.WriteLine("We don't offer this escaperoom");
 				return;
 			}
 		}
 
-		public static void Help()
+		public void Help()
 		{
-			System.Console.Write("Commands:\n\tlogin\n\tregister\n\tlogout" +
+			Console.Write("Commands:\n\tlogin\n\tregister\n\tlogout" +
 				"\n\tderegister\n\thelp\n\texit\n");
 
 			return;
 		}
 
-		public static void Register()
+		public void Register()
 		{
-			String username = ReadInput("username: ");
-			String password = ReadInput("password: ");
+			Console.Write("username: ");
+			String username = Console.ReadLine();
+			Console.Write("password: ");
+			String password = Console.ReadLine();
 
 			if (username == "" || password == "") {
 				Console.WriteLine("Leave no field empty!");
@@ -130,14 +132,15 @@ namespace App
 			return;
 		}
 
-		public static void Deregister()
+		public void Deregister()
 		{
 			if (CurrentUser == null) {
 				Console.WriteLine("You must be logged in to deregister");
 				return;
 			}
 
-			String password = ReadInput("password: ");
+			Console.Write("password: ");
+			String password = Console.ReadLine();
 
 			if (password == "") {
 				Console.WriteLine("Leave no field empty!");
@@ -154,10 +157,10 @@ namespace App
 			return;
 		}
 
-		static void Exit()
+		public void Exit()
 		{
 			Connection.Disconnect();
-			Environment.Exit(0);
+			Stop = true;
 		}
 	}
 }

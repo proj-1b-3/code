@@ -22,7 +22,9 @@ Server -down- Client
 
 class Client {
 	- CurrentUser : User
+	- Commands : Dictionary<String, Command>
 	____
+	ReadInput(text : String) : String
 	Help()
 	Login()
 	Logout()

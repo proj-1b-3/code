@@ -15,14 +15,14 @@ namespace App
 		private StringToUserData Users;
 		private GuidToUserData ActiveUsers;
 		
-		public static Server Connect()
+		public Server()
 		{
-			var server = new Server();
+			ActiveUsers = new GuidToUserData();
+		}
 
-			server.ActiveUsers = new GuidToUserData();
-			server.LoadData();
-
-			return server;
+		public void Connect()
+		{
+			LoadData();
 		}
 
 		public void Disconnect()
