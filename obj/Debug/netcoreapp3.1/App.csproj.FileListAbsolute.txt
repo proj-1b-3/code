@@ -9,3 +9,14 @@ C:\Users\sayfe\OneDrive\Bureaublad\EscaperoomSysteem\code\obj\Debug\netcoreapp3.
 C:\Users\sayfe\OneDrive\Bureaublad\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.AssemblyInfo.cs
 C:\Users\sayfe\OneDrive\Bureaublad\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.dll
 C:\Users\sayfe\OneDrive\Bureaublad\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.pdb
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\bin\Debug\netcoreapp3.1\App.exe
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\bin\Debug\netcoreapp3.1\App.deps.json
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\bin\Debug\netcoreapp3.1\App.runtimeconfig.json
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\bin\Debug\netcoreapp3.1\App.runtimeconfig.dev.json
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\bin\Debug\netcoreapp3.1\App.dll
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\bin\Debug\netcoreapp3.1\App.pdb
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.csprojAssemblyReference.cache
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.AssemblyInfoInputs.cache
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.AssemblyInfo.cs
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.dll
+C:\Users\sayfe\OneDrive\Bureaublad\project b\EscaperoomSysteem\code\obj\Debug\netcoreapp3.1\App.pdb

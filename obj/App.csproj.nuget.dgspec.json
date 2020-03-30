@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\EscaperoomSysteem\\code\\App.csproj": {}
+    "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\project b\\EscaperoomSysteem\\code\\App.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\EscaperoomSysteem\\code\\App.csproj": {
+    "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\project b\\EscaperoomSysteem\\code\\App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\EscaperoomSysteem\\code\\App.csproj",
+        "projectUniqueName": "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\project b\\EscaperoomSysteem\\code\\App.csproj",
         "projectName": "App",
-        "projectPath": "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\EscaperoomSysteem\\code\\App.csproj",
+        "projectPath": "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\project b\\EscaperoomSysteem\\code\\App.csproj",
         "packagesPath": "C:\\Users\\sayfe\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\EscaperoomSysteem\\code\\obj\\",
+        "outputPath": "C:\\Users\\sayfe\\OneDrive\\Bureaublad\\project b\\EscaperoomSysteem\\code\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
