@@ -8,9 +8,12 @@ namespace App
 		{
 			String input;
 			Client.Command command;
+			Server server = new Server();
 			
 			var client = new Client();
-			client.Connect();
+
+			server.Start();
+			client.Connect(server);
 
 			while (! client.Stop) {
 				Console.Write(">>> ");
@@ -23,7 +26,7 @@ namespace App
 				command();
 			}
 
-			client.Disconnect();
+			server.Stop();
 
 			return;
 		}

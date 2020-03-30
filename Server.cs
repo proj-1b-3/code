@@ -14,18 +14,22 @@ namespace App
 	{
 		private StringToUserData Users;
 		private GuidToUserData ActiveUsers;
+
+		private Dictionary<String, EscapeRoom> Rooms;
 		
 		public Server()
 		{
 			ActiveUsers = new GuidToUserData();
 		}
 
-		public void Connect()
+		public void Start()
 		{
 			LoadData();
+			Rooms = new Dictionary<string, EscapeRoom>();
+			Rooms.Add("escaperoom1", new EscapeRoom());
 		}
 
-		public void Disconnect()
+		public void Stop()
 		{
 			SaveData();
 		}
