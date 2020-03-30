@@ -22,15 +22,15 @@ Server -down- Client
 
 class Client {
 	- CurrentUser : User
-	- Commands : Dictionary<String, Command>
+	+ Commands : Dictionary<String, Command>
+	- Connection : Server
 	____
-	ReadInput(text : String) : String
-	Help()
-	Login()
-	Logout()
-	Register()
-	Deregister()
-	Reserve()
+	+ Help(): void
+	+ Login(): void
+	+ Logout(): void
+	+ Register(): void
+	+ Deregister(): void
+	+ BuyTicket(): void
 }
 
 Client ..> User

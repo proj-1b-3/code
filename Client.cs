@@ -7,7 +7,7 @@ namespace App
 	{
 		public Boolean Stop = false;
 		private User CurrentUser;
-		private Server Connection = new Server();
+		private Server Connection;
 
 		public delegate void Command();
 
@@ -27,14 +27,14 @@ namespace App
 			};
 		}
 		
-		public void Connect()
+		public void Connect(Server server) 
 		{
-			Connection.Connect();
+			Connection = server;
 		}
 
-		public void Disconnect()
+		public void Disconnect() 
 		{
-			Connection.Disconnect();
+			Connection = null;
 		}
 
 		public void Login()
@@ -159,7 +159,7 @@ namespace App
 
 		public void Exit()
 		{
-			Connection.Disconnect();
+			Disconnect();
 			Stop = true;
 		}
 	}
