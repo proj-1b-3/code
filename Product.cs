@@ -10,7 +10,7 @@ namespace App
 
 	class Ticket : Product
 	{
-
+		public String RoomName;
 	}
 
 	class Consumable : Product

@@ -56,18 +56,6 @@ enum Role {
 	Consumer
 }
 
-class Reservation {
-	- Id : Int32
-	- Owner : User
-	- Room : EscapeRoom
-	- Size: Int32
-	- EndDate : Date
-	____
-	get_Id() : Int32
-	____
-	IsValid(): Bool
-}
-
 together {
 	class Product {
 		- Id : Int32

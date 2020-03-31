@@ -1,0 +1,10 @@
+<DataBase>
+  <Users>
+    <UserName>maric</UserName>
+    <Password>123</Password>
+  </Users>
+  <Users>
+    <UserName>johan</UserName>
+    <Password>woord</Password>
+  </Users>
+</DataBase>

@@ -6,48 +6,75 @@ namespace App
 	using System.Collections.Generic;
 	using System.Text.Json;
 	using System.IO;
+	using System.Data;
 
 	class Server
 	{
-		private Dictionary<String, UserData> Users;
-		public Dictionary<String, EscapeRoom> Rooms;
+		private Dictionary<Guid, String> ActiveUsers;
 
-		private Dictionary<Guid, UserData> ActiveUsers;
+		public DataSet DataBase;
 		
 		public Server()
 		{
-			ActiveUsers = new Dictionary<Guid, UserData>();
+			// DataTable table;
+			// DataColumn col;
+			// DataColumn[] keys;
+
+			DataBase = new DataSet("DataBase");
+			DataBase.ReadXmlSchema("data_schema.xml");
+			// keys = new DataColumn[1];
+			
+			// table = new DataTable();
+			// table.TableName = "Rooms";
+
+			// col = new DataColumn();
+			// col.ColumnName = "RoomName";
+			// col.DataType = typeof(String);
+			// col.Unique = true;
+
+			// keys[0] = col;
+			// table.Columns.Add(col);
+
+			// table.PrimaryKey = keys;
+			// DataBase.Tables.Add(table);
+			
+			ActiveUsers = new Dictionary<Guid, String>();
 		}
 
 		public void Start()
 		{
-			LoadData<Dictionary<String, UserData>>("data/users.json", out Users);
-			LoadData<Dictionary<String, EscapeRoom>>("data/rooms.json", out Rooms);
+			if (!File.Exists("data.xml")) {
+				return;
+			}
+
+			DataBase.ReadXml("data.xml");
 		}
 
 		public void Stop()
 		{
-			SaveData<Dictionary<String, UserData>>("data/users.json", Users);
-			SaveData<Dictionary<String, EscapeRoom>>("data/rooms.json", Rooms);
+			FileStream file;
+
+			if (!File.Exists("data.xml")) {
+				file = File.Create("data.xml");
+			} else {
+				file = File.OpenWrite("data.xml");
+			}
+
+			DataBase.WriteXml(file);
+			DataBase.WriteXmlSchema("data_schema.xml");
 		}
 
 		public Boolean TryLogin(String username, String password, out User user)
 		{
-			UserData userdata;
-
 			user = null;
 
-			if (username == "" || password == "") {
-				return false;
-			}
-
-			if (! Users.TryGetValue (username, out userdata) ||
-					userdata.Password != password) {
+			var row = DataBase.Tables["Users"].Rows.Find(username);
+			if (row == null || (String)row["Password"] != password) {
 				return false;
 			}
 
 			Guid session_token = Guid.NewGuid();
-			ActiveUsers.Add(session_token, userdata);
+			ActiveUsers.Add(session_token, username);
 			user = new User(username, session_token);
 
 			return true;
@@ -70,30 +97,38 @@ namespace App
 				return false;
 			}
 
-			if (Users.ContainsKey(username)) {
+			var row = DataBase.Tables["Users"].Rows.Find(username);
+			if (row != null) {
 				return false;
 			}
 
-			Users.Add(username, new UserData(username, password));
+			row = DataBase.Tables["Users"].NewRow();
+			row["UserName"] = username;
+			row["Password"] = password;
+			DataBase.Tables["Users"].Rows.Add(row);
 
 			return true;
 		}
 
 		public Boolean TryDeregister(Guid session_token, String password)
 		{
-			UserData userdata;
+			String username;
 
 			if (password == "") {
 				return false;
 			}
 
-			if (! ActiveUsers.TryGetValue(session_token, out userdata) ||
-					userdata.Password != password) {
+			if (! ActiveUsers.TryGetValue(session_token, out username)) {
+				return false;
+			}
+
+			var row = DataBase.Tables["Users"].Rows.Find(username);
+			if (row == null || (String)row["Password"] != password) {
 				return false;
 			}
 
 			ActiveUsers.Remove(session_token);
-			Users.Remove(userdata.Name);
+			DataBase.Tables["Users"].Rows.Remove(row);
 
 			return true;
 		}

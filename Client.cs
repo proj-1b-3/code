@@ -2,6 +2,7 @@ namespace App
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Data;
 
 	class Client
 	{
@@ -160,13 +161,10 @@ namespace App
 
 		public void ListEscapeRoom()
 		{
-			foreach (var item in Connection.Rooms) {
-				Console.WriteLine(
-					"name: {0}\ntheme: {1}\ndiscription: {2}\ncapacity: {3}\n",
-					item.Value.Name,
-					item.Value.Theme,
-					item.Value.Discription,
-					item.Value.Capacity);
+			foreach (DataRow room in Connection.DataBase.Tables["Rooms"].Rows) {
+				foreach (DataColumn field in Connection.DataBase.Tables["Rooms"].Columns) {
+					Console.WriteLine($"{field}: {room[field]}\n");
+				}
 			}
 		}
 
