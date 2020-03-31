@@ -52,15 +52,7 @@ namespace App
 
 		public void Stop()
 		{
-			FileStream file;
-
-			if (!File.Exists("data.xml")) {
-				file = File.Create("data.xml");
-			} else {
-				file = File.OpenWrite("data.xml");
-			}
-
-			DataBase.WriteXml(file);
+			DataBase.WriteXml("data.xml");
 			DataBase.WriteXmlSchema("data_schema.xml");
 		}
 

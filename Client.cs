@@ -208,6 +208,7 @@ namespace App
 				foreach (DataColumn field in Connection.DataBase.Tables["Rooms"].Columns) {
 					Console.WriteLine($"{field}: {room[field]}");
 				}
+				Console.WriteLine();
 			}
 		}
 

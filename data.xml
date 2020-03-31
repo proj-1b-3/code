@@ -1,17 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
 <DataBase>
-  <Users>
-    <UserName>maric</UserName>
-    <Password>123</Password>
-  </Users>
-  <Users>
-    <UserName>johan</UserName>
-    <Password>woord</Password>
-  </Users>
   <Rooms>
-    <RoomName>Test Room 1</RoomName>
-    <Theme>Testing</Theme>
-    <Discription>This is a room for testing</Discription>
+    <RoomName>a</RoomName>
+    <Theme>b</Theme>
+    <Discription>c</Discription>
     <Capacity>0</Capacity>
-    <Price>NaN</Price>
+    <Price>0</Price>
   </Rooms>
 </DataBase>
