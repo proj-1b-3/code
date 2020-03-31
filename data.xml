@@ -7,4 +7,11 @@
     <UserName>johan</UserName>
     <Password>woord</Password>
   </Users>
+  <Rooms>
+    <RoomName>Test Room 1</RoomName>
+    <Theme>Testing</Theme>
+    <Discription>This is a room for testing</Discription>
+    <Capacity>0</Capacity>
+    <Price>NaN</Price>
+  </Rooms>
 </DataBase>

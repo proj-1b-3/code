@@ -23,7 +23,8 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-				{ "list rooms", ListEscapeRoom },
+				{ "list rooms", ListRooms },
+				{ "new room", NewRoom },
 				{ "help", Help },
 				{ "exit", Exit }
 			};
@@ -37,6 +38,12 @@ namespace App
 		public void Disconnect() 
 		{
 			Connection = null;
+		}
+
+		public String ReadField(String field_name)
+		{
+			Console.Write(field_name);
+			return Console.ReadLine().Trim();
 		}
 
 		public void Login()
@@ -159,11 +166,47 @@ namespace App
 			return;
 		}
 
-		public void ListEscapeRoom()
+		public void NewRoom()
+		{
+			String name = ReadField("name: ");
+			if (name == "") {
+				return;
+			}
+
+			String theme = ReadField("theme: ");
+			if (theme == "") {
+				return;
+			}
+
+			String dis = ReadField("discription: ");
+			if (dis == "") {
+				return;
+			}
+
+			Int32 cap;
+			if (! Int32.TryParse(ReadField("capacity: "), out cap)) {
+				return;
+			}
+
+			Single price;
+			if (! Single.TryParse(ReadField("price: "), out price)) {
+				return;
+			}
+
+			var row = Connection.DataBase.Tables["Rooms"].NewRow();
+			row["RoomName"] = name;
+			row["Theme"] = theme;
+			row["Discription"] = dis;
+			row["Capacity"] = cap;
+			row["Price"] = price;
+			Connection.DataBase.Tables["Rooms"].Rows.Add(row);
+		}
+
+		public void ListRooms()
 		{
 			foreach (DataRow room in Connection.DataBase.Tables["Rooms"].Rows) {
 				foreach (DataColumn field in Connection.DataBase.Tables["Rooms"].Columns) {
-					Console.WriteLine($"{field}: {room[field]}\n");
+					Console.WriteLine($"{field}: {room[field]}");
 				}
 			}
 		}
