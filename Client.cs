@@ -193,7 +193,7 @@ namespace App
 			if (! Single.TryParse(ReadField("price: "), out price)) {
 				return;
 			}
-			Room room =  new Room();
+			Room room =  new Room(name, theme, dis, cap, price);
 			Connection.TryAddRoom( CurrentUser.SessionToken, room);
 		}
 
