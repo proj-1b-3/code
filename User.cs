@@ -4,15 +4,20 @@ namespace App
 
 	class User
 	{
-		private String _Name;
-		public String Name { get { return _Name; } }
+		private String _UserName;
+		public String UserName {
+			get { return _UserName; }
+		}
 
-		public Guid SessionToken;
+		private Guid _SessionToken;
+		public Guid SessionToken {
+			get { return _SessionToken; }
+		}
 
-		public User(String name, Guid session_token)
+		public User(String username, Guid session_token)
 		{
-			_Name = name;
-			SessionToken = session_token;
+			_UserName = username;
+			_SessionToken = session_token;
 		}
 	}
 }

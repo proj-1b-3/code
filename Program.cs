@@ -2,14 +2,14 @@ namespace App
 {
 	using System;
 
-	class Program
+	static class Program
 	{
 		public static void Main(string[] args)
 		{
 			String input;
 			Client.Command command;
-			Server server = new Server();
 			
+			var server = new Server();
 			var client = new Client();
 
 			server.LoadData();

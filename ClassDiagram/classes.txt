@@ -1,61 +1,107 @@
 @startuml
 skinparam defaultFontSize 16
 skinparam defaultFontName IBM Plex Mono
-skinparam classAttributeIconSize 0
 
-class Program {
-	Main(args: String[]): void
+class "<u>Program</u>" {
+	+ Main(args: []String): void
 }
 
-Program ..> Server
-Program ..> Client
+"<u>Program</u>" ..> Server
+"<u>Program</u>" ..> Client
 
 class Server {
-	- DataBase : DataSet
-	- ActiveUsers : Dictionary<Guid, String>
-	____
-	+ Server()
-	____
-	+ Start(): void
-	+ Stop(): void
+	- _DataBase: DataSet
+	- ActiveUsers: Dictionary<Token, String>
+	__
+	+ <<constructor>> Server()
+	..
+	+ <<getter>> DataBase(): DataSet
+	..
+	+ LoadData(): void
+	+ SaveData(): void
 	+ TryLogin(username: String, password: String, user: out User): Boolean
-	+ TryLogout(session_token: Guid): Boolean
+	+ TryLogout(session_token: Token): Boolean
 	+ TryRegister(username: String, password: String): Boolean
-	+ TryDeregister(session_token: Guid, password: String): Boolean
+	+ TryDeregister(session_token: Token, password: String): Boolean
+	+ TryAddRoom(session_token: Token, room: RoomData): Boolean
+	+ TryRemoveRoom(session_token: Token, room: RoomData): Boolean
+	+ TryPay(session_token: Token, items: Product[]): Boolean
 }
 
-Server -r- Client
+Server ..> User
+Server ..> Role
+Server ..> RoomData
+Server ..> Product
 
 class Client {
 	- CurrentUser: User
 	- Connection: Server
 	- _Stop: Boolean
 	+ Commands: Dictionary<String, Command>
-	+ Command: void Delegate(void)
-	____
-	+ get_Stop(): Boolean
-	____
-	+ Client()
-	____
+	{field} + Command: void Delegate(void)
+	__
+	+ <<constructor>> Client()
+	..
+	+ <<getter>> Stop(): Boolean
+	..
 	- ReadField(field_name: String): String
-	+ Help(): void
-	+ Login(): void
-	+ Logout(): void
-	+ Register(): void
-	+ Deregister(): void
-	+ BuyTicket(): void
-	+ AddRoom(): void
-	+ ListRooms(): void
+	+ Help()
+	+ ShowStatus()
+	+ ListBasketItems()
+	+ RemoveBasketItem()
+	+ Login()
+	+ Logout()
+	+ Register()
+	+ Deregister()
+	+ Exit()
+	+ BuyTicket()
+	+ AddRoom()
+	+ RemoveRoom()
+	+ ListRooms()
+	+ Pay()
 }
 
 Client ..> User
+Client -> Server
+Client ..> RoomData
+Client ..> Product
+
+class Product {
+	+ Id: Int32
+	+ Price: Single
+}
+
+class Ticket {
+	+ RoomName: String
+	+ Consumables: []Consumable
+}
+
+Ticket -u-|> Product
+Ticket ..> Consumable
+
+class Consumable {
+	+ ConsumableName: String
+	+ Discription: String
+}
+
+Consumable -u-|> Product
+
+class RoomData {
+	+ RoomName: String
+	+ Theme: String
+	+ Discription: String
+	+ Capacity: Int32
+	+ Price: Single
+}
 
 class User {
-	- Name: String
-	- Token: Byte[]
-	____
-	+ get_Id(): Int32
-	+ get_Name(): String
+	- _UserName: String
+	- _SessionToken: Guid
+	__
+	+ <<constructor>> User(username: String, session_token: Guid)
+	..
+	+ <<getter>> UserName(): String
+	+ <<getter>> SessionToken(): Guid
 }
 
 enum Role {
@@ -63,31 +109,7 @@ enum Role {
 	CafeManager
 	Manager
 	Consumer
-}
-
-together {
-	class Product {
-		- Id : Int32
-		+ Name : String
-		+ Discription : String
-		- Price : Int32
-		____
-		+ get_Id() : Int32
-		+ get_Price() : Int32
-	}
-
-	class Ticket {
-		+ EscapeRoomId : Int32
-		+ UserName : String
-		+ EndDate : Date
-	}
-
-	class Consumable {
-		+ Items : Consumable[]
-	}
-
-	Consumable -up-|> Product
-	Ticket -up-|> Product
+	__
 }
 
 @enduml
