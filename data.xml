@@ -5,18 +5,4 @@
     <Password>123</Password>
     <Role>0</Role>
   </Users>
-  <Rooms>
-    <RoomName>Test Room 1</RoomName>
-    <Theme>Testing</Theme>
-    <Discription>This is a room made for testing</Discription>
-    <Capacity>0</Capacity>
-    <Price>NaN</Price>
-  </Rooms>
-  <Rooms>
-    <RoomName>test room 2</RoomName>
-    <Theme>testing</Theme>
-    <Discription>this is the second test room</Discription>
-    <Capacity>8</Capacity>
-    <Price>10</Price>
-  </Rooms>
 </DataBase>
