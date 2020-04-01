@@ -27,6 +27,7 @@ namespace App
 				{ "buy ticket", BuyTicket },
 				// { "list rooms", ListRooms },
 				{ "add room", AddRoom },
+				{ "remove room", RemoveRoom },
 				{ "help", Help },
 				{ "exit", Exit }
 			};
@@ -195,6 +196,13 @@ namespace App
 			}
 			Room room =  new Room(name, theme, dis, cap, price);
 			Connection.TryAddRoom( CurrentUser.SessionToken, room);
+		}
+
+		public void RemoveRoom()
+		{
+			string name = ReadField("name: ");
+			Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
+
 		}
 
 		// public void ListRooms()
