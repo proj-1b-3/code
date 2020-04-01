@@ -19,7 +19,7 @@ namespace App
 	{
 		private Dictionary<Guid, String> ActiveUsers;
 
-		public DataSet DataBase;
+		private DataSet DataBase;
 		
 		public Server()
 		{

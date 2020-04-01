@@ -203,15 +203,15 @@ namespace App
 			Connection.DataBase.Tables["Rooms"].Rows.Add(row);
 		}
 
-		public void ListRooms()
-		{
-			foreach (DataRow room in Connection.DataBase.Tables["Rooms"].Rows) {
-				foreach (DataColumn field in Connection.DataBase.Tables["Rooms"].Columns) {
-					Console.WriteLine($"{field}: {room[field]}");
-				}
-				Console.WriteLine();
-			}
-		}
+		// public void ListRooms()
+		// {
+		// 	foreach (DataRow room in Connection.DataBase.Tables["Rooms"].Rows) {
+		// 		foreach (DataColumn field in Connection.DataBase.Tables["Rooms"].Columns) {
+		// 			Console.WriteLine($"{field}: {room[field]}");
+		// 		}
+		// 		Console.WriteLine();
+		// 	}
+		// }
 
 		public void Exit()
 		{
