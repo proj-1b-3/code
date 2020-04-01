@@ -202,7 +202,6 @@ namespace App
 		{
 			string name = ReadField("name: ");
 			Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
-
 		}
 
 		// public void ListRooms()
