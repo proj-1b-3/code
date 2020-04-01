@@ -25,7 +25,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-				{ "list rooms", ListRooms },
+		//		{ "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "help", Help },
 				{ "exit", Exit }
@@ -193,14 +193,8 @@ namespace App
 			if (! Single.TryParse(ReadField("price: "), out price)) {
 				return;
 			}
-
-			var row = Connection.DataBase.Tables["Rooms"].NewRow();
-			row["RoomName"] = name;
-			row["Theme"] = theme;
-			row["Discription"] = dis;
-			row["Capacity"] = cap;
-			row["Price"] = price;
-			Connection.DataBase.Tables["Rooms"].Rows.Add(row);
+			Room room =  new Room();
+			Connection.TryAddRoom( CurrentUser.SessionToken, room);
 		}
 
 		// public void ListRooms()
