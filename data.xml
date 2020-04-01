@@ -5,10 +5,6 @@
     <Password>123</Password>
     <Role>0</Role>
   </Users>
-  <Users>
-    <UserName>name</UserName>
-    <Password>123</Password>
-  </Users>
   <Rooms>
     <RoomName>Test Room 1</RoomName>
     <Theme>Testing</Theme>

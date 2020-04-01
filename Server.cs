@@ -104,6 +104,7 @@ namespace App
 			row = DataBase.Tables["Users"].NewRow();
 			row["UserName"] = username;
 			row["Password"] = password;
+			row["Role"] = Role.Consumer;
 			DataBase.Tables["Users"].Rows.Add(row);
 
 			return true;

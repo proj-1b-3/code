@@ -25,7 +25,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-		//		{ "list rooms", ListRooms },
+				// { "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "help", Help },
 				{ "exit", Exit }

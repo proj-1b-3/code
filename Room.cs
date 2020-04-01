@@ -11,12 +11,13 @@ namespace App
 		public Single Price { get; set; }
 
 		public Room() {}
-		public Room(String name, String theme, String discription, Int32 capacity)
+		public Room(String name, String theme, String discription, Int32 capacity, Single price)
 		{
 			RoomName = name;
 			Theme = theme;
 			Discription = discription;
 			Capacity = capacity;
+			Price = price;
 		}
 	}
 }
