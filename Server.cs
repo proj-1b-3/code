@@ -131,5 +131,50 @@ namespace App
 
 			return true;
 		}
+
+		public Boolean TryAddRoom(Guid session_token, Room room)
+		{
+			String username;
+			if (!ActiveUsers.TryGetValue(session_token, out username)) {
+				return false;
+			}
+
+			var user_row = DataBase.Tables["Users"].Rows.Find(username);
+			if (user_row == null || (Role)user_row["Role"] != Role.Owner) {
+				return false;
+			}
+
+			var room_row = DataBase.Tables["Rooms"].NewRow();
+			room_row["RoomName"] = room.RoomName;
+			room_row["Theme"] = room.Theme;
+			room_row["Discription"] = room.Discription;
+			room_row["Capacity"] = room.Capacity;
+			room_row["Price"] = room.Price;
+			DataBase.Tables["Rooms"].Rows.Add(room_row);
+
+			return true;
+		}
+
+		public Boolean TryRemoveRoom(Guid session_token, String roomname)
+		{
+			String username;
+			if (!ActiveUsers.TryGetValue(session_token, out username)) {
+				return false;
+			}
+
+			var row = DataBase.Tables["Users"].Rows.Find(username);
+			if (row == null || (Role)row["Role"] != Role.Owner) {
+				return false;
+			}
+
+			row = DataBase.Tables["Rooms"].Rows.Find(roomname);
+			if (row == null) {
+				return false;
+			}
+
+			DataBase.Tables["Rooms"].Rows.Remove(row);
+			
+			return true;
+		}
 	}
 }

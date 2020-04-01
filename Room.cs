@@ -13,7 +13,7 @@ namespace App
 		public Room() {}
 		public Room(String name, String theme, String discription, Int32 capacity)
 		{
-			Name = name;
+			RoomName = name;
 			Theme = theme;
 			Discription = discription;
 			Capacity = capacity;
