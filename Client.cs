@@ -26,7 +26,7 @@ namespace App
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
 				{ "list rooms", ListRooms },
-				{ "new room", NewRoom },
+				{ "add room", AddRoom },
 				{ "help", Help },
 				{ "exit", Exit }
 			};
@@ -167,7 +167,7 @@ namespace App
 			}
 		}
 
-		public void NewRoom()
+		public void AddRoom()
 		{
 			String name = ReadField("name: ");
 			if (name == "") {
