@@ -8,6 +8,7 @@
             <xs:sequence>
               <xs:element name="UserName" type="xs:string" />
               <xs:element name="Password" type="xs:string" minOccurs="0" />
+              <xs:element name="Role" msdata:DataType="App.Role, App, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" type="xs:anyType" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

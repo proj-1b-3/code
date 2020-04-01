@@ -6,7 +6,9 @@ namespace App
 
 	class Client
 	{
-		public Boolean Stop = false;
+		private Boolean _Stop = false;
+		public Boolean Stop { get { return _Stop; }}
+
 		private User CurrentUser;
 		private Server Connection;
 
@@ -40,18 +42,26 @@ namespace App
 			Connection = null;
 		}
 
-		public String ReadField(String field_name)
+		private static String ReadField(String field_name)
 		{
 			Console.Write(field_name);
 			return Console.ReadLine().Trim();
 		}
 
+		/* Commands */
+
+		public void Help()
+		{
+			Console.Write("Commands:\n\thelp\n\tlogin\n\tlogout\n" +
+				"\tregister\n\tderegister\n\texit\n");
+
+			return;
+		}
+
 		public void Login()
 		{
-			Console.Write("username: ");
-			String username = Console.ReadLine();
-			Console.Write("password: ");
-			String password = Console.ReadLine();
+			String username = ReadField("username: ");
+			String password = ReadField("password: ");
 
 			if (username == "" || password == "") {
 				Console.WriteLine("Leave no field empty!");
@@ -86,45 +96,10 @@ namespace App
 			return;
 		}
 
-		public void BuyTicket()
-		{
-			if (CurrentUser == null) {
-				Console.WriteLine("You must be logged in to buy a ticket");
-				return;
-			}
-
-			Console.Write("amount: ");
-			String tickets = Console.ReadLine();
-			Int32 ntickets = 0;
-
-			if (!Int32.TryParse(tickets, out ntickets)) {
-				Console.WriteLine("Invalid number");
-				return;
-			}
-
-			Console.Write("escaperoom: ");
-			string escaperoom = Console.ReadLine().ToLower();
-
-			if (escaperoom != "escape1" && escaperoom != "escape2" && escaperoom != "escape3") {
-				Console.WriteLine("We don't offer this escaperoom");
-				return;
-			}
-		}
-
-		public void Help()
-		{
-			Console.Write("Commands:\n\tlogin\n\tregister\n\tlogout" +
-				"\n\tderegister\n\thelp\n\texit\n");
-
-			return;
-		}
-
 		public void Register()
 		{
-			Console.Write("username: ");
-			String username = Console.ReadLine();
-			Console.Write("password: ");
-			String password = Console.ReadLine();
+			String username = ReadField("username: ");
+			String password = ReadField("password: ");
 
 			if (username == "" || password == "") {
 				Console.WriteLine("Leave no field empty!");
@@ -148,8 +123,7 @@ namespace App
 				return;
 			}
 
-			Console.Write("password: ");
-			String password = Console.ReadLine();
+			String password = ReadField("password: ");
 
 			if (password == "") {
 				Console.WriteLine("Leave no field empty!");
@@ -164,6 +138,33 @@ namespace App
 			CurrentUser = null;
 
 			return;
+		}
+
+
+
+		public void BuyTicket()
+		{
+			if (CurrentUser == null) {
+				Console.WriteLine("You must be logged in to buy a ticket");
+				return;
+			}
+
+			Console.Write("amount: ");
+			String tickets = Console.ReadLine();
+			Int32 ntickets = 0;
+
+			if (!Int32.TryParse(tickets, out ntickets)) {
+				Console.WriteLine("Invalid number");
+				return;
+			}
+
+			Console.Write("escaperoom: ");
+			string escaperoom = Console.ReadLine().ToLower();
+
+			if (escaperoom != "escape1" && escaperoom != "escape2" && escaperoom != "escape3") {
+				Console.WriteLine("We don't offer this escaperoom");
+				return;
+			}
 		}
 
 		public void NewRoom()
@@ -215,7 +216,7 @@ namespace App
 		public void Exit()
 		{
 			Disconnect();
-			Stop = true;
+			_Stop = true;
 		}
 	}
 }

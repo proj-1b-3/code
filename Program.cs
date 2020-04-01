@@ -12,7 +12,7 @@ namespace App
 			
 			var client = new Client();
 
-			server.Start();
+			server.LoadData();
 			client.Connect(server);
 
 			while (! client.Stop) {
@@ -27,7 +27,7 @@ namespace App
 				command();
 			}
 
-			server.Stop();
+			server.SaveData();
 
 			return;
 		}

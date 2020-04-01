@@ -4,9 +4,16 @@ namespace App
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Text.Json;
 	using System.IO;
 	using System.Data;
+
+	enum Role
+	{
+		Owner,
+		CafeManager,
+		Manager,
+		Consumer
+	}
 
 	class Server
 	{
@@ -28,8 +35,8 @@ namespace App
 			// table.TableName = "Rooms";
 
 			// col = new DataColumn();
-			// col.ColumnName = "RoomName";
-			// col.DataType = typeof(String);
+			// col.ColumnName = "Role";
+			// col.DataType = typeof(Role);
 			// col.Unique = true;
 
 			// keys[0] = col;
@@ -41,7 +48,7 @@ namespace App
 			ActiveUsers = new Dictionary<Guid, String>();
 		}
 
-		public void Start()
+		public void LoadData()
 		{
 			if (!File.Exists("data.xml")) {
 				return;
@@ -50,7 +57,7 @@ namespace App
 			DataBase.ReadXml("data.xml");
 		}
 
-		public void Stop()
+		public void SaveData()
 		{
 			DataBase.WriteXml("data.xml");
 			DataBase.WriteXmlSchema("data_schema.xml");
@@ -123,30 +130,6 @@ namespace App
 			DataBase.Tables["Users"].Rows.Remove(row);
 
 			return true;
-		}
-	
-		private void LoadData<T>(String file_name, out T obj)
-			where T : new()
-		{
-			if (! File.Exists(file_name)) {
-				obj = new T();
-				return;
-			}
-
-			obj = JsonSerializer.Deserialize<T>(File.ReadAllBytes(file_name));
-
-			return;
-		}
-
-		private void SaveData<T>(String file_name, in T obj)
-		{
-			if (! File.Exists(file_name)) {
-				File.Create(file_name);
-			}
-
-			File.WriteAllBytes(file_name, JsonSerializer.SerializeToUtf8Bytes<T>(obj));
-
-			return;
 		}
 	}
 }

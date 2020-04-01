@@ -3,50 +3,59 @@ skinparam defaultFontSize 16
 skinparam defaultFontName IBM Plex Mono
 skinparam classAttributeIconSize 0
 
+class Program {
+	Main(args: String[]): void
+}
+
+Program ..> Server
+Program ..> Client
+
 class Server {
-	- Users : Dictionary<String, UserData>
-	- ActiveUsers : Dictionary<Guid, UserData>
+	- DataBase : DataSet
+	- ActiveUsers : Dictionary<Guid, String>
 	____
 	+ Server()
 	____
-	+ TryLogin(username, password : String, user : out User) : Boolean
-	+ TryLogout(session_token : Guid) : Boolean
-	+ TryRegister(username, password : String) : Boolean
-	+ TryDeregister(session_token : Guid, password : String): Boolean
-	- LoadData()
-	- SaveData()
+	+ Start(): void
+	+ Stop(): void
+	+ TryLogin(username: String, password: String, user: out User): Boolean
+	+ TryLogout(session_token: Guid): Boolean
+	+ TryRegister(username: String, password: String): Boolean
+	+ TryDeregister(session_token: Guid, password: String): Boolean
 }
 
-Server .up.> UserData
-Server -down- Client
+Server -r- Client
 
 class Client {
-	- CurrentUser : User
-	+ Commands : Dictionary<String, Command>
-	- Connection : Server
+	- CurrentUser: User
+	- Connection: Server
+	- _Stop: Boolean
+	+ Commands: Dictionary<String, Command>
+	+ Command: void Delegate(void)
 	____
+	+ get_Stop(): Boolean
+	____
+	+ Client()
+	____
+	- ReadField(field_name: String): String
 	+ Help(): void
 	+ Login(): void
 	+ Logout(): void
 	+ Register(): void
 	+ Deregister(): void
 	+ BuyTicket(): void
+	+ AddRoom(): void
+	+ ListRooms(): void
 }
 
 Client ..> User
 
 class User {
-	- Name : String
-	- Token : Byte[]
+	- Name: String
+	- Token: Byte[]
 	____
-	+ get_Id() : Int32
-	+ get_Name() : String
-}
-
-class UserData {
-	+ Name : String
-	+ Password : String
-	+ Perms : Role
+	+ get_Id(): Int32
+	+ get_Name(): String
 }
 
 enum Role {
