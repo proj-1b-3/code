@@ -6,6 +6,7 @@ namespace App
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Data;
+	using System.Linq;
 
 	enum Role
 	{
@@ -26,49 +27,91 @@ namespace App
 			// DataTable table;
 			// DataColumn col;
 			// DataColumn[] keys;
+			// DataRelation rel;
 
 			DataBase = new DataSet("DataBase");
-			DataBase.ReadXmlSchema("data_schema.xml");
+			DataBase.ReadXmlSchema("Data/ServerSchema.xml");
 			// keys = new DataColumn[1];
 			
 			// table = new DataTable();
-			// table.TableName = "Rooms";
+			// table.TableName = "Tickets";
 
 			// col = new DataColumn();
-			// col.ColumnName = "Role";
-			// col.DataType = typeof(Role);
+			// col.ColumnName = "TicketId";
+			// col.DataType = typeof(Guid);
 			// col.Unique = true;
+			// table.Columns.Add(col);
 
 			// keys[0] = col;
+
+			// col = new DataColumn();
+			// col.ColumnName = "UserName";
+			// col.DataType = typeof(String);
+			// col.Unique = true;
+			// table.Columns.Add(col);
+
+			// col = new DataColumn();
+			// col.ColumnName = "RoomName";
+			// col.DataType = typeof(String);
+			// col.Unique = true;
 			// table.Columns.Add(col);
 
 			// table.PrimaryKey = keys;
 			// DataBase.Tables.Add(table);
+
+			// rel = new DataRelation("TicketOwner",
+			// 	DataBase.Tables["Users"].Columns["UserName"],
+			// 	DataBase.Tables["Tickets"].Columns["UserName"]);
+			// DataBase.Relations.Add(rel);
+
+			// rel = new DataRelation("TicketRoom",
+			// 	DataBase.Tables["Rooms"].Columns["RoomName"],
+			// 	DataBase.Tables["Tickets"].Columns["RoomName"]);
+			// DataBase.Relations.Add(rel);
 			
 			ActiveUsers = new Dictionary<Guid, String>();
 		}
 
 		public void LoadData()
 		{
-			if (!File.Exists("data.xml")) {
+			if (!File.Exists("Data/Data.xml")) {
 				return;
 			}
 
-			DataBase.ReadXml("data.xml");
+			DataBase.ReadXml("Data/Data.xml");
 		}
 
 		public void SaveData()
 		{
-			DataBase.WriteXml("data.xml");
-			DataBase.WriteXmlSchema("data_schema.xml");
+			DataBase.WriteXml("Data/Data.xml");
+			DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
+
+		private DataRow GetUserRecord(String username)
+		{
+			return DataBase.Tables["Users"].Rows.Find(username);
+		}
+
+		private DataRow GetUserRecord(Guid session_token)
+		{
+			String username;
+
+			if (!ActiveUsers.TryGetValue(session_token, out username)) {
+				return null;
+			}
+
+			return DataBase.Tables["Users"].Rows.Find(username);
+		}
+
+		/* command */
 
 		public Boolean TryLogin(String username, String password, out User user)
 		{
+			DataRow row;
+			
 			user = null;
-
-			var row = DataBase.Tables["Users"].Rows.Find(username);
-			if (row == null || (String)row["Password"] != password) {
+			row = GetUserRecord(username);
+			if (row == null || row.Field<String>("Password") != password) {
 				return false;
 			}
 
@@ -92,13 +135,14 @@ namespace App
 
 		public Boolean TryRegister(String username, String password)
 		{
+			DataRow row;
+			
 			if (username == "" || password == "") {
 				return false;
 			}
 
-			var row = DataBase.Tables["Users"].Rows.Find(username);
-			if (row != null) {
-				return false;
+			if (DataBase.Tables["Users"].Rows.Contains(username)) {
+				return false; 
 			}
 
 			row = DataBase.Tables["Users"].NewRow();
@@ -112,18 +156,14 @@ namespace App
 
 		public Boolean TryDeregister(Guid session_token, String password)
 		{
-			String username;
+			DataRow row;
 
 			if (password == "") {
 				return false;
 			}
-
-			if (! ActiveUsers.TryGetValue(session_token, out username)) {
-				return false;
-			}
-
-			var row = DataBase.Tables["Users"].Rows.Find(username);
-			if (row == null || (String)row["Password"] != password) {
+			
+			row = GetUserRecord(session_token);
+			if (row == null || row.Field<String>("Password") != password) {
 				return false;
 			}
 
@@ -135,36 +175,30 @@ namespace App
 
 		public Boolean TryAddRoom(Guid session_token, Room room)
 		{
-			String username;
-			if (!ActiveUsers.TryGetValue(session_token, out username)) {
+			DataRow row;
+
+			row = GetUserRecord(session_token);
+			if (row == null || row.Field<Role>("Role") != Role.Owner) {
 				return false;
 			}
 
-			var user_row = DataBase.Tables["Users"].Rows.Find(username);
-			if (user_row == null || (Role)user_row["Role"] != Role.Owner) {
-				return false;
-			}
-
-			var room_row = DataBase.Tables["Rooms"].NewRow();
-			room_row["RoomName"] = room.RoomName;
-			room_row["Theme"] = room.Theme;
-			room_row["Discription"] = room.Discription;
-			room_row["Capacity"] = room.Capacity;
-			room_row["Price"] = room.Price;
-			DataBase.Tables["Rooms"].Rows.Add(room_row);
+			row = DataBase.Tables["Rooms"].NewRow();
+			row["RoomName"] = room.Name;
+			row["Theme"] = room.Theme;
+			row["Discription"] = room.Discription;
+			row["Capacity"] = room.Capacity;
+			row["Price"] = room.Price;
+			DataBase.Tables["Rooms"].Rows.Add(row);
 
 			return true;
 		}
 
 		public Boolean TryRemoveRoom(Guid session_token, String roomname)
 		{
-			String username;
-			if (!ActiveUsers.TryGetValue(session_token, out username)) {
-				return false;
-			}
+			DataRow row;
 
-			var row = DataBase.Tables["Users"].Rows.Find(username);
-			if (row == null || (Role)row["Role"] != Role.Owner) {
+			row = GetUserRecord(session_token);
+			if (row == null || row.Field<Role>("Role") != Role.Owner) {
 				return false;
 			}
 
@@ -175,6 +209,23 @@ namespace App
 
 			DataBase.Tables["Rooms"].Rows.Remove(row);
 			
+			return true;
+		}
+
+		public Boolean TryGetRoomData(Guid session_token, out String data, out String schema)
+		{
+			DataRow row;
+			
+			data = null;
+			schema = null;
+			row = GetUserRecord(session_token);
+			if (row == null) {
+				return false;
+			}
+
+			DataBase.Tables["Rooms"].WriteXml(data);
+			DataBase.Tables["Rooms"].WriteXmlSchema(schema);
+
 			return true;
 		}
 	}
