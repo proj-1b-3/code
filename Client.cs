@@ -69,15 +69,27 @@ namespace App
 			Console.Write("Commands:\n\thelp\n\tlogout" +
 				"\n\texit\n\tadd room\n\tremove room\n");
 
+				Console.Write("Commands:\n" +
+				"\thelp\n" +
+				"\tlogout\n" +
+				"\tregister\n" +
+				"\tderegister\n" +
+				"\tadd room\n" +
+				"\tremove room\n" +
+				"\texit\n");
+
 			return;
 		}
 
 		public void HelpCustomer()
 		{
-			Console.Write("Commands:\n\thelp\n\tlogout\n" +
-				"\texit\n\tbuy ticket\n");
+			Console.Write("Commands:\n" +
+				"\thelp\n" +
+				"\tlogout\n" +
+				"\tbuy ticket\n" +
+				"\texit\n");
 
-			return;
+				return;
 		}
 
 		public void Login()
