@@ -233,7 +233,7 @@ namespace App
 				return;
 			}
 			
-			Room room =  new Room(name, theme, dis, cap, price, available);
+			Room room =  new Room(theme, cap, price, available);
 			Connection.TryAddRoom( CurrentUser.SessionToken, room);
 		}
 
