@@ -239,9 +239,9 @@ namespace App
 
 		public void ListRooms()
 		{	
-			MemoryStream tabledata;
+			MemoryStream tabledata = new MemoryStream();
 
-			Connection.TryGetRoomData(CurrentUser.SessionToken,out tabledata);
+			Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata);
 			if (tabledata == null){
 				return;
 			}
