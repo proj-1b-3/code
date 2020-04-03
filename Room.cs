@@ -2,13 +2,10 @@ namespace App
 {
 	using System;
 
-	class Room
+	class Room : Product
 	{
-		public String Name { get; set; }
 		public String Theme { get; set; }
-		public String Discription { get; set; }
 		public Int32 Capacity { get; set; }
-		public Single Price { get; set; }
 
 		public Room()
 		{
@@ -18,7 +15,6 @@ namespace App
 		{
 			Name = name;
 			Theme = theme;
-			Discription = discription;
 			Capacity = capacity;
 			Price = price;
 		}
