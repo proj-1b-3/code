@@ -215,13 +215,14 @@ namespace App
 		{
 			DataRow row;
 			
-			tabledata = null;
 			row = GetUserRecord(session_token);
 			if (row == null) {
 				return false;
 			}
 
 			DataBase.Tables["Rooms"].WriteXml(tabledata, XmlWriteMode.WriteSchema);
+
+			Console.Write(tabledata.ToString());
 
 			return true;
 		}
