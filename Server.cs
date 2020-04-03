@@ -84,7 +84,7 @@ namespace App
 		public void SaveData()
 		{
 			DataBase.WriteXml("Data/Data.xml");
-			DataBase.WriteXmlSchema("Data/ServerSchema.xml");
+			// DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
 
 		private DataRow GetUserRecord(String username)
@@ -185,6 +185,7 @@ namespace App
 			row = DataBase.Tables["Rooms"].NewRow();
 			row["RoomName"] = room.Name;
 			row["Theme"] = room.Theme;
+			row["Discription"] = room.Discription;
 			row["Capacity"] = room.Capacity;
 			row["Price"] = room.Price;
 			DataBase.Tables["Rooms"].Rows.Add(row);
@@ -221,8 +222,11 @@ namespace App
 			}
 
 			DataBase.Tables["Rooms"].WriteXml(tabledata, XmlWriteMode.WriteSchema);
+			if (tabledata.Length == 0) {
+				return false;
+			}
 
-			Console.Write(tabledata.ToString());
+			tabledata.Position = 0;
 
 			return true;
 		}

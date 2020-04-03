@@ -246,11 +246,11 @@ namespace App
 		public void ListRooms()
 		{	
 			MemoryStream tabledata = new MemoryStream();
-
-			Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata);
-			if (tabledata == null){
+			
+			if (Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata)) {
 				return;
 			}
+
 			Rooms = new DataTable();
 			Rooms.ReadXml(tabledata);
 		}

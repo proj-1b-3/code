@@ -5,8 +5,9 @@ namespace App
 
 	class Product
 	{
-		public String Name;
 		public String Type;
+		public String Name;
+		public String Discription;
 		public Single Price;
 		public Dictionary<String, String> Tags;
 
@@ -17,6 +18,7 @@ namespace App
 		public Product(String name, String discription, Single price)
 		{
 			Name = name;
+			Discription = discription;
 			Price = price;
 		}
 	}
