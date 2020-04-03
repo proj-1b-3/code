@@ -6,17 +6,19 @@ namespace App
 	{
 		public String Theme { get; set; }
 		public Int32 Capacity { get; set; }
+		public Single Price { get; set; }
+		public Boolean Available { get; set; }
 
 		public Room()
 		{
 		}
 
-		public Room(String name, String theme, String discription, Int32 capacity, Single price)
+		public Room(String theme, Int32 capacity, Single price, Boolean available)
 		{
-			Name = name;
 			Theme = theme;
 			Capacity = capacity;
 			Price = price;
+			Available = available;
 		}
 	}
 }
