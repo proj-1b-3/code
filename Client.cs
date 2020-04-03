@@ -3,6 +3,7 @@ namespace App
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
+	using System.IO;
 
 	class Client
 	{
@@ -16,6 +17,8 @@ namespace App
 
 		public Dictionary<String, Command> Commands;
 
+		private DataTable Rooms;
+
 		public Client()
 		{
 			Commands = new Dictionary<String, Command>
@@ -25,7 +28,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-				// { "list rooms", ListRooms },
+				{ "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
 				{ "help", Help },
@@ -240,19 +243,17 @@ namespace App
 			Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
 		}
 
-		public void availableRooms(){
-			
-		}
+		public void ListRooms()
+		{	
+			MemoryStream tabledata = new MemoryStream();
 
-		// public void ListRooms()
-		// {
-		// 	foreach (DataRow room in Connection.DataBase.Tables["Rooms"].Rows) {
-		// 		foreach (DataColumn field in Connection.DataBase.Tables["Rooms"].Columns) {
-		// 			Console.WriteLine($"{field}: {room[field]}");
-		// 		}
-		// 		Console.WriteLine();
-		// 	}
-		// }
+			Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata);
+			if (tabledata == null){
+				return;
+			}
+			Rooms = new DataTable();
+			Rooms.ReadXml(tabledata);
+		}
 
 		public void Exit()
 		{

@@ -185,7 +185,6 @@ namespace App
 			row = DataBase.Tables["Rooms"].NewRow();
 			row["RoomName"] = room.Name;
 			row["Theme"] = room.Theme;
-			row["Discription"] = room.Discription;
 			row["Capacity"] = room.Capacity;
 			row["Price"] = room.Price;
 			DataBase.Tables["Rooms"].Rows.Add(row);
@@ -212,19 +211,18 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryGetRoomData(Guid session_token, out String data, out String schema)
+		public Boolean TryGetRoomData(Guid session_token, MemoryStream tabledata)
 		{
 			DataRow row;
 			
-			data = null;
-			schema = null;
 			row = GetUserRecord(session_token);
 			if (row == null) {
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].WriteXml(data);
-			DataBase.Tables["Rooms"].WriteXmlSchema(schema);
+			DataBase.Tables["Rooms"].WriteXml(tabledata, XmlWriteMode.WriteSchema);
+
+			Console.Write(tabledata.ToString());
 
 			return true;
 		}

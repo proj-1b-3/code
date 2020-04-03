@@ -55,13 +55,13 @@
       <xs:selector xpath=".//Tickets" />
       <xs:field xpath="RoomName" />
     </xs:unique>
-    <xs:keyref name="TicketOwner" refer="Constraint1">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="UserName" />
-    </xs:keyref>
     <xs:keyref name="TicketRoom" refer="Rooms_Constraint1">
       <xs:selector xpath=".//Tickets" />
       <xs:field xpath="RoomName" />
+    </xs:keyref>
+    <xs:keyref name="TicketOwner" refer="Constraint1">
+      <xs:selector xpath=".//Tickets" />
+      <xs:field xpath="UserName" />
     </xs:keyref>
   </xs:element>
 </xs:schema>
