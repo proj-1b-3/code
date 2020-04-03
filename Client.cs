@@ -64,10 +64,7 @@ namespace App
 			return;
 		}
 
-		public void helpManager(){
-
-			Console.Write("Commands:\n\thelp\n\tlogout" +
-				"\n\texit\n\tadd room\n\tremove room\n");
+		private void helpManager(){
 
 				Console.Write("Commands:\n" +
 				"\thelp\n" +
@@ -81,7 +78,7 @@ namespace App
 			return;
 		}
 
-		public void HelpCustomer()
+		private void HelpCustomer()
 		{
 			Console.Write("Commands:\n" +
 				"\thelp\n" +
