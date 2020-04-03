@@ -64,6 +64,31 @@ namespace App
 			return;
 		}
 
+		private void helpManager(){
+
+				Console.Write("Commands:\n" +
+				"\thelp\n" +
+				"\tlogout\n" +
+				"\tregister\n" +
+				"\tderegister\n" +
+				"\tadd room\n" +
+				"\tremove room\n" +
+				"\texit\n");
+
+			return;
+		}
+
+		private void HelpCustomer()
+		{
+			Console.Write("Commands:\n" +
+				"\thelp\n" +
+				"\tlogout\n" +
+				"\tbuy ticket\n" +
+				"\texit\n");
+
+				return;
+		}
+
 		public void Login()
 		{
 			String username = ReadField("username: ");
