@@ -224,7 +224,13 @@ namespace App
 			if (! Single.TryParse(ReadField("price: "), out price)) {
 				return;
 			}
-			Room room =  new Room(name, theme, dis, cap, price);
+
+			Boolean available;
+			if(! Boolean.TryParse(ReadField("available: true/false: "), out available)){
+				return;
+			}
+			
+			Room room =  new Room(name, theme, dis, cap, price, available);
 			Connection.TryAddRoom( CurrentUser.SessionToken, room);
 		}
 
@@ -232,6 +238,10 @@ namespace App
 		{
 			string name = ReadField("name: ");
 			Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
+		}
+
+		public void availableRooms(){
+			
 		}
 
 		// public void ListRooms()
