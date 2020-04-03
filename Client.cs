@@ -54,7 +54,7 @@ namespace App
 		public void Help()
 		{
 			Console.Write("Commands:\n\thelp\n\tlogin\n\tlogout\n" +
-				"\tregister\n\tderegister\n\texit\n\add room\n\remove room\n\buy ticket\n");
+				"\tregister\n\tderegister\n\texit\n\tadd room\n\tremove room\n\tbuy ticket\n");
 
 			return;
 		}
