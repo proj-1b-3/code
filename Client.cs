@@ -213,13 +213,13 @@ namespace App
 				return;
 			}
 
-			String dis = ReadField("discription: ");
-			if (dis == "") {
+			String discription = ReadField("discription: ");
+			if (discription == "") {
 				return;
 			}
 
-			Int32 cap;
-			if (! Int32.TryParse(ReadField("capacity: "), out cap)) {
+			Int32 capacity;
+			if (! Int32.TryParse(ReadField("capacity: "), out capacity)) {
 				return;
 			}
 
@@ -233,7 +233,7 @@ namespace App
 				return;
 			}
 			
-			Room room =  new Room(theme, cap, price, available);
+			Room room =  new Room(name, discription, price, theme, capacity);
 			Connection.TryAddRoom( CurrentUser.SessionToken, room);
 		}
 
