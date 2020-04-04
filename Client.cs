@@ -28,7 +28,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-		//		{ "list rooms", ListRooms },
+				{ "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
 				{ "help", Help },
@@ -254,7 +254,16 @@ namespace App
 			Rooms = new DataTable();
 			Rooms.ReadXml(tabledata);
 		}
-		
+
+		public void ListRooms()
+		{
+			foreach (var row in Rooms.Rows) {
+  				foreach (var col in Rooms.Columns) {
+    				Console.WriteLine($"{col}: {row}");
+  				}
+			}
+
+		}
 
 		public void Exit()
 		{
