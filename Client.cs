@@ -109,6 +109,7 @@ namespace App
 
 			Console.WriteLine("Login successful");
 			FetchRooms();
+
 			return;
 		}
 
@@ -244,25 +245,27 @@ namespace App
 		}
 
 		private void FetchRooms()
-		{	
+		{
 			MemoryStream tabledata = new MemoryStream();
 			
-			if (Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata)) {
+			if (!Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata)) {
+				Console.WriteLine("Something went wrong while trying to get the product data from the server");
 				return;
 			}
 
 			Rooms = new DataTable();
 			Rooms.ReadXml(tabledata);
+
+			tabledata.Close();
 		}
 
 		public void ListRooms()
 		{
-			foreach (var row in Rooms.Rows) {
-  				foreach (var col in Rooms.Columns) {
-    				Console.WriteLine($"{col}: {row}");
+			foreach (DataRow row in Rooms.Rows) {
+  				foreach (DataColumn col in Rooms.Columns) {
+    				Console.WriteLine($"{col}: {row[col]}");
   				}
 			}
-
 		}
 
 		public void Exit()

@@ -97,6 +97,7 @@ namespace App
 			String username;
 
 			if (!ActiveUsers.TryGetValue(session_token, out username)) {
+				Console.WriteLine("error: Line 100");
 				return null;
 			}
 
@@ -222,11 +223,11 @@ namespace App
 			}
 
 			DataBase.Tables["Rooms"].WriteXml(tabledata, XmlWriteMode.WriteSchema);
+			tabledata.Position = 0;
+
 			if (tabledata.Length == 0) {
 				return false;
 			}
-
-			tabledata.Position = 0;
 
 			return true;
 		}
