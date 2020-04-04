@@ -112,13 +112,13 @@ namespace App
 			
 			user = null;
 			row = GetUserRecord(username);
-			if (row == null || row.Field<String>("Password") != password) {
+			if (row == null || (String)row["Password"] != password) {
 				return false;
 			}
 
 			Guid session_token = Guid.NewGuid();
 			ActiveUsers.Add(session_token, username);
-			user = new User(username, session_token, row.Field<Role>("Role"));
+			user = new User(username, session_token, (Role)row["Role"]);
 
 			return true;
 		}
@@ -164,7 +164,7 @@ namespace App
 			}
 			
 			row = GetUserRecord(session_token);
-			if (row == null || row.Field<String>("Password") != password) {
+			if (row == null || (String)row["Password"] != password) {
 				return false;
 			}
 
@@ -179,7 +179,7 @@ namespace App
 			DataRow row;
 
 			row = GetUserRecord(session_token);
-			if (row == null || row.Field<Role>("Role") != Role.Owner) {
+			if (row == null || (Role)row["Role"] != Role.Owner) {
 				return false;
 			}
 
@@ -199,7 +199,7 @@ namespace App
 			DataRow row;
 
 			row = GetUserRecord(session_token);
-			if (row == null || row.Field<Role>("Role") != Role.Owner) {
+			if (row == null || (Role)row["Role"] != Role.Owner) {
 				return false;
 			}
 

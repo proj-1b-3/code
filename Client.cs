@@ -257,9 +257,9 @@ namespace App
 		public void ListRooms()
 		{
 			foreach (DataRow row in Rooms.Rows) {
-  				foreach (DataColumn col in Rooms.Columns) {
-    				Console.WriteLine($"{col}: {row[col]}");
-  				}
+				foreach (DataColumn col in Rooms.Columns) {
+					Console.WriteLine($"{col}: {row[col]}");
+				}
 			}
 		}
 
