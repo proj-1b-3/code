@@ -228,11 +228,6 @@ namespace App
 			if (! Single.TryParse(ReadField("price: "), out price)) {
 				return;
 			}
-
-			Boolean available;
-			if(! Boolean.TryParse(ReadField("available: true/false: "), out available)){
-				return;
-			}
 			
 			Room room =  new Room(name, discription, price, theme, capacity);
 			Connection.TryAddRoom( CurrentUser.SessionToken, room);
