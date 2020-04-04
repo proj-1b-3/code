@@ -256,14 +256,16 @@ namespace App
 
 		public void ListRooms()
 		{
-			
 			foreach (DataRow row in Rooms.Rows) {
+				Console.WriteLine("");
 				foreach (DataColumn col in Rooms.Columns) {
 					Console.WriteLine($"{col}: {row[col]}");
 				}
-
-				Console.WriteLine("\n");
 			}
+
+			Console.WriteLine("");
+
+			return;
 		}
 
 		public void Exit()
