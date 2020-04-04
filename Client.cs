@@ -28,7 +28,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-				{ "list rooms", ListRooms },
+		//		{ "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
 				{ "help", Help },
@@ -108,7 +108,7 @@ namespace App
 			}
 
 			Console.WriteLine("Login successful");
-			
+			FetchRooms();
 			return;
 		}
 
@@ -243,7 +243,7 @@ namespace App
 			Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
 		}
 
-		public void ListRooms()
+		private void FetchRooms()
 		{	
 			MemoryStream tabledata = new MemoryStream();
 			
@@ -254,6 +254,7 @@ namespace App
 			Rooms = new DataTable();
 			Rooms.ReadXml(tabledata);
 		}
+		
 
 		public void Exit()
 		{
