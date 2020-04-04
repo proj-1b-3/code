@@ -263,7 +263,8 @@ namespace App
 		{
 			foreach (DataRow row in Rooms.Rows) {
   				foreach (DataColumn col in Rooms.Columns) {
-    				Console.WriteLine($"{col}: {row[col]}");
+    				Console.WriteLine($"{col}: {row[col]}" + "\n\n");
+					Console.WriteLine("\n\n");
   				}
 			}
 		}
