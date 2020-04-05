@@ -69,41 +69,29 @@ namespace App
 
 		public void Help()
 		{
-			Console.Write("Commands:\n" +
-				"\thelp\n" +
-				"\tlogin\n" +
-				"\tlogout\n" +
-				"\tregister\n" +
-				"\tderegister\n" +
-				"\texit\n");
+			if (CurrentUser == null) {
+				Console.WriteLine("Register or log in first")
+			}
+			else if (CurrentUser.Role == Role.Owner){ 
+				Console.WriteLine (" ")
+			}
+			
+			else if (CurrentUser.Role == Role.Manager)
+				Console.WriteLine (" ")
+			}
+		
+			else if (CurrentUser.Role == Role.CafeManager){
+				Console.WriteLine (" ")
+			}
 
-			return;
+			else if (CurrentUser.Role == Role.Consumer){
+				Console.WriteLine (" ")
+				return;	
+			}
+
+		
 		}
 
-		private void helpManager(){
-
-				Console.Write("Commands:\n" +
-				"\thelp\n" +
-				"\tlogout\n" +
-				"\tregister\n" +
-				"\tderegister\n" +
-				"\tadd room\n" +
-				"\tremove room\n" +
-				"\texit\n");
-
-			return;
-		}
-
-		private void HelpCustomer()
-		{
-			Console.Write("Commands:\n" +
-				"\thelp\n" +
-				"\tlogout\n" +
-				"\tbuy ticket\n" +
-				"\texit\n");
-
-				return;
-		}
 
 		public void Login()
 		{
