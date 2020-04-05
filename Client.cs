@@ -7,15 +7,14 @@ namespace App
 
 	class Client
 	{
-		private Boolean _Stop = false;
-		public Boolean Stop { get { return _Stop; }}
+		private Boolean Stop = false;
 
 		private User CurrentUser;
 		private Server Connection;
 
 		public delegate void Command();
 
-		public Dictionary<String, Command> Commands;
+		private Dictionary<String, Command> Commands;
 
 		private DataTable Rooms;
 
@@ -35,15 +34,29 @@ namespace App
 				{ "exit", Exit }
 			};
 		}
-		
-		public void Connect(Server server) 
-		{
-			Connection = server;
-		}
 
-		public void Disconnect() 
+		public void Begin(Server server)
 		{
+			String input;
+			Command command;
+
+			Connection = server;
+
+			while (! Stop) {
+				Console.Write(">>> ");
+				input = Console.ReadLine().ToLower().Trim();
+
+				if (! Commands.TryGetValue(input, out command)) {
+					Console.WriteLine("Invalid command");
+					continue;
+				}
+
+				command();
+			}
+
 			Connection = null;
+
+			return;
 		}
 
 		private static String ReadField(String field_name)
@@ -209,18 +222,8 @@ namespace App
 				return;
 			}
 
-			String theme = ReadField("theme: ");
-			if (theme == "") {
-				return;
-			}
-
 			String discription = ReadField("discription: ");
 			if (discription == "") {
-				return;
-			}
-
-			Int32 capacity;
-			if (! Int32.TryParse(ReadField("capacity: "), out capacity)) {
 				return;
 			}
 
@@ -228,9 +231,21 @@ namespace App
 			if (! Single.TryParse(ReadField("price: "), out price)) {
 				return;
 			}
+
+			String theme = ReadField("theme: ");
+			if (theme == "") {
+				return;
+			}
+
+			Int32 capacity;
+			if (! Int32.TryParse(ReadField("capacity: "), out capacity)) {
+				return;
+			}
 			
-			Room room =  new Room(name, discription, price, theme, capacity);
-			Connection.TryAddRoom( CurrentUser.SessionToken, room);
+			var room =  new Product("Room", name, discription, price);
+			room.Tags.Add("Theme", theme);
+			room.Tags.Add("Capacity", capacity.ToString());
+			Connection.TryAddRoom(CurrentUser.SessionToken, room);
 		}
 
 		public void RemoveRoom()
@@ -270,8 +285,7 @@ namespace App
 
 		public void Exit()
 		{
-			Disconnect();
-			_Stop = true;
+			Stop = true;
 		}
 	}
 }

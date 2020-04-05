@@ -12,24 +12,15 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Rooms">
+        <xs:element name="Products">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="RoomName" type="xs:string" />
-              <xs:element name="Theme" type="xs:string" minOccurs="0" />
+              <xs:element name="Name" type="xs:string" />
+              <xs:element name="Type" type="xs:string" />
               <xs:element name="Discription" type="xs:string" minOccurs="0" />
-              <xs:element name="Capacity" type="xs:int" minOccurs="0" />
               <xs:element name="Price" type="xs:float" minOccurs="0" />
               <xs:element name="Available" type="xs:boolean" minOccurs="0" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="Tickets">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="TicketId" msdata:DataType="System.Guid, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" type="xs:string" />
-              <xs:element name="UserName" type="xs:string" minOccurs="0" />
-              <xs:element name="RoomName" type="xs:string" minOccurs="0" />
+              <xs:element name="Tags" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -39,29 +30,10 @@
       <xs:selector xpath=".//Users" />
       <xs:field xpath="UserName" />
     </xs:unique>
-    <xs:unique name="Rooms_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
-      <xs:selector xpath=".//Rooms" />
-      <xs:field xpath="RoomName" />
+    <xs:unique name="Products_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Products" />
+      <xs:field xpath="Name" />
+      <xs:field xpath="Type" />
     </xs:unique>
-    <xs:unique name="Tickets_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="TicketId" />
-    </xs:unique>
-    <xs:unique name="Constraint2">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="UserName" />
-    </xs:unique>
-    <xs:unique name="Constraint3">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="RoomName" />
-    </xs:unique>
-    <xs:keyref name="TicketOwner" refer="Constraint1">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="UserName" />
-    </xs:keyref>
-    <xs:keyref name="TicketRoom" refer="Rooms_Constraint1">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="RoomName" />
-    </xs:keyref>
   </xs:element>
 </xs:schema>

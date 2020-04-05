@@ -31,43 +31,18 @@ namespace App
 
 			DataBase = new DataSet("DataBase");
 			DataBase.ReadXmlSchema("Data/ServerSchema.xml");
-			// keys = new DataColumn[1];
 			
-			// table = new DataTable();
-			// table.TableName = "Tickets";
-
-			// col = new DataColumn();
-			// col.ColumnName = "TicketId";
-			// col.DataType = typeof(Guid);
-			// col.Unique = true;
-			// table.Columns.Add(col);
-
-			// keys[0] = col;
-
-			// col = new DataColumn();
-			// col.ColumnName = "UserName";
-			// col.DataType = typeof(String);
-			// col.Unique = true;
-			// table.Columns.Add(col);
+			// keys = new DataColumn[2];
+			// table = new DataTable("Rooms");
 
 			// col = new DataColumn();
 			// col.ColumnName = "RoomName";
 			// col.DataType = typeof(String);
-			// col.Unique = true;
 			// table.Columns.Add(col);
+			// keys[0] = col;
 
 			// table.PrimaryKey = keys;
 			// DataBase.Tables.Add(table);
-
-			// rel = new DataRelation("TicketOwner",
-			// 	DataBase.Tables["Users"].Columns["UserName"],
-			// 	DataBase.Tables["Tickets"].Columns["UserName"]);
-			// DataBase.Relations.Add(rel);
-
-			// rel = new DataRelation("TicketRoom",
-			// 	DataBase.Tables["Rooms"].Columns["RoomName"],
-			// 	DataBase.Tables["Tickets"].Columns["RoomName"]);
-			// DataBase.Relations.Add(rel);
 			
 			ActiveUsers = new Dictionary<Guid, String>();
 		}
@@ -104,7 +79,8 @@ namespace App
 			return DataBase.Tables["Users"].Rows.Find(username);
 		}
 
-		/* command */
+		// COMMANDS
+		// user commands
 
 		public Boolean TryLogin(String username, String password, out User user)
 		{
@@ -174,7 +150,9 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryAddRoom(Guid session_token, Room room)
+		// room commands
+
+		public Boolean TryAddRoom(Guid session_token, Product room)
 		{
 			DataRow row;
 
@@ -183,17 +161,25 @@ namespace App
 				return false;
 			}
 
-			row = DataBase.Tables["Rooms"].NewRow();
-			row["RoomName"] = room.Name;
-			row["Theme"] = room.Theme;
-			row["Discription"] = room.Discription;
-			row["Capacity"] = room.Capacity;
-			row["Price"] = room.Price;
-			DataBase.Tables["Rooms"].Rows.Add(row);
+			if (!room.Tags.ContainsKey("Theme") || !room.Tags.ContainsKey("Capacity")) {
+				return false;
+			}
+
+			row = DataBase.Tables["Products"].NewRow();
+			room.FillDataRow(row);
+			DataBase.Tables["Products"].Rows.Add(row);
 
 			return true;
 		}
 
+		// session_token: the user session token.
+		// roomName: the other the name of the room the user want remove.
+		// return: a boolean indicating wether the method failed or passed
+		//
+		// this method finds if the user wanting to remove the room has the
+		// right permissions to do so, then it checks if the room name is
+		// registered in the Products table and removes it if it is found and
+		// the user has the right permissions.
 		public Boolean TryRemoveRoom(Guid session_token, String roomname)
 		{
 			DataRow row;
@@ -203,16 +189,20 @@ namespace App
 				return false;
 			}
 
-			row = DataBase.Tables["Rooms"].Rows.Find(roomname);
+			var key = new object[]{roomname, "Room"};
+			row = DataBase.Tables["Producst"].Rows.Find(key);
 			if (row == null) {
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].Rows.Remove(row);
+			DataBase.Tables["Producst"].Rows.Remove(row);
 			
 			return true;
 		}
 
+		// this method is passed 2 arguments one being the user session token
+		// and the other a stream to which the table schema and data is written
+		// so that the client can read from it and get the needed data
 		public Boolean TryGetRoomData(Guid session_token, MemoryStream tabledata)
 		{
 			DataRow row;
@@ -222,7 +212,7 @@ namespace App
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].WriteXml(tabledata, XmlWriteMode.WriteSchema);
+			DataBase.Tables["Products"].WriteXml(tabledata, XmlWriteMode.WriteSchema);
 			tabledata.Position = 0;
 
 			if (tabledata.Length == 0) {
