@@ -31,15 +31,46 @@ namespace App
 
 			DataBase = new DataSet("DataBase");
 			DataBase.ReadXmlSchema("Data/ServerSchema.xml");
-			
+		
 			// keys = new DataColumn[2];
 			// table = new DataTable("Rooms");
 
 			// col = new DataColumn();
-			// col.ColumnName = "RoomName";
-			// col.DataType = typeof(String);
+			// col.ColumnName = "Id";
+			// col.DataType = typeof(Guid);
 			// table.Columns.Add(col);
 			// keys[0] = col;
+
+			// col = new DataColumn();
+			// col.ColumnName = "Name";
+			// col.DataType = typeof(String);
+			// table.Columns.Add(col);
+			// keys[1] = col;
+
+			// col = new DataColumn();
+			// col.ColumnName = "Theme";
+			// col.DataType = typeof(String);
+			// table.Columns.Add(col);
+
+			// col = new DataColumn();
+			// col.ColumnName = "Discription";
+			// col.DataType = typeof(String);
+			// table.Columns.Add(col);
+
+			// col = new DataColumn();
+			// col.ColumnName = "Capacity";
+			// col.DataType = typeof(Int32);
+			// table.Columns.Add(col);
+
+			// col = new DataColumn();
+			// col.ColumnName = "Price";
+			// col.DataType = typeof(Single);
+			// table.Columns.Add(col);
+
+			// col = new DataColumn();
+			// col.ColumnName = "Available";
+			// col.DataType = typeof(Boolean);
+			// table.Columns.Add(col);
 
 			// table.PrimaryKey = keys;
 			// DataBase.Tables.Add(table);
@@ -152,7 +183,7 @@ namespace App
 
 		// room commands
 
-		public Boolean TryAddRoom(Guid session_token, Product room)
+		public Boolean TryAddRoom(Guid session_token, Room room)
 		{
 			DataRow row;
 
@@ -161,13 +192,10 @@ namespace App
 				return false;
 			}
 
-			if (!room.Tags.ContainsKey("Theme") || !room.Tags.ContainsKey("Capacity")) {
-				return false;
-			}
-
-			row = DataBase.Tables["Products"].NewRow();
+			row = DataBase.Tables["Rooms"].NewRow();
+			row["Id"] = Guid.NewGuid();
 			room.FillDataRow(row);
-			DataBase.Tables["Products"].Rows.Add(row);
+			DataBase.Tables["Rooms"].Rows.Add(row);
 
 			return true;
 		}
@@ -189,13 +217,12 @@ namespace App
 				return false;
 			}
 
-			var key = new object[]{roomname, "Room"};
-			row = DataBase.Tables["Producst"].Rows.Find(key);
-			if (row == null) {
+			var rows = DataBase.Tables["Rooms"].Select($"Name = '{roomname}'");
+			if (rows == null || rows[0] == null) {
 				return false;
 			}
 
-			DataBase.Tables["Producst"].Rows.Remove(row);
+			DataBase.Tables["Rooms"].Rows.Remove(rows[0]);
 			
 			return true;
 		}
@@ -203,7 +230,7 @@ namespace App
 		// this method is passed 2 arguments one being the user session token
 		// and the other a stream to which the table schema and data is written
 		// so that the client can read from it and get the needed data
-		public Boolean TryGetRoomData(Guid session_token, MemoryStream tabledata)
+		public Boolean TryGetRoomData(Guid session_token, MemoryStream stream)
 		{
 			DataRow row;
 			
@@ -212,10 +239,10 @@ namespace App
 				return false;
 			}
 
-			DataBase.Tables["Products"].WriteXml(tabledata, XmlWriteMode.WriteSchema);
-			tabledata.Position = 0;
+			DataBase.Tables["Rooms"].WriteXml(stream, XmlWriteMode.WriteSchema);
+			stream.Position = 0;
 
-			if (tabledata.Length == 0) {
+			if (stream.Length == 0) {
 				return false;
 			}
 

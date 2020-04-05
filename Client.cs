@@ -188,8 +188,6 @@ namespace App
 			return;
 		}
 
-
-
 		public void BuyTicket()
 		{
 			if (CurrentUser == null) {
@@ -242,9 +240,7 @@ namespace App
 				return;
 			}
 			
-			var room =  new Product("Room", name, discription, price);
-			room.Tags.Add("Theme", theme);
-			room.Tags.Add("Capacity", capacity.ToString());
+			var room =  new Room(name, theme, discription, capacity, price);
 			Connection.TryAddRoom(CurrentUser.SessionToken, room);
 		}
 
