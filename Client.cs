@@ -215,6 +215,13 @@ namespace App
 			}
 		}
 
+		public void Basket()
+		{
+ 			DataTable basket = new DataTable();
+			basket.Columns.Add("ID");
+			basket.Columns.Add("Type");
+			basket.Columns.Add("Amount");
+		}
 		public void AddRoom()
 		{
 			String name = ReadField("name: ");
