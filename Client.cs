@@ -70,22 +70,15 @@ namespace App
 		public void Help()
 		{
 			if (CurrentUser == null) {
-				Console.WriteLine("Register or log in first")
-			}
-			else if (CurrentUser.Role == Role.Owner){ 
-				Console.WriteLine (" ")
-			}
-			
-			else if (CurrentUser.Role == Role.Manager)
-				Console.WriteLine (" ")
-			}
-		
-			else if (CurrentUser.Role == Role.CafeManager){
-				Console.WriteLine (" ")
-			}
-
-			else if (CurrentUser.Role == Role.Consumer){
-				Console.WriteLine (" ")
+				Console.WriteLine("Register or log in first");
+			}else if (CurrentUser.Role == Role.Owner){ 
+				Console.WriteLine (" ");
+			}else if (CurrentUser.Role == Role.Manager){
+				Console.WriteLine (" ");
+			}else if (CurrentUser.Role == Role.CafeManager){
+				Console.WriteLine (" ");
+			}else if (CurrentUser.Role == Role.Consumer){
+				Console.WriteLine (" ");
 				return;	
 			}
 
