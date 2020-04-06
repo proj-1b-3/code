@@ -90,7 +90,7 @@ namespace App
 		public void SaveData()
 		{
 			DataBase.WriteXml("Data/Data.xml");
-			// DataBase.WriteXmlSchema("Data/ServerSchema.xml");
+			DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
 
 		private DataRow GetUserRecord(String username)
@@ -217,13 +217,13 @@ namespace App
 				return false;
 			}
 
-			var query = $"Name = '{roomName}'";
-			var rows = DataBase.Tables["Rooms"].Select(query);
-			if (rows == null || rows[0] == null) {
+			// var query = $"Name = '{roomName}'";
+			row = DataBase.Tables["Rooms"].Rows.Find(roomName);
+			if (row == null) {
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].Rows.Remove(rows[0]);
+			DataBase.Tables["Rooms"].Rows.Remove(row);
 			
 			return true;
 		}
