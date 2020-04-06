@@ -134,7 +134,6 @@ namespace App
 				Console.WriteLine ("-\tlist rooms");
 				Console.WriteLine ("-\texit");
 			}else if (CurrentUser.Role == Role.Consumer){
-<<<<<<< HEAD
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -143,11 +142,7 @@ namespace App
 				Console.WriteLine ("-\tderegister" );
 				Console.WriteLine ("-\tbuy ticket");
 				Console.WriteLine ("-\texit");
-				return;	
-=======
-				Console.WriteLine (" ");
 				return;
->>>>>>> 95f093a0617af1b7ed6c9db9c92065e1381c9f91
 			}
 		}
 
