@@ -9,6 +9,8 @@ namespace App
 	{
 		private Boolean Stop = false;
 
+		public DataTable basket;
+
 		private User CurrentUser;
 		private Server Connection;
 
@@ -33,11 +35,13 @@ namespace App
 				{ "help", Help },
 				{ "exit", Exit }
 			};
-
-			DataTable basket = new DataTable();
+			
+			basket = new DataTable();
+			{
 			basket.Columns.Add("ID");
 			basket.Columns.Add("Type");
 			basket.Columns.Add("Amount");
+			}
 		}
 
 		public void Begin(Server server)
@@ -86,8 +90,6 @@ namespace App
 				Console.WriteLine (" ");
 				return;
 			}
-
-
 		}
 
 
