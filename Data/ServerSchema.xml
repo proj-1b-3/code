@@ -33,8 +33,11 @@
     </xs:unique>
     <xs:unique name="Rooms_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
       <xs:selector xpath=".//Rooms" />
-      <xs:field xpath="Id" />
       <xs:field xpath="Name" />
+    </xs:unique>
+    <xs:unique name="Constraint2">
+      <xs:selector xpath=".//Rooms" />
+      <xs:field xpath="Id" />
     </xs:unique>
   </xs:element>
 </xs:schema>

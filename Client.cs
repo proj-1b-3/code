@@ -93,17 +93,61 @@ namespace App
 
 		public void Help()
 		{
+			
+
 			if (CurrentUser == null) {
-				Console.WriteLine("Register or log in first");
+				Console.WriteLine(" Register or log in first ");
+				Console.WriteLine(" To register type 'register' ");
+				Console.WriteLine(" To login type 'login' ");
 			}else if (CurrentUser.Role == Role.Owner){ 
-				Console.WriteLine (" ");
+				Console.WriteLine ("Commands you can use:  ");
+				Console.WriteLine ("-\thelp");
+				Console.WriteLine ("-\tlogin" );
+				Console.WriteLine ("-\togout");
+				Console.WriteLine ("-\tregister" );
+				Console.WriteLine ("-\tderegister" );
+				Console.WriteLine ("-\tbuy ticket");
+				Console.WriteLine ("-\tlist rooms");
+				Console.WriteLine ("-\tadd room ");
+				Console.WriteLine ("-\tremove room ");
+				Console.WriteLine ("-\texit");
 			}else if (CurrentUser.Role == Role.Manager){
-				Console.WriteLine (" ");
+				Console.WriteLine ("Commands you can use:  ");
+				Console.WriteLine ("-\thelp");
+				Console.WriteLine ("-\tlogin" );
+				Console.WriteLine ("-\tlogout");
+				Console.WriteLine ("-\tregister" );
+				Console.WriteLine ("-\tderegister" );
+				Console.WriteLine ("-\tbuy ticket");
+				Console.WriteLine ("-\tlist rooms");
+				Console.WriteLine ("-\tadd room ");
+				Console.WriteLine ("-\tremove room ");
+				Console.WriteLine ("-\texit");
 			}else if (CurrentUser.Role == Role.CafeManager){
-				Console.WriteLine (" ");
+				Console.WriteLine ("Commands you can use:  ");
+				Console.WriteLine ("-\thelp");
+				Console.WriteLine ("-\tlogin" );
+				Console.WriteLine ("-\tlogout");
+				Console.WriteLine ("-\tregister" );
+				Console.WriteLine ("-\tderegister" );
+				Console.WriteLine ("-\tbuy ticket");
+				Console.WriteLine ("-\tlist rooms");
+				Console.WriteLine ("-\texit");
 			}else if (CurrentUser.Role == Role.Consumer){
+<<<<<<< HEAD
+				Console.WriteLine ("Commands you can use:  ");
+				Console.WriteLine ("-\thelp");
+				Console.WriteLine ("-\tlogin" );
+				Console.WriteLine ("-\tlogout");
+				Console.WriteLine ("-\tregister" );
+				Console.WriteLine ("-\tderegister" );
+				Console.WriteLine ("-\tbuy ticket");
+				Console.WriteLine ("-\texit");
+				return;	
+=======
 				Console.WriteLine (" ");
 				return;
+>>>>>>> 95f093a0617af1b7ed6c9db9c92065e1381c9f91
 			}
 		}
 
@@ -224,18 +268,13 @@ namespace App
 				return;
 			}
 
-			String discription = ReadField("discription: ");
-			if (discription == "") {
-				return;
-			}
-
-			Single price;
-			if (! Single.TryParse(ReadField("price: "), out price)) {
-				return;
-			}
-
 			String theme = ReadField("theme: ");
 			if (theme == "") {
+				return;
+			}
+			
+			String discription = ReadField("description: ");
+			if (discription == "") {
 				return;
 			}
 
@@ -243,6 +282,13 @@ namespace App
 			if (! Int32.TryParse(ReadField("capacity: "), out capacity)) {
 				return;
 			}
+			
+			Single price;
+			if (! Single.TryParse(ReadField("price: "), out price)) {
+				return;
+			}
+
+
 			
 			var room =  new Room(name, theme, discription, capacity, price);
 			Connection.TryAddRoom(CurrentUser.SessionToken, room);

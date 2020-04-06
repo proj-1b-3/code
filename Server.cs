@@ -90,7 +90,7 @@ namespace App
 		public void SaveData()
 		{
 			DataBase.WriteXml("Data/Data.xml");
-			// DataBase.WriteXmlSchema("Data/ServerSchema.xml");
+			DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
 
 		private DataRow GetUserRecord(String username)
@@ -208,7 +208,7 @@ namespace App
 		// right permissions to do so, then it checks if the room name is
 		// registered in the Products table and removes it if it is found and
 		// the user has the right permissions.
-		public Boolean TryRemoveRoom(Guid session_token, String roomname)
+		public Boolean TryRemoveRoom(Guid session_token, String roomName)
 		{
 			DataRow row;
 
@@ -217,12 +217,13 @@ namespace App
 				return false;
 			}
 
-			var rows = DataBase.Tables["Rooms"].Select($"Name = '{roomname}'");
-			if (rows == null || rows[0] == null) {
+			// var query = $"Name = '{roomName}'";
+			row = DataBase.Tables["Rooms"].Rows.Find(roomName);
+			if (row == null) {
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].Rows.Remove(rows[0]);
+			DataBase.Tables["Rooms"].Rows.Remove(row);
 			
 			return true;
 		}

@@ -4,9 +4,9 @@ namespace App
 
 	class User
 	{
-		private String _UserName;
-		public String UserName {
-			get { return _UserName; }
+		private String _Name;
+		public String Name {
+			get { return _Name; }
 		}
 
 		private Role _Role;
@@ -21,7 +21,7 @@ namespace App
 
 		public User(String username, Guid session_token, Role role)
 		{
-			_UserName = username;
+			_Name = username;
 			_SessionToken = session_token;
 			_Role = role;
 		}
