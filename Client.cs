@@ -9,7 +9,7 @@ namespace App
 	{
 		private Boolean Stop = false;
 
-		public DataTable basket;
+		public DataTable Basket;
 
 		private User CurrentUser;
 		private Server Connection;
@@ -32,16 +32,31 @@ namespace App
 				{ "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
+				{"sync", FetchRooms},
 				{ "help", Help },
 				{ "exit", Exit }
 			};
-			
-			basket = new DataTable();
-			{
-			basket.Columns.Add("ID");
-			basket.Columns.Add("Type");
-			basket.Columns.Add("Amount");
-			}
+
+			Basket = new DataTable();
+			DataColumn col;
+			DataColumn[] keys;
+			keys = new DataColumn[2];
+
+			col = new DataColumn();
+			col.ColumnName = "Id";
+			col.DataType = typeof(Guid);
+			Basket.Columns.Add(col);
+
+			col = new DataColumn();
+			col.ColumnName = "Type";
+			col.DataType = typeof(String);
+			Basket.Columns.Add(col);
+
+			col = new DataColumn();
+			col.ColumnName = "Amount";
+			col.DataType = typeof(Int32);
+			Basket.Columns.Add(col);
+
 		}
 
 		public void Begin(Server server)
