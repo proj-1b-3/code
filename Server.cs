@@ -208,7 +208,7 @@ namespace App
 		// right permissions to do so, then it checks if the room name is
 		// registered in the Products table and removes it if it is found and
 		// the user has the right permissions.
-		public Boolean TryRemoveRoom(Guid session_token, String roomname)
+		public Boolean TryRemoveRoom(Guid session_token, String roomName)
 		{
 			DataRow row;
 
@@ -217,7 +217,8 @@ namespace App
 				return false;
 			}
 
-			var rows = DataBase.Tables["Rooms"].Select($"Name = '{roomname}'");
+			var query = $"Name = '{roomName}'";
+			var rows = DataBase.Tables["Rooms"].Select(query);
 			if (rows == null || rows[0] == null) {
 				return false;
 			}
