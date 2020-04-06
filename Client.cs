@@ -9,6 +9,8 @@ namespace App
 	{
 		private Boolean Stop = false;
 
+		public DataTable basket;
+
 		private User CurrentUser;
 		private Server Connection;
 
@@ -33,6 +35,13 @@ namespace App
 				{ "help", Help },
 				{ "exit", Exit }
 			};
+			
+			basket = new DataTable();
+			{
+			basket.Columns.Add("ID");
+			basket.Columns.Add("Type");
+			basket.Columns.Add("Amount");
+			}
 		}
 
 		public void Begin(Server server)
@@ -110,6 +119,7 @@ namespace App
 				Console.WriteLine ("-\tlist rooms");
 				Console.WriteLine ("-\texit");
 			}else if (CurrentUser.Role == Role.Consumer){
+<<<<<<< HEAD
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -119,9 +129,11 @@ namespace App
 				Console.WriteLine ("-\tbuy ticket");
 				Console.WriteLine ("-\texit");
 				return;	
+=======
+				Console.WriteLine (" ");
+				return;
+>>>>>>> 95f093a0617af1b7ed6c9db9c92065e1381c9f91
 			}
-
-		
 		}
 
 
@@ -233,13 +245,7 @@ namespace App
 			}
 		}
 
-		public void Basket()
-		{
- 			DataTable basket = new DataTable();
-			basket.Columns.Add("ID");
-			basket.Columns.Add("Type");
-			basket.Columns.Add("Amount");
-		}
+
 		public void AddRoom()
 		{
 			String name = ReadField("name: ");
