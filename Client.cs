@@ -33,6 +33,11 @@ namespace App
 				{ "help", Help },
 				{ "exit", Exit }
 			};
+
+			DataTable basket = new DataTable();
+			basket.Columns.Add("ID");
+			basket.Columns.Add("Type");
+			basket.Columns.Add("Amount");
 		}
 
 		public void Begin(Server server)
@@ -79,10 +84,10 @@ namespace App
 				Console.WriteLine (" ");
 			}else if (CurrentUser.Role == Role.Consumer){
 				Console.WriteLine (" ");
-				return;	
+				return;
 			}
 
-		
+
 		}
 
 
@@ -194,13 +199,7 @@ namespace App
 			}
 		}
 
-		public void Basket()
-		{
- 			DataTable basket = new DataTable();
-			basket.Columns.Add("ID");
-			basket.Columns.Add("Type");
-			basket.Columns.Add("Amount");
-		}
+
 		public void AddRoom()
 		{
 			String name = ReadField("name: ");
