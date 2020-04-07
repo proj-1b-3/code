@@ -2,18 +2,28 @@ namespace App
 {
 	using System;
 	using System.Data;
-	using System.Collections.Generic;
 
 	class Room
 	{
-		public String Name;
-		public String Theme;
-		public String Discription;
-		public Int32 Capacity;
-		public Single Price;
-		public Boolean Available = true;
+		public String Name 
+		{ get; set; }
 
-		private Room() {}
+		public String Theme
+		{ get; set; }
+
+		public String Discription
+		{ get; set; }
+
+		public Int32 Capacity
+		{ get; set; }
+
+		public Single Price
+		{ get; set; }
+
+		public Boolean Available
+		{ get; set; }
+
+		public Room() {}
 
 		public Room(String name, String theme, String discription, Int32 capacity, Single price)
 		{
@@ -24,7 +34,17 @@ namespace App
 			Price = price;
 		}
 
-		public void FillDataRow(DataRow row)
+		// public void ReadDataRow(DataRow row)
+		// {
+		// 	Name = (String)row["Name"];
+		// 	Theme = (String)row["Theme"];
+		// 	Discription = (String)row["Discription"];
+		// 	Capacity = (Int32)row["Capacity"];
+		// 	Price = (Single)row["Price"];
+		// 	Available = (Boolean)row["Available"];
+		// }
+
+		public void WriteDataRow(DataRow row)
 		{
 			row["Name"] = Name;
 			row["Theme"] = Theme;

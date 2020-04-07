@@ -33,43 +33,28 @@ namespace App
 			DataBase.ReadXmlSchema("Data/ServerSchema.xml");
 		
 			// keys = new DataColumn[2];
-			// table = new DataTable("Rooms");
+			// table = new DataTable("EscapeRooms");
 
-			// col = new DataColumn();
-			// col.ColumnName = "Id";
-			// col.DataType = typeof(Guid);
+			// col = new DataColumn("ProductId");
+			// col.DataType = typeof(Int64);
+			// col.AutoIncrement = true;
 			// table.Columns.Add(col);
 			// keys[0] = col;
 
-			// col = new DataColumn();
-			// col.ColumnName = "Name";
-			// col.DataType = typeof(String);
-			// table.Columns.Add(col);
-			// keys[1] = col;
+			// col = new DataColumn("ProductTypeId");
+			// col.DataType = typeof(Int64);
+			// table.Columns.Ad
 
-			// col = new DataColumn();
-			// col.ColumnName = "Theme";
+			// col = new DataColumn("ProductName");
 			// col.DataType = typeof(String);
 			// table.Columns.Add(col);
 
-			// col = new DataColumn();
-			// col.ColumnName = "Discription";
+			// col = new DataColumn("product_disc");
 			// col.DataType = typeof(String);
 			// table.Columns.Add(col);
 
-			// col = new DataColumn();
-			// col.ColumnName = "Capacity";
-			// col.DataType = typeof(Int32);
-			// table.Columns.Add(col);
-
-			// col = new DataColumn();
-			// col.ColumnName = "Price";
-			// col.DataType = typeof(Single);
-			// table.Columns.Add(col);
-
-			// col = new DataColumn();
-			// col.ColumnName = "Available";
-			// col.DataType = typeof(Boolean);
+			// col = new DataColumn("product_price");
+			// col.DataType=typeof(Single);
 			// table.Columns.Add(col);
 
 			// table.PrimaryKey = keys;
@@ -103,7 +88,6 @@ namespace App
 			String username;
 
 			if (!ActiveUsers.TryGetValue(session_token, out username)) {
-				Console.WriteLine("error: Line 100");
 				return null;
 			}
 
@@ -194,7 +178,7 @@ namespace App
 
 			row = DataBase.Tables["Rooms"].NewRow();
 			row["Id"] = Guid.NewGuid();
-			room.FillDataRow(row);
+			room.WriteDataRow(row);
 			DataBase.Tables["Rooms"].Rows.Add(row);
 
 			return true;
