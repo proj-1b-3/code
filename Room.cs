@@ -32,6 +32,7 @@ namespace App
 			Discription = discription;
 			Capacity = capacity;
 			Price = price;
+			Available = true;
 		}
 
 		// public void ReadDataRow(DataRow row)
@@ -48,7 +49,7 @@ namespace App
 		{
 			row["Name"] = Name;
 			row["Theme"] = Theme;
-			row["Discription"] = Discription;
+			row["Desc"] = Discription;
 			row["Capacity"] = Capacity;
 			row["Price"] = Price;
 			row["Available"] = Available;
