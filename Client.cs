@@ -44,14 +44,10 @@ namespace App
 			col = new DataColumn();
 			col.ColumnName = "Id";
 			keys[0] = col;
-			col.DataType = typeof(Guid );
+			col.DataType = typeof(Int64);
 			Basket.Columns.Add(col);
 			Basket.PrimaryKey = keys;
 
-			col = new DataColumn();
-			col.ColumnName = "Type";
-			col.DataType = typeof(String);
-			Basket.Columns.Add(col);
 
 			col = new DataColumn();
 			col.ColumnName = "Amount";
@@ -261,13 +257,11 @@ namespace App
 			string escaperoom = Console.ReadLine().ToLower();
 
 			Console.Write("Room ID");
-			Int64 roomid = Convert.ToInt64(Console.ReadLine());
-			if (roomid.GetType() != typeof(Int64) ){
+			Int64 roomid;
+			if (!Int64.TryParse(Console.ReadLine(), out roomid)){
 				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
-
-			// Basket.PrimaryKey = roomid;
 		}
 
 
@@ -307,8 +301,8 @@ namespace App
 		public void RemoveRoom()
 		{
 			Console.WriteLine("Room ID");
-			Int64 roomid = Convert.ToInt64(Console.ReadLine());
-			if (roomid.GetType() != typeof(Int64) ){
+			Int64 roomid;
+			if (!Int64.TryParse(Console.ReadLine(), out roomid)){
 				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
