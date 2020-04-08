@@ -303,9 +303,13 @@ namespace App
 		{
 			// I have commented this out, because TryRemoveRoom now needs
 			// the RoomId to be passed to it
-
-			// string name = ReadField("name: ");
-			// Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
+			Console.WriteLine("Room ID");
+			Int64 roomid = Convert.ToInt64(Console.ReadLine());
+			if (roomid.GetType() != typeof(Int64) ){
+				Console.WriteLine("That is not as valide Room ID");
+				return;
+			}
+			Connection.TryRemoveRoom(CurrentUser.SessionToken, roomid);
 		}
 
 		private void FetchRooms()
