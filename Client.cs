@@ -10,7 +10,6 @@ namespace App
 		private Boolean Stop = false;
 
 		public DataTable Basket;
-
 		private User CurrentUser;
 		private Server Connection;
 
@@ -40,12 +39,14 @@ namespace App
 			Basket = new DataTable();
 			DataColumn col;
 			DataColumn[] keys;
-			keys = new DataColumn[2];
+			keys = new DataColumn[1];
 
 			col = new DataColumn();
 			col.ColumnName = "Id";
+			keys[0] = col;
 			col.DataType = typeof(Guid);
 			Basket.Columns.Add(col);
+			Basket.PrimaryKey = keys;
 
 			col = new DataColumn();
 			col.ColumnName = "Type";
@@ -95,11 +96,14 @@ namespace App
 		{
 			
 
-			if (CurrentUser == null) {
+			if (CurrentUser == null)
+			{
 				Console.WriteLine(" Register or log in first ");
 				Console.WriteLine(" To register type 'register' ");
 				Console.WriteLine(" To login type 'login' ");
-			}else if (CurrentUser.Role == Role.Owner){ 
+			}
+			else if (CurrentUser.Role == Role.Owner)
+			{ 
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -111,7 +115,9 @@ namespace App
 				Console.WriteLine ("-\tadd room ");
 				Console.WriteLine ("-\tremove room ");
 				Console.WriteLine ("-\texit");
-			}else if (CurrentUser.Role == Role.Manager){
+			}
+			else if (CurrentUser.Role == Role.Manager)
+			{
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -123,7 +129,9 @@ namespace App
 				Console.WriteLine ("-\tadd room ");
 				Console.WriteLine ("-\tremove room ");
 				Console.WriteLine ("-\texit");
-			}else if (CurrentUser.Role == Role.CafeManager){
+			}
+			else if (CurrentUser.Role == Role.CafeManager)
+			{
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -133,8 +141,10 @@ namespace App
 				Console.WriteLine ("-\tbuy ticket");
 				Console.WriteLine ("-\tlist rooms");
 				Console.WriteLine ("-\texit");
-			}else if (CurrentUser.Role == Role.Consumer){
-<<<<<<< HEAD
+			}
+			else if (CurrentUser.Role == Role.Consumer)
+			{
+
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -143,11 +153,7 @@ namespace App
 				Console.WriteLine ("-\tderegister" );
 				Console.WriteLine ("-\tbuy ticket");
 				Console.WriteLine ("-\texit");
-				return;	
-=======
-				Console.WriteLine (" ");
 				return;
->>>>>>> 95f093a0617af1b7ed6c9db9c92065e1381c9f91
 			}
 		}
 
