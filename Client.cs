@@ -267,7 +267,7 @@ namespace App
 				return;
 			}
 
-			Basket.PrimaryKey = roomid;
+			// Basket.PrimaryKey = roomid;
 		}
 
 

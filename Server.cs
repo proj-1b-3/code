@@ -18,52 +18,61 @@ namespace App
 
 	class Server
 	{
-		private Dictionary<Guid, String> ActiveUsers;
+		private Dictionary<Guid, Int64> ActiveUsers;
 
 		private DataSet DataBase;
 		
 		public Server()
 		{
 			DataBase = new DataSet("DataBase");
-			DataBase.ReadXmlSchema("Data/ServerSchema.xml");
+			// DataBase.ReadXmlSchema("Data/ServerSchema.xml");
 
-			// DataTable table;
-			// DataColumn col;
-			// DataColumn[] keys;
-			// DataRelation rel;
+			var table = new DataTable("Users");
+			var keys = new DataColumn[1];
+			var col = new DataColumn("UserId");
+			col.DataType = typeof(Int64);
+			col.AutoIncrement = true;
+			table.Columns.Add(col);
+			keys[0] = col;
+			col = new DataColumn("UserName");
+			col.DataType = typeof(String);
+			table.Columns.Add(col);
+			col = new DataColumn("Email");
+			col.DataType = typeof(String);
+			col.Unique = true;
+			table.Columns.Add(col);
+			col = new DataColumn("Password");
+			col.DataType = typeof(String);
+			table.Columns.Add(col);
+			col = new DataColumn("Role");
+			col.DataType = typeof(Int32);
+			table.Columns.Add(col);
+			table.PrimaryKey = keys;
+			DataBase.Tables.Add(table);
 
-			// table = new DataTable("Products");
+			table = new DataTable("Products");
+			col = new DataColumn("ProductId");
+			col.DataType = typeof(Int64);
+			col.AutoIncrement = true;
+			table.Columns.Add(col);
+			keys[0] = col;
+			col = new DataColumn("ProductName");
+			col.DataType = typeof(String);
+			col.Unique = true;
+			table.Columns.Add(col);
+			col = new DataColumn("Description");
+			col.DataType = typeof(String);
+			table.Columns.Add(col);
+			col = new DataColumn("Price");
+			col.DataType = typeof(Single);
+			table.Columns.Add(col);
+			col = new DataColumn("Available");
+			col.DataType = typeof(Boolean);
+			table.Columns.Add(col);
+			table.PrimaryKey = keys;
+			DataBase.Tables.Add(table);
 
-			// DataBase.Tables.Remove("Rooms");
-			// var table = new DataTable("Rooms");
-			// var keys = new DataColumn[1];
-			// var col = new DataColumn("Id");
-			// col.DataType = typeof(Int64);
-			// col.AutoIncrement = true;
-			// table.Columns.Add(col);
-			// keys[0] = col;
-			// col = new DataColumn("Name");
-			// col.DataType = typeof(String);
-			// table.Columns.Add(col);
-			// col = new DataColumn("Theme");
-			// col.DataType = typeof(String);
-			// table.Columns.Add(col);
-			// col = new DataColumn("Desc");
-			// col.DataType = typeof(String);
-			// table.Columns.Add(col);
-			// col = new DataColumn("Capacity");
-			// col.DataType = typeof(Int32);
-			// table.Columns.Add(col);
-			// col = new DataColumn("Price");
-			// col.DataType = typeof(Single);
-			// table.Columns.Add(col);
-			// col = new DataColumn("Available");
-			// col.DataType = typeof(Boolean);
-			// table.Columns.Add(col);
-			// table.PrimaryKey = keys;
-			// DataBase.Tables.Add(table);
-
-			ActiveUsers = new Dictionary<Guid, String>();
+			ActiveUsers = new Dictionary<Guid, Int64>();
 		}
 
 		public void LoadData()
@@ -81,20 +90,26 @@ namespace App
 			// DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
 
-		private DataRow GetUserRecord(String username)
+		private DataRow GetUserRecord(String email)
 		{
-			return DataBase.Tables["Users"].Rows.Find(username);
+			var query = $"Email = '{email}'";
+			var rows = DataBase.Tables["Users"].Select(query);
+			if (rows.Length == 0) {
+				return null;
+			}
+
+			return rows[0];
 		}
 
 		private DataRow GetUserRecord(Guid session_token)
 		{
-			String username;
+			Int64 userId;
 
-			if (!ActiveUsers.TryGetValue(session_token, out username)) {
+			if (!ActiveUsers.TryGetValue(session_token, out userId)) {
 				return null;
 			}
 
-			return DataBase.Tables["Users"].Rows.Find(username);
+			return DataBase.Tables["Users"].Rows.Find(userId);
 		}
 
 		// COMMANDS
@@ -111,7 +126,7 @@ namespace App
 			}
 
 			Guid session_token = Guid.NewGuid();
-			ActiveUsers.Add(session_token, username);
+			ActiveUsers.Add(session_token, (Int64)row["UserId"]);
 			user = new User(username, session_token, (Role)row["Role"]);
 
 			return true;
@@ -119,7 +134,7 @@ namespace App
 
 		public Boolean TryLogout(Guid session_token)
 		{
-			if (! ActiveUsers.ContainsKey(session_token)) {
+			if (!ActiveUsers.ContainsKey(session_token)) {
 				return false;
 			}
 
@@ -128,20 +143,21 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryRegister(String username, String password)
+		public Boolean TryRegister(String userName, String email, String password)
 		{
 			DataRow row;
 			
-			if (username == "" || password == "") {
+			if (userName == "" || password == "") {
 				return false;
 			}
 
-			if (DataBase.Tables["Users"].Rows.Contains(username)) {
+			if (DataBase.Tables["Users"].Rows.Contains(userName)) {
 				return false; 
 			}
 
 			row = DataBase.Tables["Users"].NewRow();
-			row["UserName"] = username;
+			row["UserName"] = userName;
+			row["Email"] = email;
 			row["Password"] = password;
 			row["Role"] = Role.Consumer;
 			DataBase.Tables["Users"].Rows.Add(row);
@@ -179,42 +195,34 @@ namespace App
 				return false;
 			}
 
-			row = DataBase.Tables["Rooms"].NewRow();
-			room.WriteDataRow(row);
-			DataBase.Tables["Rooms"].Rows.Add(row);
+			row = DataBase.Tables["Products"].NewRow();
+			row["ProductName"] = room.Name;
+			row["Description"] = room.Discription;
+			row["Price"] = room.Price;
+			row["Available"] = room.Available;
+			DataBase.Tables["Products"].Rows.Add(row);
 
 			return true;
 		}
 
-		// session_token: the user session token.
-		// roomName: the other the name of the room the user want remove.
-		// return: a boolean indicating wether the method failed or passed
-		//
-		// this method finds if the user wanting to remove the room has the
-		// right permissions to do so, then it checks if the room name is
-		// registered in the Products table and removes it if it is found and
-		// the user has the right permissions.
-		public Boolean TryRemoveRoom(Guid session_token, Int64 roomId)
+		public Boolean TryRemoveRoom(Guid session_token, Int64 productId)
 		{
 			var userRecord = GetUserRecord(session_token);
 			if (userRecord == null || (Role)userRecord["Role"] != Role.Owner) {
 				return false;
 			}
 
-			var query = $"Name = '{roomId}'";
-			var roomRecords = DataBase.Tables["Rooms"].Select(query);
+			var query = $"ProductId = '{productId}'";
+			var roomRecords = DataBase.Tables["Products"].Select(query);
 			if (roomRecords == null || roomRecords[0] == null) {
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].Rows.Remove(roomRecords[0]);
+			DataBase.Tables["Products"].Rows.Remove(roomRecords[0]);
 			
 			return true;
 		}
 
-		// this method is passed 2 arguments one being the user session token
-		// and the other a stream to which the table schema and data is written
-		// so that the client can read from it and get the needed data
 		public Boolean TryGetRoomData(Guid session_token, MemoryStream stream)
 		{
 			DataRow row;
@@ -224,12 +232,19 @@ namespace App
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].WriteXml(stream, XmlWriteMode.WriteSchema);
+			DataBase.Tables["Products"].WriteXml(stream, XmlWriteMode.WriteSchema);
 			stream.Position = 0;
 
 			if (stream.Length == 0) {
 				return false;
 			}
+
+			return true;
+		}
+		
+		public Boolean TryPay(Guid session_token, MemoryStream stream) 
+		{
+			// DataTable selection;
 
 			return true;
 		}
