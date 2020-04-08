@@ -24,57 +24,45 @@ namespace App
 		
 		public Server()
 		{
+			DataBase = new DataSet("DataBase");
+			DataBase.ReadXmlSchema("Data/ServerSchema.xml");
+
 			// DataTable table;
 			// DataColumn col;
 			// DataColumn[] keys;
 			// DataRelation rel;
 
-			DataBase = new DataSet("DataBase");
-			DataBase.ReadXmlSchema("Data/ServerSchema.xml");
-		
-			// keys = new DataColumn[2];
-			// table = new DataTable("Rooms");
+			// table = new DataTable("Products");
 
-			// col = new DataColumn();
-			// col.ColumnName = "Id";
-			// col.DataType = typeof(Guid);
+			// DataBase.Tables.Remove("Rooms");
+			// var table = new DataTable("Rooms");
+			// var keys = new DataColumn[1];
+			// var col = new DataColumn("Id");
+			// col.DataType = typeof(Int64);
+			// col.AutoIncrement = true;
 			// table.Columns.Add(col);
 			// keys[0] = col;
-
-			// col = new DataColumn();
-			// col.ColumnName = "Name";
+			// col = new DataColumn("Name");
 			// col.DataType = typeof(String);
 			// table.Columns.Add(col);
-			// keys[1] = col;
-
-			// col = new DataColumn();
-			// col.ColumnName = "Theme";
+			// col = new DataColumn("Theme");
 			// col.DataType = typeof(String);
 			// table.Columns.Add(col);
-
-			// col = new DataColumn();
-			// col.ColumnName = "Discription";
+			// col = new DataColumn("Desc");
 			// col.DataType = typeof(String);
 			// table.Columns.Add(col);
-
-			// col = new DataColumn();
-			// col.ColumnName = "Capacity";
+			// col = new DataColumn("Capacity");
 			// col.DataType = typeof(Int32);
 			// table.Columns.Add(col);
-
-			// col = new DataColumn();
-			// col.ColumnName = "Price";
+			// col = new DataColumn("Price");
 			// col.DataType = typeof(Single);
 			// table.Columns.Add(col);
-
-			// col = new DataColumn();
-			// col.ColumnName = "Available";
+			// col = new DataColumn("Available");
 			// col.DataType = typeof(Boolean);
 			// table.Columns.Add(col);
-
 			// table.PrimaryKey = keys;
 			// DataBase.Tables.Add(table);
-			
+
 			ActiveUsers = new Dictionary<Guid, String>();
 		}
 
@@ -90,7 +78,7 @@ namespace App
 		public void SaveData()
 		{
 			DataBase.WriteXml("Data/Data.xml");
-			DataBase.WriteXmlSchema("Data/ServerSchema.xml");
+			// DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
 
 		private DataRow GetUserRecord(String username)
@@ -103,7 +91,6 @@ namespace App
 			String username;
 
 			if (!ActiveUsers.TryGetValue(session_token, out username)) {
-				Console.WriteLine("error: Line 100");
 				return null;
 			}
 
@@ -193,8 +180,7 @@ namespace App
 			}
 
 			row = DataBase.Tables["Rooms"].NewRow();
-			row["Id"] = Guid.NewGuid();
-			room.FillDataRow(row);
+			room.WriteDataRow(row);
 			DataBase.Tables["Rooms"].Rows.Add(row);
 
 			return true;
@@ -208,22 +194,20 @@ namespace App
 		// right permissions to do so, then it checks if the room name is
 		// registered in the Products table and removes it if it is found and
 		// the user has the right permissions.
-		public Boolean TryRemoveRoom(Guid session_token, String roomName)
+		public Boolean TryRemoveRoom(Guid session_token, Int64 roomId)
 		{
-			DataRow row;
-
-			row = GetUserRecord(session_token);
-			if (row == null || (Role)row["Role"] != Role.Owner) {
+			var userRecord = GetUserRecord(session_token);
+			if (userRecord == null || (Role)userRecord["Role"] != Role.Owner) {
 				return false;
 			}
 
-			// var query = $"Name = '{roomName}'";
-			row = DataBase.Tables["Rooms"].Rows.Find(roomName);
-			if (row == null) {
+			var query = $"Name = '{roomId}'";
+			var roomRecords = DataBase.Tables["Rooms"].Select(query);
+			if (roomRecords == null || roomRecords[0] == null) {
 				return false;
 			}
 
-			DataBase.Tables["Rooms"].Rows.Remove(row);
+			DataBase.Tables["Rooms"].Rows.Remove(roomRecords[0]);
 			
 			return true;
 		}

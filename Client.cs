@@ -144,7 +144,6 @@ namespace App
 			}
 			else if (CurrentUser.Role == Role.Consumer)
 			{
-
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -302,8 +301,11 @@ namespace App
 
 		public void RemoveRoom()
 		{
-			string name = ReadField("name: ");
-			Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
+			// I have commented this out, because TryRemoveRoom now needs
+			// the RoomId to be passed to it
+
+			// string name = ReadField("name: ");
+			// Connection.TryRemoveRoom(CurrentUser.SessionToken, name);
 		}
 
 		private void FetchRooms()

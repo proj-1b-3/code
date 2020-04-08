@@ -15,10 +15,10 @@
         <xs:element name="Rooms">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="Id" msdata:DataType="System.Guid, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" type="xs:string" />
-              <xs:element name="Name" type="xs:string" />
+              <xs:element name="Id" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="Name" type="xs:string" minOccurs="0" />
               <xs:element name="Theme" type="xs:string" minOccurs="0" />
-              <xs:element name="Discription" type="xs:string" minOccurs="0" />
+              <xs:element name="Desc" type="xs:string" minOccurs="0" />
               <xs:element name="Capacity" type="xs:int" minOccurs="0" />
               <xs:element name="Price" type="xs:float" minOccurs="0" />
               <xs:element name="Available" type="xs:boolean" minOccurs="0" />
@@ -32,10 +32,6 @@
       <xs:field xpath="UserName" />
     </xs:unique>
     <xs:unique name="Rooms_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
-      <xs:selector xpath=".//Rooms" />
-      <xs:field xpath="Name" />
-    </xs:unique>
-    <xs:unique name="Constraint2">
       <xs:selector xpath=".//Rooms" />
       <xs:field xpath="Id" />
     </xs:unique>
