@@ -44,7 +44,7 @@ namespace App
 			col = new DataColumn();
 			col.ColumnName = "Id";
 			keys[0] = col;
-			col.DataType = typeof(Guid);
+			col.DataType = typeof(Guid );
 			Basket.Columns.Add(col);
 			Basket.PrimaryKey = keys;
 
@@ -159,16 +159,16 @@ namespace App
 
 		public void Login()
 		{
-			String username = ReadField("username: ");
+			String email = ReadField("email: ");
 			String password = ReadField("password: ");
 
-			if (username == "" || password == "") {
+			if (email == "" || password == "") {
 				Console.WriteLine("Leave no field empty!");
 				return;
 			}
 
-			if (! Connection.TryLogin(username, password, out CurrentUser)) {
-				Console.WriteLine("Wrong username or password");
+			if (! Connection.TryLogin(email, password, out CurrentUser)) {
+				Console.WriteLine("Wrong email or password");
 				return;
 			}
 
@@ -199,14 +199,15 @@ namespace App
 		public void Register()
 		{
 			String username = ReadField("username: ");
+			String email = ReadField("email: ");
 			String password = ReadField("password: ");
 
-			if (username == "" || password == "") {
+			if (username == "" || password == "" || email == "") {
 				Console.WriteLine("Leave no field empty!");
 				return;
 			}
 
-			if (! Connection.TryRegister(username, password)) {
+			if (! Connection.TryRegister(username, email, password)) {
 				Console.WriteLine("The username is already in use");
 				return;
 			}
@@ -259,10 +260,14 @@ namespace App
 			Console.Write("escaperoom: ");
 			string escaperoom = Console.ReadLine().ToLower();
 
-			if (escaperoom != "escape1" && escaperoom != "escape2" && escaperoom != "escape3") {
-				Console.WriteLine("We don't offer this escaperoom");
+			Console.Write("Room ID");
+			Int64 roomid = Convert.ToInt64(Console.ReadLine());
+			if (roomid.GetType() != typeof(Int64) ){
+				Console.WriteLine("That is not as valid Room ID");
 				return;
 			}
+
+			Basket.PrimaryKey = roomid;
 		}
 
 
@@ -301,12 +306,10 @@ namespace App
 
 		public void RemoveRoom()
 		{
-			// I have commented this out, because TryRemoveRoom now needs
-			// the RoomId to be passed to it
 			Console.WriteLine("Room ID");
 			Int64 roomid = Convert.ToInt64(Console.ReadLine());
 			if (roomid.GetType() != typeof(Int64) ){
-				Console.WriteLine("That is not as valide Room ID");
+				Console.WriteLine("That is not as valid Room ID");
 				return;
 			}
 			Connection.TryRemoveRoom(CurrentUser.SessionToken, roomid);
