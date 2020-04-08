@@ -263,7 +263,7 @@ namespace App
 			Console.Write("Room ID");
 			Int64 roomid = Convert.ToInt64(Console.ReadLine());
 			if (roomid.GetType() != typeof(Int64) ){
-				Console.WriteLine("That is not as valid Room ID");
+				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
 
@@ -309,7 +309,7 @@ namespace App
 			Console.WriteLine("Room ID");
 			Int64 roomid = Convert.ToInt64(Console.ReadLine());
 			if (roomid.GetType() != typeof(Int64) ){
-				Console.WriteLine("That is not as valid Room ID");
+				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
 			Connection.TryRemoveRoom(CurrentUser.SessionToken, roomid);
