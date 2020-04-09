@@ -25,7 +25,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="ProductRooms">
+        <xs:element name="RoomAttributes">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="ProductId" type="xs:long" minOccurs="0" />
@@ -52,5 +52,9 @@
       <xs:selector xpath=".//Products" />
       <xs:field xpath="ProductId" />
     </xs:unique>
+    <xs:keyref name="ProductRoomAttribute" refer="Products_Constraint2">
+      <xs:selector xpath=".//RoomAttributes" />
+      <xs:field xpath="ProductId" />
+    </xs:keyref>
   </xs:element>
 </xs:schema>

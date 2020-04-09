@@ -6,7 +6,8 @@ namespace App
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Data;
-	using System.Linq;
+	using System.Text;
+	using System.Text.Json;
 
 	enum Role
 	{
@@ -27,62 +28,57 @@ namespace App
 			DataBase = new DataSet("DataBase");
 			// DataBase.ReadXmlSchema("Data/ServerSchema.xml");
 
-			var table = new DataTable("Users");
-			var keys = new DataColumn[1];
-			var col = new DataColumn("UserId");
-			col.DataType = typeof(Int64);
-			col.AutoIncrement = true;
-			table.Columns.Add(col);
-			keys[0] = col;
-			col = new DataColumn("UserName");
-			col.DataType = typeof(String);
-			table.Columns.Add(col);
-			col = new DataColumn("Email");
-			col.DataType = typeof(String);
-			col.Unique = true;
-			table.Columns.Add(col);
-			col = new DataColumn("Password");
-			col.DataType = typeof(String);
-			table.Columns.Add(col);
-			col = new DataColumn("Role");
-			col.DataType = typeof(Int32);
-			table.Columns.Add(col);
-			table.PrimaryKey = keys;
-			DataBase.Tables.Add(table);
+			DataColumn col;
+			DataColumn[] keys;
 
-			table = new DataTable("Products");
-			col = new DataColumn("ProductId");
-			col.DataType = typeof(Int64);
+			var userTable = new DataTable("Users");
+			keys = new DataColumn[1];
+			col = new DataColumn("UserId", typeof(Int64));
 			col.AutoIncrement = true;
-			table.Columns.Add(col);
+			userTable.Columns.Add(col);
 			keys[0] = col;
-			col = new DataColumn("ProductName");
-			col.DataType = typeof(String);
+			col = new DataColumn("UserName", typeof(String));
+			userTable.Columns.Add(col);
+			col = new DataColumn("Email", typeof(String));
 			col.Unique = true;
-			table.Columns.Add(col);
-			col = new DataColumn("Description");
-			col.DataType = typeof(String);
-			table.Columns.Add(col);
-			col = new DataColumn("Price");
-			col.DataType = typeof(Single);
-			table.Columns.Add(col);
-			col = new DataColumn("Available");
-			col.DataType = typeof(Boolean);
-			table.Columns.Add(col);
-			table.PrimaryKey = keys;
-			DataBase.Tables.Add(table);
+			userTable.Columns.Add(col);
+			col = new DataColumn("Password", typeof(String));
+			userTable.Columns.Add(col);
+			col = new DataColumn("Role", typeof(Int32));
+			userTable.Columns.Add(col);
+			userTable.PrimaryKey = keys;
 
-			table = new DataTable("ProductRooms");
+			var productTable = new DataTable("Products");
 			col = new DataColumn("ProductId", typeof(Int64));
-			table.Columns.Add(col);
+			col.AutoIncrement = true;
+			productTable.Columns.Add(col);
+			keys[0] = col;
+			col = new DataColumn("ProductName", typeof(String));
+			col.Unique = true;
+			productTable.Columns.Add(col);
+			col = new DataColumn("Description", typeof(String));
+			productTable.Columns.Add(col);
+			col = new DataColumn("Price", typeof(Single));
+			productTable.Columns.Add(col);
+			col = new DataColumn("Available", typeof(Boolean));
+			productTable.Columns.Add(col);
+			productTable.PrimaryKey = keys;
+
+			var roomAttributeTable = new DataTable("RoomAttributes");
+			col = new DataColumn("ProductId", typeof(Int64));
+			roomAttributeTable.Columns.Add(col);
 			col = new DataColumn("Theme", typeof(String));
-			table.Columns.Add(col);
+			roomAttributeTable.Columns.Add(col);
 			col = new DataColumn("Capacity", typeof(Int32));
-			table.Columns.Add(col);
-			DataBase.Tables.Add(table);
-			var rel = new DataRelation("RoomProducts",
-				DataBase.Tables["Products"].Columns["ProductId"],
-				DataBase.Tables["ProductRooms"].Columns["ProductId"]);
+			roomAttributeTable.Columns.Add(col);
+
+			DataBase.Tables.AddRange(
+				new DataTable[]{userTable, productTable, roomAttributeTable});
+
+			var rel = new DataRelation("ProductRoomAttribute",
+				productTable.Columns["ProductId"],
+				roomAttributeTable.Columns["ProductId"]);
+			DataBase.Relations.Add(rel);
 
 			ActiveUsers = new Dictionary<Guid, Int64>();
 		}
@@ -99,7 +95,7 @@ namespace App
 		public void SaveData()
 		{
 			DataBase.WriteXml("Data/Data.xml");
-			// DataBase.WriteXmlSchema("Data/ServerSchema.xml");
+			DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
 
 		private DataRow GetUserRecord(String email)
@@ -129,17 +125,17 @@ namespace App
 
 		public Boolean TryLogin(String username, String password, out User user)
 		{
-			DataRow row;
+			DataRow userRecord;
 			
 			user = null;
-			row = GetUserRecord(username);
-			if (row == null || (String)row["Password"] != password) {
+			userRecord = GetUserRecord(username);
+			if (userRecord == null || (String)userRecord["Password"] != password) {
 				return false;
 			}
 
 			Guid session_token = Guid.NewGuid();
-			ActiveUsers.Add(session_token, (Int64)row["UserId"]);
-			user = new User(username, session_token, (Role)row["Role"]);
+			ActiveUsers.Add(session_token, (Int64)userRecord["UserId"]);
+			user = new User(username, session_token, (Role)userRecord["Role"]);
 
 			return true;
 		}
@@ -207,13 +203,18 @@ namespace App
 				return false;
 			}
 
-			row = DataBase.Tables["Products"].NewRow();
-			row["ProductName"] = room.Name;
-			row["Description"] = room.Discription;
-			row["Price"] = room.Price;
-			row["Available"] = room.Available;
-			DataBase.Tables["Products"].Rows.Add(row);
-
+			var productRow = DataBase.Tables["Products"].NewRow();
+			productRow["ProductName"] = room.Name;
+			productRow["Description"] = room.Description;
+			productRow["Price"] = room.Price;
+			productRow["Available"] = room.Available;
+			DataBase.Tables["Products"].Rows.Add(productRow);
+			var roomAttributeRow = DataBase.Tables["RoomAttributes"].NewRow();
+			roomAttributeRow["ProductId"] = productRow["ProductId"];
+			roomAttributeRow["Theme"] = room.Theme;
+			roomAttributeRow["Capacity"] = room.Capacity;
+			DataBase.Tables["RoomAttributes"].Rows.Add(roomAttributeRow);
+			
 			return true;
 		}
 
@@ -237,16 +238,35 @@ namespace App
 
 		public Boolean TryGetRoomData(Guid session_token, MemoryStream stream)
 		{
-			DataRow row;
+			DataRow userRecord;
 			
-			row = GetUserRecord(session_token);
-			if (row == null) {
+			userRecord = GetUserRecord(session_token);
+			if (userRecord == null) {
 				return false;
 			}
 
-			DataBase.Tables["Products"].WriteXml(stream, XmlWriteMode.WriteSchema);
-			stream.Position = 0;
+			var rel = DataBase.Relations["ProductRoomAttribute"];
+			var productTable = rel.ParentTable;
+			var roomAttributeTable = rel.ChildTable;
 
+			var rooms = new List<Room>();
+
+			for (int i = 0; i < roomAttributeTable.Rows.Count; i += 1) {
+				var roomAttributeRow = roomAttributeTable.Rows[i];
+				var productRow = roomAttributeRow.GetParentRow(rel);
+				var room = new Room();
+				room.ProductId = (Int64)productRow["ProductId"];
+				room.Name = (String)productRow["ProductName"];
+				room.Description = (String)productRow["Description"];
+				room.Price = (Single)productRow["Price"];
+				room.Theme = (String)roomAttributeRow["Theme"];
+				room.Capacity = (Int32)roomAttributeRow["Capacity"];
+				rooms.Add(room);
+			}
+
+			var raw_json = JsonSerializer.SerializeToUtf8Bytes<List<Room>>(rooms);
+			stream.Write(raw_json, 0, raw_json.Length);
+			stream.Position = 0;
 			if (stream.Length == 0) {
 				return false;
 			}
