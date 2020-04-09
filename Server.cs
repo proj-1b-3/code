@@ -72,6 +72,18 @@ namespace App
 			table.PrimaryKey = keys;
 			DataBase.Tables.Add(table);
 
+			table = new DataTable("ProductRooms");
+			col = new DataColumn("ProductId", typeof(Int64));
+			table.Columns.Add(col);
+			col = new DataColumn("Theme", typeof(String));
+			table.Columns.Add(col);
+			col = new DataColumn("Capacity", typeof(Int32));
+			table.Columns.Add(col);
+			DataBase.Tables.Add(table);
+			var rel = new DataRelation("RoomProducts",
+				DataBase.Tables["Products"].Columns["ProductId"],
+				DataBase.Tables["ProductRooms"].Columns["ProductId"]);
+
 			ActiveUsers = new Dictionary<Guid, Int64>();
 		}
 
@@ -214,7 +226,7 @@ namespace App
 
 			var query = $"ProductId = '{productId}'";
 			var roomRecords = DataBase.Tables["Products"].Select(query);
-			if (roomRecords == null || roomRecords[0] == null) {
+			if (roomRecords.Length == 0) {
 				return false;
 			}
 

@@ -1,0 +1,56 @@
+<?xml version="1.0" standalone="yes"?>
+<xs:schema id="DataBase" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="DataBase" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Users">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="UserId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="UserName" type="xs:string" minOccurs="0" />
+              <xs:element name="Email" type="xs:string" minOccurs="0" />
+              <xs:element name="Password" type="xs:string" minOccurs="0" />
+              <xs:element name="Role" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Products">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProductId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="ProductName" type="xs:string" minOccurs="0" />
+              <xs:element name="Description" type="xs:string" minOccurs="0" />
+              <xs:element name="Price" type="xs:float" minOccurs="0" />
+              <xs:element name="Available" type="xs:boolean" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ProductRooms">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProductId" type="xs:long" minOccurs="0" />
+              <xs:element name="Theme" type="xs:string" minOccurs="0" />
+              <xs:element name="Capacity" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1">
+      <xs:selector xpath=".//Users" />
+      <xs:field xpath="Email" />
+    </xs:unique>
+    <xs:unique name="Constraint2" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Users" />
+      <xs:field xpath="UserId" />
+    </xs:unique>
+    <xs:unique name="Products_Constraint1" msdata:ConstraintName="Constraint1">
+      <xs:selector xpath=".//Products" />
+      <xs:field xpath="ProductName" />
+    </xs:unique>
+    <xs:unique name="Products_Constraint2" msdata:ConstraintName="Constraint2" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Products" />
+      <xs:field xpath="ProductId" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>
