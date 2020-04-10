@@ -15,6 +15,8 @@ namespace App
 		private User CurrentUser;
 		private Server Connection;
 
+		private List<Room> rooms;
+
 		public delegate void Command();
 
 		private Dictionary<String, Command> Commands;
@@ -54,6 +56,8 @@ namespace App
 			col.ColumnName = "Amount";
 			col.DataType = typeof(Int32);
 			Basket.Columns.Add(col);
+
+			
 
 		}
 
@@ -313,6 +317,7 @@ namespace App
 
 		private void FetchRooms()
 		{
+			 
 			MemoryStream tabledata = new MemoryStream();
 			List<Room> rooms = new List<Room>();
 			if (!Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata)) {
