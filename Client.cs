@@ -31,7 +31,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-				// { "list rooms", ListRooms },
+				{ "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
 				{ "sync", FetchRooms },
@@ -328,15 +328,17 @@ namespace App
 			stream.Close();
 		}
 
-		// public void ListRooms()
-		// {
+		public void ListRooms()
+		{
 			
-		// 	for ( int i = 0; i < Rooms.Length )
+			foreach ( var i in Rooms){
+				Console.WriteLine("\nName:{0}\nTheme:\n{1}\nDescription:{2}\nCapacity:{3}\nPrice:{4}", i.Name, i.Theme, i.Description, i.Capacity, i.Price);
+			}
 
-		// 	Console.WriteLine("");
+			Console.WriteLine("");
 
-		// 	return;
-		// }
+			return;
+		}
 
 		public void Exit()
 		{
