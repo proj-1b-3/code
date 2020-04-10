@@ -4,6 +4,8 @@ namespace App
 	using System.Collections.Generic;
 	using System.Data;
 	using System.IO;
+	using System.Text.Json;
+	using System.Text.Json.Serialization;
 
 	class Client
 	{
@@ -17,7 +19,6 @@ namespace App
 
 		private Dictionary<String, Command> Commands;
 
-		private DataTable Rooms;
 
 		public Client()
 		{
@@ -28,10 +29,10 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
-				{ "list rooms", ListRooms },
+				// { "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
-				{"sync", FetchRooms},
+				{ "sync", FetchRooms },
 				{ "help", Help },
 				{ "exit", Exit }
 			};
@@ -44,14 +45,10 @@ namespace App
 			col = new DataColumn();
 			col.ColumnName = "Id";
 			keys[0] = col;
-			col.DataType = typeof(Guid );
+			col.DataType = typeof(Int64);
 			Basket.Columns.Add(col);
 			Basket.PrimaryKey = keys;
 
-			col = new DataColumn();
-			col.ColumnName = "Type";
-			col.DataType = typeof(String);
-			Basket.Columns.Add(col);
 
 			col = new DataColumn();
 			col.ColumnName = "Amount";
@@ -155,8 +152,7 @@ namespace App
 				return;
 			}
 		}
-
-
+		
 		public void Login()
 		{
 			String email = ReadField("email: ");
@@ -260,14 +256,14 @@ namespace App
 			Console.Write("escaperoom: ");
 			string escaperoom = Console.ReadLine().ToLower();
 
+
+
 			Console.Write("Room ID");
-			Int64 roomid = Convert.ToInt64(Console.ReadLine());
-			if (roomid.GetType() != typeof(Int64) ){
-				Console.WriteLine("That is not as valid Room ID");
+			Int64 roomid;
+			if (!Int64.TryParse(Console.ReadLine(), out roomid)){
+				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
-
-			// Basket.PrimaryKey = roomid;
 		}
 
 
@@ -307,9 +303,9 @@ namespace App
 		public void RemoveRoom()
 		{
 			Console.WriteLine("Room ID");
-			Int64 roomid = Convert.ToInt64(Console.ReadLine());
-			if (roomid.GetType() != typeof(Int64) ){
-				Console.WriteLine("That is not as valid Room ID");
+			Int64 roomid;
+			if (!Int64.TryParse(Console.ReadLine(), out roomid)){
+				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
 			Connection.TryRemoveRoom(CurrentUser.SessionToken, roomid);
@@ -318,31 +314,26 @@ namespace App
 		private void FetchRooms()
 		{
 			MemoryStream tabledata = new MemoryStream();
-			
+			List<Room> rooms = new List<Room>();
 			if (!Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata)) {
 				Console.WriteLine("Something went wrong while trying to get the product data from the server");
 				return;
 			}
-
-			Rooms = new DataTable();
-			Rooms.ReadXml(tabledata);
+			var raw_json = tabledata.ToArray();
+			var Rooms = JsonSerializer.Deserialize<List<Room>>(raw_json);
 
 			tabledata.Close();
 		}
 
-		public void ListRooms()
-		{
-			foreach (DataRow row in Rooms.Rows) {
-				Console.WriteLine("");
-				foreach (DataColumn col in Rooms.Columns) {
-					Console.WriteLine($"{col}: {row[col]}");
-				}
-			}
+		// public void ListRooms()
+		// {
+			
+		// 	for ( int i = 0; i < Rooms.Length )
 
-			Console.WriteLine("");
+		// 	Console.WriteLine("");
 
-			return;
-		}
+		// 	return;
+		// }
 
 		public void Exit()
 		{
