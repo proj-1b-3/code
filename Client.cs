@@ -11,11 +11,11 @@ namespace App
 	{
 		private Boolean Stop = false;
 
-		public DataTable Basket;
 		private User CurrentUser;
 		private Server Connection;
 
 		private List<Room> Rooms;
+		private List<OrderItem> Basket;
 
 		public delegate void Command();
 
@@ -31,6 +31,7 @@ namespace App
 				{ "deregister", Deregister },
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
+				{ "view basket", ViewBasket },
 				{ "list rooms", ListRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
@@ -38,27 +39,8 @@ namespace App
 				{ "help", Help },
 				{ "exit", Exit }
 			};
-
-			Basket = new DataTable();
-			DataColumn col;
-			DataColumn[] keys;
-			keys = new DataColumn[1];
-
-			col = new DataColumn();
-			col.ColumnName = "Id";
-			keys[0] = col;
-			col.DataType = typeof(Int64);
-			Basket.Columns.Add(col);
-			Basket.PrimaryKey = keys;
-
-
-			col = new DataColumn();
-			col.ColumnName = "Amount";
-			col.DataType = typeof(Int32);
-			Basket.Columns.Add(col);
-
 			
-
+			Basket = new List<OrderItem>();
 		}
 
 		public void Begin(Server server)
@@ -248,25 +230,34 @@ namespace App
 				return;
 			}
 
+			Int64 roomid = 64;
+			Console.Write("escaperoom: ");
+			string escaperoom = Console.ReadLine();
+			foreach ( var room in Rooms){
+				if (escaperoom == room.Name){
+					roomid = room.ProductId;
+				}
+				else{
+					Console.WriteLine("Invalid room name");
+				}
+			}
+
 			Console.Write("amount: ");
 			String tickets = Console.ReadLine();
 			Int32 ntickets = 0;
-
 			if (!Int32.TryParse(tickets, out ntickets)) {
 				Console.WriteLine("Invalid number");
 				return;
 			}
-
-			Console.Write("escaperoom: ");
-			string escaperoom = Console.ReadLine().ToLower();
+			Basket.Add(new OrderItem(roomid,ntickets));
 
 
+		}
 
-			Console.Write("Room ID");
-			Int64 roomid;
-			if (!Int64.TryParse(Console.ReadLine(), out roomid)){
-				Console.WriteLine("That is not a valid Room ID");
-				return;
+		public void ViewBasket()
+		{
+			foreach(var item in Basket){
+				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.ProductId, item.Amount);
 			}
 		}
 
