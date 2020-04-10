@@ -15,7 +15,7 @@ namespace App
 		private User CurrentUser;
 		private Server Connection;
 
-		private List<Room> rooms;
+		private List<Room> Rooms;
 
 		public delegate void Command();
 
@@ -317,17 +317,15 @@ namespace App
 
 		private void FetchRooms()
 		{
-			 
-			MemoryStream tabledata = new MemoryStream();
-			List<Room> rooms = new List<Room>();
-			if (!Connection.TryGetRoomData(CurrentUser.SessionToken, tabledata)) {
+			MemoryStream stream = new MemoryStream();
+			if (!Connection.TryGetRoomData(CurrentUser.SessionToken, stream)) {
 				Console.WriteLine("Something went wrong while trying to get the product data from the server");
 				return;
 			}
-			var raw_json = tabledata.ToArray();
-			var Rooms = JsonSerializer.Deserialize<List<Room>>(raw_json);
+			byte[] raw_json = stream.ToArray();
+			this.Rooms = JsonSerializer.Deserialize<List<Room>>(raw_json);
 
-			tabledata.Close();
+			stream.Close();
 		}
 
 		// public void ListRooms()
