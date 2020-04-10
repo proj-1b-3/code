@@ -29,14 +29,14 @@ namespace App
 			// DataBase.ReadXmlSchema("Data/ServerSchema.xml");
 
 			DataColumn col;
-			DataColumn[] keys;
+			DataColumn[] primaryKeys;
 
 			var userTable = new DataTable("Users");
-			keys = new DataColumn[1];
+			primaryKeys = new DataColumn[1];
 			col = new DataColumn("UserId", typeof(Int64));
 			col.AutoIncrement = true;
 			userTable.Columns.Add(col);
-			keys[0] = col;
+			primaryKeys[0] = col;
 			col = new DataColumn("UserName", typeof(String));
 			userTable.Columns.Add(col);
 			col = new DataColumn("Email", typeof(String));
@@ -46,13 +46,14 @@ namespace App
 			userTable.Columns.Add(col);
 			col = new DataColumn("Role", typeof(Int32));
 			userTable.Columns.Add(col);
-			userTable.PrimaryKey = keys;
+			userTable.PrimaryKey = primaryKeys;
 
 			var productTable = new DataTable("Products");
+			primaryKeys = new DataColumn[1];
 			col = new DataColumn("ProductId", typeof(Int64));
 			col.AutoIncrement = true;
 			productTable.Columns.Add(col);
-			keys[0] = col;
+			primaryKeys[0] = col;
 			col = new DataColumn("ProductName", typeof(String));
 			col.Unique = true;
 			productTable.Columns.Add(col);
@@ -62,18 +63,45 @@ namespace App
 			productTable.Columns.Add(col);
 			col = new DataColumn("Available", typeof(Boolean));
 			productTable.Columns.Add(col);
-			productTable.PrimaryKey = keys;
+			productTable.PrimaryKey = primaryKeys;
 
 			var roomAttributeTable = new DataTable("RoomAttributes");
+			primaryKeys = new DataColumn[1];
 			col = new DataColumn("ProductId", typeof(Int64));
+			primaryKeys[0] = col;
 			roomAttributeTable.Columns.Add(col);
 			col = new DataColumn("Theme", typeof(String));
 			roomAttributeTable.Columns.Add(col);
 			col = new DataColumn("Capacity", typeof(Int32));
 			roomAttributeTable.Columns.Add(col);
+			roomAttributeTable.PrimaryKey = primaryKeys;
 
-			DataBase.Tables.AddRange(
-				new DataTable[]{userTable, productTable, roomAttributeTable});
+			var orderTable = new DataTable("Orders");
+			primaryKeys = new DataColumn[1];
+			col = new DataColumn("OrderId", typeof(Int64));
+			col.AutoIncrement = true;
+			orderTable.Columns.Add(col);
+			primaryKeys[0] = col;
+			col=new DataColumn("UserId", typeof(Int64));
+			orderTable.Columns.Add(col);
+			col=new DataColumn("OrderDateTime", typeof(DateTime));
+			orderTable.Columns.Add(col);
+			orderTable.PrimaryKey = primaryKeys;
+
+			var orderItemTable = new DataTable("OrderItems");
+			primaryKeys = new DataColumn[2];
+			col=new DataColumn("OrderId", typeof(Int64));
+			orderItemTable.Columns.Add(col);
+			primaryKeys[0] = col;
+			col=new DataColumn("ProductId", typeof(Int64));
+			orderItemTable.Columns.Add(col);
+			primaryKeys[1] = col;
+			col=new DataColumn("Amount", typeof(Int32));
+			orderItemTable.Columns.Add(col);
+			orderItemTable.PrimaryKey = primaryKeys;
+
+			DataBase.Tables.AddRange(new DataTable[]{
+				userTable, productTable, roomAttributeTable, orderTable, orderItemTable});
 
 			var rel = new DataRelation("ProductRoomAttribute",
 				productTable.Columns["ProductId"],
@@ -274,9 +302,29 @@ namespace App
 			return true;
 		}
 		
-		public Boolean TryPay(Guid session_token, MemoryStream stream) 
+		private Boolean TryPay(Guid session_token, MemoryStream stream) 
 		{
-			// DataTable selection;
+			DataRow userRecord;
+			List<OrderItem> orderItems;
+
+			userRecord = GetUserRecord(session_token);
+			if (userRecord == null) {
+				return false;
+			}
+
+			orderItems = JsonSerializer.Deserialize<List<OrderItem>>(stream.ToArray());
+
+			var orderRow = DataBase.Tables["Orders"].NewRow();
+			orderRow["OrderDateTime"] = DateTime.Now;
+			foreach (OrderItem item in orderItems) {
+				var orderItemRow = DataBase.Tables["OrderItems"].NewRow();
+				orderItemRow["OrderId"] = orderRow["OrderId"];
+				orderItemRow["ProductId"] = item.ProductId;
+				orderItemRow["Amount"] = item.Amount;
+				DataBase.Tables["OrderItems"].Rows.Add(orderRow);
+			}
+
+			DataBase.Tables["Orders"].Rows.Add(orderRow);
 
 			return true;
 		}
