@@ -3,15 +3,10 @@ namespace App
 	using System;
 	using System.Data;
 
-	class Room
+	class Room : Product
 	{
-		public Int64 ProductId { get; set; }
-		public String Name { get; set; }
 		public String Theme { get; set; }
-		public String Description { get; set; }
 		public Int32 Capacity { get; set; }
-		public Single Price { get; set; }
-		public Boolean Available { get; set; }
 
 		public Room() {}
 

@@ -17,6 +17,12 @@ namespace App
 		Consumer
 	}
 
+	enum ProductType
+	{
+		EscapeRoom,
+		Consumable
+	}
+
 	class Server
 	{
 		private Dictionary<Guid, Int64> ActiveUsers;
@@ -54,6 +60,8 @@ namespace App
 			col.AutoIncrement = true;
 			productTable.Columns.Add(col);
 			primaryKeys[0] = col;
+			// col = new DataColumn("ProductType", typeof(ProductType));
+			// productTable.Columns.Add(col);
 			col = new DataColumn("ProductName", typeof(String));
 			col.Unique = true;
 			productTable.Columns.Add(col);
@@ -226,6 +234,7 @@ namespace App
 			}
 
 			var productRow = DataBase.Tables["Products"].NewRow();
+			// productRow["ProductType"] = ProductType.EscapeRoom;
 			productRow["ProductName"] = room.Name;
 			productRow["Description"] = room.Description;
 			productRow["Price"] = room.Price;
