@@ -126,18 +126,18 @@ namespace App
 			DataBase.WriteXmlSchema("Data/ServerSchema.xml");
 		}
 
-		private DataRow GetUserRecord(String email)
+		private DataRow GetUserRow(String email)
 		{
 			var query = $"Email = '{email}'";
-			var rows = DataBase.Tables["Users"].Select(query);
-			if (rows.Length == 0) {
+			var userRows = DataBase.Tables["Users"].Select(query);
+			if (userRows.Length == 0) {
 				return null;
 			}
 
-			return rows[0];
+			return userRows[0];
 		}
 
-		private DataRow GetUserRecord(Guid session_token)
+		private DataRow GetUserRow(Guid session_token)
 		{
 			Int64 userId;
 
@@ -153,17 +153,17 @@ namespace App
 
 		public Boolean TryLogin(String username, String password, out User user)
 		{
-			DataRow userRecord;
+			DataRow userRow;
 			
 			user = null;
-			userRecord = GetUserRecord(username);
-			if (userRecord == null || (String)userRecord["Password"] != password) {
+			userRow = GetUserRow(username);
+			if (userRow == null || (String)userRow["Password"] != password) {
 				return false;
 			}
 
 			Guid session_token = Guid.NewGuid();
-			ActiveUsers.Add(session_token, (Int64)userRecord["UserId"]);
-			user = new User(username, session_token, (Role)userRecord["Role"]);
+			ActiveUsers.Add(session_token, (Int64)userRow["UserId"]);
+			user = new User(username, session_token, (Role)userRow["Role"]);
 
 			return true;
 		}
@@ -179,10 +179,9 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryRegister(String userName, String email, String password)
+		public Boolean TryRegister(String userName, String email,
+			String password)
 		{
-			DataRow row;
-			
 			if (userName == "" || password == "") {
 				return false;
 			}
@@ -191,31 +190,29 @@ namespace App
 				return false; 
 			}
 
-			row = DataBase.Tables["Users"].NewRow();
-			row["UserName"] = userName;
-			row["Email"] = email;
-			row["Password"] = password;
-			row["Role"] = Role.Consumer;
-			DataBase.Tables["Users"].Rows.Add(row);
+			var userRow = DataBase.Tables["Users"].NewRow();
+			userRow["UserName"] = userName;
+			userRow["Email"] = email;
+			userRow["Password"] = password;
+			userRow["Role"] = Role.Consumer;
+			DataBase.Tables["Users"].Rows.Add(userRow);
 
 			return true;
 		}
 
 		public Boolean TryDeregister(Guid session_token, String password)
 		{
-			DataRow row;
-
 			if (password == "") {
 				return false;
 			}
 			
-			row = GetUserRecord(session_token);
-			if (row == null || (String)row["Password"] != password) {
+			var userRow = GetUserRow(session_token);
+			if (userRow == null || (String)userRow["Password"] != password) {
 				return false;
 			}
 
 			ActiveUsers.Remove(session_token);
-			DataBase.Tables["Users"].Rows.Remove(row);
+			DataBase.Tables["Users"].Rows.Remove(userRow);
 
 			return true;
 		}
@@ -224,10 +221,8 @@ namespace App
 
 		public Boolean TryAddRoom(Guid session_token, Room room)
 		{
-			DataRow row;
-
-			row = GetUserRecord(session_token);
-			if (row == null || (Role)row["Role"] != Role.Owner) {
+			var userRow = GetUserRow(session_token);
+			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
 				return false;
 			}
 
@@ -248,35 +243,32 @@ namespace App
 
 		public Boolean TryRemoveRoom(Guid session_token, Int64 productId)
 		{
-			var userRecord = GetUserRecord(session_token);
-			if (userRecord == null || (Role)userRecord["Role"] != Role.Owner) {
+			var userRow = GetUserRow(session_token);
+			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
 				return false;
 			}
 
 			var query = $"ProductId = '{productId}'";
-			var roomRecords = DataBase.Tables["Products"].Select(query);
-			if (roomRecords.Length == 0) {
+			var roomRow = DataBase.Tables["Products"].Select(query);
+			if (roomRow.Length == 0) {
 				return false;
 			}
 
-			DataBase.Tables["Products"].Rows.Remove(roomRecords[0]);
+			DataBase.Tables["Products"].Rows.Remove(roomRow[0]);
 			
 			return true;
 		}
 
 		public Boolean TryGetRoomData(Guid session_token, MemoryStream stream)
 		{
-			DataRow userRecord;
-			
-			userRecord = GetUserRecord(session_token);
-			if (userRecord == null) {
+			var userRow = GetUserRow(session_token);
+			if (userRow == null) {
 				return false;
 			}
 
 			var rel = DataBase.Relations["ProductRoomAttribute"];
 			var productTable = rel.ParentTable;
 			var roomAttributeTable = rel.ChildTable;
-
 			var rooms = new List<Room>();
 
 			for (int i = 0; i < roomAttributeTable.Rows.Count; i += 1) {
@@ -304,16 +296,12 @@ namespace App
 		
 		private Boolean TryPay(Guid session_token, MemoryStream stream) 
 		{
-			DataRow userRecord;
-			List<OrderItem> orderItems;
-
-			userRecord = GetUserRecord(session_token);
-			if (userRecord == null) {
+			var userRow = GetUserRow(session_token);
+			if (userRow == null) {
 				return false;
 			}
 
-			orderItems = JsonSerializer.Deserialize<List<OrderItem>>(stream.ToArray());
-
+			var orderItems = JsonSerializer.Deserialize<List<OrderItem>>(stream.ToArray());
 			var orderRow = DataBase.Tables["Orders"].NewRow();
 			orderRow["OrderDateTime"] = DateTime.Now;
 			foreach (OrderItem item in orderItems) {

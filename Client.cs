@@ -77,16 +77,11 @@ namespace App
 
 		public void Help()
 		{
-			
-
-			if (CurrentUser == null)
-			{
+			if (CurrentUser == null) {
 				Console.WriteLine(" Register or log in first ");
 				Console.WriteLine(" To register type 'register' ");
 				Console.WriteLine(" To login type 'login' ");
-			}
-			else if (CurrentUser.Role == Role.Owner)
-			{ 
+			} else if (CurrentUser.Role == Role.Owner) { 
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -98,9 +93,7 @@ namespace App
 				Console.WriteLine ("-\tadd room ");
 				Console.WriteLine ("-\tremove room ");
 				Console.WriteLine ("-\texit");
-			}
-			else if (CurrentUser.Role == Role.Manager)
-			{
+			} else if (CurrentUser.Role == Role.Manager) {
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -112,9 +105,7 @@ namespace App
 				Console.WriteLine ("-\tadd room ");
 				Console.WriteLine ("-\tremove room ");
 				Console.WriteLine ("-\texit");
-			}
-			else if (CurrentUser.Role == Role.CafeManager)
-			{
+			} else if (CurrentUser.Role == Role.CafeManager) {
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -124,9 +115,7 @@ namespace App
 				Console.WriteLine ("-\tbuy ticket");
 				Console.WriteLine ("-\tlist rooms");
 				Console.WriteLine ("-\texit");
-			}
-			else if (CurrentUser.Role == Role.Consumer)
-			{
+			} else if (CurrentUser.Role == Role.Consumer) {
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
@@ -135,8 +124,9 @@ namespace App
 				Console.WriteLine ("-\tderegister" );
 				Console.WriteLine ("-\tbuy ticket");
 				Console.WriteLine ("-\texit");
-				return;
 			}
+
+			return;
 		}
 		
 		public void Login()
