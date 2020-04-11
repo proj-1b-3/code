@@ -256,7 +256,6 @@ namespace App
 			MemoryStream stream = new MemoryStream();
 			var pay_json = JsonSerializer.SerializeToUtf8Bytes<List<OrderItem>>(Basket);
 			stream.Write(pay_json, 0, pay_json.Length);
-			Connection.TryPay(CurrentUser.SessionToken, stream);
 			if(!Connection.TryPay(CurrentUser.SessionToken, stream)){
 				Console.WriteLine("Unsuccessful payment, Please try again");
 			}
