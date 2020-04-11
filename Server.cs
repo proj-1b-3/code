@@ -193,7 +193,9 @@ namespace App
 				return false;
 			}
 
-			if (DataBase.Tables["Users"].Rows.Contains(userName)) {
+			var query = $"Email = '{email}'";
+			var userRows = DataBase.Tables["Users"].Select(query);
+			if (userRows.Length != 0) {
 				return false; 
 			}
 
