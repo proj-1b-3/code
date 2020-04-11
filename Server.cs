@@ -319,7 +319,7 @@ namespace App
 				orderItemRow["OrderId"] = orderRow["OrderId"];
 				orderItemRow["ProductId"] = item.ProductId;
 				orderItemRow["Amount"] = item.Amount;
-				DataBase.Tables["OrderItems"].Rows.Add(orderRow);
+				DataBase.Tables["OrderItems"].Rows.Add(orderItemRow);
 			}
 
 			DataBase.Tables["Orders"].Rows.Add(orderRow);
