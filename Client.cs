@@ -219,29 +219,28 @@ namespace App
 				Console.WriteLine("You must be logged in to buy a ticket");
 				return;
 			}
-
-			Int64 roomid = 64;
+			String tickets;
+			Int32 ntickets = 0;
+			Int64 roomid = 99999999;
 			Console.Write("escaperoom: ");
 			string escaperoom = Console.ReadLine();
 			foreach ( var room in Rooms){
 				if (escaperoom == room.Name){
 					roomid = room.ProductId;
 				}
-				else{
-					Console.WriteLine("Invalid room name");
+				if (roomid == 99999999){
+					System.Console.WriteLine("Invalid room name");
+					return;
 				}
-			}
-
-			Console.Write("amount: ");
-			String tickets = Console.ReadLine();
-			Int32 ntickets = 0;
-			if (!Int32.TryParse(tickets, out ntickets)) {
-				Console.WriteLine("Invalid number");
+				Console.Write("amount: ");
+				tickets = Console.ReadLine();
+				if (!Int32.TryParse(tickets, out ntickets)) {
+					Console.WriteLine("Invalid number");
+					return;
+					}
+				Basket.Add(new OrderItem(roomid,ntickets));
 				return;
 			}
-			Basket.Add(new OrderItem(roomid,ntickets));
-
-
 		}
 
 		public void ViewBasket()
@@ -254,6 +253,10 @@ namespace App
 
 		public void AddRoom()
 		{
+			if(CurrentUser == null){
+				Console.WriteLine("You must be logged in to Add a room");
+			}
+
 			String name = ReadField("name: ");
 			if (name == "") {
 				return;
