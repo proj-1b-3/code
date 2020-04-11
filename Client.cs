@@ -313,7 +313,11 @@ namespace App
 		{
 			
 			foreach ( var room in Rooms){
-				Console.WriteLine("\nName:{0}\nTheme:{1}\nDescription:{2}\nCapacity:{3}\nPrice:{4}", room.Name, room.Theme, room.Description, room.Capacity, room.Price);
+				Console.WriteLine("\nName: {0}", room.Name);
+				Console.WriteLine("Theme: {0}", room.Theme);
+				Console.WriteLine("Description: {0}", room.Description);
+				Console.WriteLine("Capacity: {0}", room.Capacity);
+				Console.WriteLine("Price: {0}", room.Price);
 			}
 
 			Console.WriteLine("");
