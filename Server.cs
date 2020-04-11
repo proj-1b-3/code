@@ -82,29 +82,28 @@ namespace App
 			col.AutoIncrement = true;
 			orderTable.Columns.Add(col);
 			primaryKeys[0] = col;
-			col=new DataColumn("UserId", typeof(Int64));
+			col = new DataColumn("UserId", typeof(Int64));
 			orderTable.Columns.Add(col);
-			col=new DataColumn("OrderDateTime", typeof(DateTime));
+			col = new DataColumn("OrderDateTime", typeof(DateTime));
 			orderTable.Columns.Add(col);
 			orderTable.PrimaryKey = primaryKeys;
 
 			var orderItemTable = new DataTable("OrderItems");
 			primaryKeys = new DataColumn[2];
-			col=new DataColumn("OrderId", typeof(Int64));
+			col = new DataColumn("OrderId", typeof(Int64));
 			orderItemTable.Columns.Add(col);
 			primaryKeys[0] = col;
-			col=new DataColumn("ProductId", typeof(Int64));
+			col = new DataColumn("ProductId", typeof(Int64));
 			orderItemTable.Columns.Add(col);
 			primaryKeys[1] = col;
-			col=new DataColumn("Amount", typeof(Int32));
+			col = new DataColumn("Amount", typeof(Int32));
 			orderItemTable.Columns.Add(col);
 			orderItemTable.PrimaryKey = primaryKeys;
 
 			DataBase.Tables.AddRange(new DataTable[]{
 				userTable, productTable, roomAttributeTable, orderTable, orderItemTable});
 
-			var rel = new DataRelation("ProductRoomAttribute",
-				productTable.Columns["ProductId"],
+			var rel = new DataRelation("ProductRoomAttribute", productTable.Columns["ProductId"],
 				roomAttributeTable.Columns["ProductId"]);
 			DataBase.Relations.Add(rel);
 
@@ -294,7 +293,7 @@ namespace App
 			return true;
 		}
 		
-		private Boolean TryPay(Guid session_token, MemoryStream stream) 
+		public Boolean TryPay(Guid session_token, MemoryStream stream) 
 		{
 			var userRow = GetUserRow(session_token);
 			if (userRow == null) {
