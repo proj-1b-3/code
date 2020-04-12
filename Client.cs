@@ -33,7 +33,7 @@ namespace App
 				{ "buy ticket", BuyTicket },
 				{ "view basket", ViewBasket },
 				{ "pay", Payment },
-				{ "list rooms", ListRooms },
+				{ "view rooms", ViewRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
 				{ "sync", FetchRooms },
@@ -90,7 +90,7 @@ namespace App
 				Console.WriteLine ("-\tregister" );
 				Console.WriteLine ("-\tderegister" );
 				Console.WriteLine ("-\tbuy ticket");
-				Console.WriteLine ("-\tlist rooms");
+				Console.WriteLine ("-\tview rooms");
 				Console.WriteLine ("-\tadd room ");
 				Console.WriteLine ("-\tremove room ");
 				Console.WriteLine ("-\texit");
@@ -102,7 +102,7 @@ namespace App
 				Console.WriteLine ("-\tregister" );
 				Console.WriteLine ("-\tderegister" );
 				Console.WriteLine ("-\tbuy ticket");
-				Console.WriteLine ("-\tlist rooms");
+				Console.WriteLine ("-\tview rooms");
 				Console.WriteLine ("-\tadd room ");
 				Console.WriteLine ("-\tremove room ");
 				Console.WriteLine ("-\texit");
@@ -114,7 +114,7 @@ namespace App
 				Console.WriteLine ("-\tregister" );
 				Console.WriteLine ("-\tderegister" );
 				Console.WriteLine ("-\tbuy ticket");
-				Console.WriteLine ("-\tlist rooms");
+				Console.WriteLine ("-\tview rooms");
 				Console.WriteLine ("-\texit");
 			} else if (CurrentUser.Role == Role.Consumer) {
 				Console.WriteLine ("Commands you can use:  ");
@@ -132,6 +132,10 @@ namespace App
 		
 		public void Login()
 		{
+			if (CurrentUser != null) {
+				return;
+			}
+
 			String email = ReadField("email: ");
 			String password = ReadField("password: ");
 
@@ -171,6 +175,10 @@ namespace App
 
 		public void Register()
 		{
+			if (CurrentUser != null) {
+				return;
+			}
+
 			String username = ReadField("username: ");
 			String email = ReadField("email: ");
 			String password = ReadField("password: ");
@@ -246,6 +254,10 @@ namespace App
 
 		public void ViewBasket()
 		{
+			if (CurrentUser == null) {
+				return;
+			}
+
 			foreach(var item in Basket){
 				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.ProductId, item.Amount);
 			}
@@ -264,8 +276,8 @@ namespace App
 		}
 		public void AddRoom()
 		{
-			if(CurrentUser == null){
-				Console.WriteLine("You must be logged in to Add a room");
+			if (CurrentUser == null){
+				return;
 			}
 
 			String name = ReadField("name: ");
@@ -301,6 +313,15 @@ namespace App
 
 		public void RemoveRoom()
 		{
+			if (CurrentUser == null) {
+				return;
+			}
+
+			if (CurrentUser.Role != Role.Manager || CurrentUser.Role != Role.Owner) {
+				Console.WriteLine("You do not have the permissions to perform this action");
+				return;
+			}
+				
 			Console.WriteLine("Room ID");
 			Int64 roomid;
 			if (!Int64.TryParse(Console.ReadLine(), out roomid)){
@@ -323,10 +344,13 @@ namespace App
 			stream.Close();
 		}
 
-		public void ListRooms()
+		public void ViewRooms()
 		{
+			if (CurrentUser == null) {
+				return;
+			}
 			
-			foreach ( var room in Rooms){
+			foreach (var room in Rooms) {
 				Console.WriteLine("\nName: {0}", room.Name);
 				Console.WriteLine("Theme: {0}", room.Theme);
 				Console.WriteLine("Description: {0}", room.Description);
