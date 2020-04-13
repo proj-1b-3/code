@@ -228,26 +228,22 @@ namespace App
 			}
 			String tickets;
 			Int32 ntickets = 0;
-			Int64 roomid = 99999999;
 			Console.Write("escaperoom: ");
 			string escaperoom = Console.ReadLine();
 			foreach ( var room in Rooms){
-				if (escaperoom == room.Name){
-					roomid = room.ProductId;
-				}
-				if (roomid == 99999999){
-					System.Console.WriteLine("Invalid room name");
-					return;
-				}
-				Console.Write("amount: ");
-				tickets = Console.ReadLine();
-				if (!Int32.TryParse(tickets, out ntickets)) {
-					Console.WriteLine("Invalid number");
-					return;
+				if (room.Name == escaperoom){
+					Int64 roomid = room.ProductId;
+					Console.Write("amount: ");
+					tickets = Console.ReadLine();
+					if (!Int32.TryParse(tickets, out ntickets)) {
+						Console.WriteLine("Invalid number");
+						return;
 					}
-				Basket.Add(new OrderItem(roomid,ntickets));
+					Basket.Add(new OrderItem(roomid,ntickets));
 				return;
-			}
+				}
+				}
+			Console.WriteLine("Invalid room name");
 		}
 
 		public void ViewBasket()
