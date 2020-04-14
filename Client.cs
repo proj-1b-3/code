@@ -84,7 +84,7 @@ namespace App
 				Console.WriteLine ("Commands you can use:  ");
 				Console.WriteLine ("-\thelp");
 				Console.WriteLine ("-\tlogin" );
-				Console.WriteLine ("-\togout");
+				Console.WriteLine ("-\tlogout");
 				Console.WriteLine ("-\tregister" );
 				Console.WriteLine ("-\tderegister" );
 				Console.WriteLine ("-\tbuy ticket");
@@ -228,13 +228,12 @@ namespace App
 			}
 			String tickets;
 			Int32 ntickets = 0;
-			Console.Write("escaperoom: ");
-			string roomName = Console.ReadLine();
+			string roomName = ReadField("Room name:");
 			foreach (var room in Rooms){
 				if (room.Name == roomName){
 					Int64 roomid = room.ProductId;
 					Console.Write("amount: ");
-					tickets = Console.ReadLine();
+					tickets = ReadField("");
 					if (!Int32.TryParse(tickets, out ntickets)) {
 						Console.WriteLine("Invalid number");
 						return;
@@ -318,7 +317,7 @@ namespace App
 				
 			Console.WriteLine("Room ID");
 			Int64 roomid;
-			if (!Int64.TryParse(Console.ReadLine(), out roomid)){
+			if (!Int64.TryParse(ReadField(""), out roomid)){
 				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
