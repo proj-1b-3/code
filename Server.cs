@@ -144,11 +144,11 @@ namespace App
 			return userRows[0];
 		}
 
-		private DataRow GetUserRow(Guid session_token)
+		private DataRow GetUserRow(Guid sessionToken)
 		{
 			Int64 userId;
 
-			if (!ActiveUsers.TryGetValue(session_token, out userId)) {
+			if (!ActiveUsers.TryGetValue(sessionToken, out userId)) {
 				return null;
 			}
 
@@ -158,38 +158,37 @@ namespace App
 		// COMMANDS
 		// user commands
 
-		public Boolean TryLogin(String username, String password, out User user)
+		public Boolean TryLogin(String userName, String password, out User user)
 		{
 			DataRow userRow;
 			
 			user = null;
-			userRow = GetUserRow(username);
+			userRow = GetUserRow(userName);
 			if (userRow == null || (String)userRow["Password"] != password) {
 				return false;
 			}
 
 			Guid session_token = Guid.NewGuid();
 			ActiveUsers.Add(session_token, (Int64)userRow["UserId"]);
-			user = new User(username, session_token, (Role)userRow["Role"]);
+			user = new User(userName, session_token, (Role)userRow["Role"]);
 
 			return true;
 		}
 
-		public Boolean TryLogout(Guid session_token)
+		public Boolean TryLogout(Guid sessionToken)
 		{
-			if (!ActiveUsers.ContainsKey(session_token)) {
+			if (!ActiveUsers.ContainsKey(sessionToken)) {
 				return false;
 			}
 
-			ActiveUsers.Remove(session_token);
+			ActiveUsers.Remove(sessionToken);
 
 			return true;
 		}
 
-		public Boolean TryRegister(String userName, String email,
-			String password)
+		public Boolean TryRegister(String userName, String email, String password)
 		{
-			if (userName == "" || password == "") {
+			if (userName == "" || email == "" || password == "") {
 				return false;
 			}
 
@@ -209,18 +208,18 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryDeregister(Guid session_token, String password)
+		public Boolean TryDeregister(Guid sessionToken, String password)
 		{
 			if (password == "") {
 				return false;
 			}
 			
-			var userRow = GetUserRow(session_token);
+			var userRow = GetUserRow(sessionToken);
 			if (userRow == null || (String)userRow["Password"] != password) {
 				return false;
 			}
 
-			ActiveUsers.Remove(session_token);
+			ActiveUsers.Remove(sessionToken);
 			DataBase.Tables["Users"].Rows.Remove(userRow);
 
 			return true;
@@ -228,9 +227,9 @@ namespace App
 
 		// room commands
 
-		public Boolean TryAddRoom(Guid session_token, Room room)
+		public Boolean TryAddRoom(Guid sessionToken, Room room)
 		{
-			var userRow = GetUserRow(session_token);
+			var userRow = GetUserRow(sessionToken);
 			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
 				return false;
 			}
@@ -251,9 +250,9 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryRemoveRoom(Guid session_token, Int64 productId)
+		public Boolean TryRemoveRoom(Guid sessionToken, Int64 productId)
 		{
-			var userRow = GetUserRow(session_token);
+			var userRow = GetUserRow(sessionToken);
 			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
 				return false;
 			}
@@ -269,9 +268,9 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryGetRoomData(Guid session_token, MemoryStream stream)
+		public Boolean TryGetRoomData(Guid sessionToken, MemoryStream stream)
 		{
-			var userRow = GetUserRow(session_token);
+			var userRow = GetUserRow(sessionToken);
 			if (userRow == null) {
 				return false;
 			}
@@ -304,9 +303,9 @@ namespace App
 			return true;
 		}
 		
-		public Boolean TryPay(Guid session_token, MemoryStream stream) 
+		public Boolean TryPay(Guid sessionToken, MemoryStream stream) 
 		{
-			var userRow = GetUserRow(session_token);
+			var userRow = GetUserRow(sessionToken);
 			if (userRow == null) {
 				return false;
 			}
