@@ -7,35 +7,36 @@ namespace App
 	{
 		public Int64 OrderId {get;set;}
 		public Int64 UserId {get;set;}
-		public Int64 RoomId {get;set;}
+		public List<Reservation> Rooms {get;set;}
 		public List<OrderItem> Items {get;set;}
-		public DateTime DateTime {get;set;}
+		public DateTime OrderDateTime {get;set;}
 
 		public Order()
 		{
 			OrderId = -1;
 			UserId = -1;
-			RoomId = -1;
+			RoomId = null;
 			Items = null;
-			DateTime = new DateTime();
+			OrderDateTime = new DateTime();
 		}
 
-		public Order(Int64 roomId, List<OrderItem> items, DateTime dateTime)
+		public Order(List<Reservation> rooms, List<OrderItem> items, DateTime dateTime)
 		{
 			OrderId = -1;
 			UserId = -1;
-			RoomId = roomId;
+			RoomId = rooms;
 			Items = items;
-			DateTime = dateTime;
+			OrderDateTime = dateTime;
 		}
 
-		public Order(Int64 orderId, Int64 userId, Int64 roomId, List<OrderItem> items, DateTime dateTime)
+		public Order(Int64 orderId, Int64 userId, List<Reservatin> rooms, List<OrderItem> items, 
+			DateTime dateTime)
 		{
 			OrderId = orderId;
 			UserId = userId;
-			RoomId = roomId;
+			RoomId = rooms;
 			Items = items;
-			DateTime = dateTime;
+			OrderDateTime = dateTime;
 		}
 	}
 }
