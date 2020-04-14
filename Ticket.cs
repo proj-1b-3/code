@@ -29,7 +29,7 @@ namespace App
 			OrderDateTime = dateTime;
 		}
 
-		public Order(Int64 orderId, Int64 userId, List<Reservatin> rooms, List<OrderItem> items, 
+		public Order(Int64 orderId, Int64 userId, List<Reservation> rooms, List<OrderItem> items, 
 			DateTime dateTime)
 		{
 			OrderId = orderId;
