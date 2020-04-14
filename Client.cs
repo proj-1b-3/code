@@ -229,9 +229,9 @@ namespace App
 			String tickets;
 			Int32 ntickets = 0;
 			Console.Write("escaperoom: ");
-			string escaperoom = Console.ReadLine();
-			foreach ( var room in Rooms){
-				if (room.Name == escaperoom){
+			string roomName = Console.ReadLine();
+			foreach (var room in Rooms){
+				if (room.Name == roomName){
 					Int64 roomid = room.ProductId;
 					Console.Write("amount: ");
 					tickets = Console.ReadLine();
@@ -240,9 +240,9 @@ namespace App
 						return;
 					}
 					Basket.Add(new OrderItem(roomid,ntickets));
-				return;
+					return;
 				}
-				}
+			}
 			Console.WriteLine("Invalid room name");
 		}
 
