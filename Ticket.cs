@@ -15,7 +15,7 @@ namespace App
 		{
 			OrderId = -1;
 			UserId = -1;
-			RoomId = null;
+			Rooms = null;
 			Items = null;
 			OrderDateTime = new DateTime();
 		}
@@ -24,7 +24,7 @@ namespace App
 		{
 			OrderId = -1;
 			UserId = -1;
-			RoomId = rooms;
+			Rooms = rooms;
 			Items = items;
 			OrderDateTime = dateTime;
 		}
@@ -34,7 +34,7 @@ namespace App
 		{
 			OrderId = orderId;
 			UserId = userId;
-			RoomId = rooms;
+			Rooms = rooms;
 			Items = items;
 			OrderDateTime = dateTime;
 		}
