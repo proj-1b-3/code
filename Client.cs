@@ -13,7 +13,7 @@ namespace App
 		private Server Connection;
 
 		private List<Room> Rooms;
-		private List<OrderItem> Basket;
+		private Order Basket;
 
 		public delegate void Command();
 
@@ -30,7 +30,7 @@ namespace App
 				{ "logout", Logout },
 				{ "buy ticket", BuyTicket },
 				{ "view basket", ViewBasket },
-				{ "pay", Payment },
+				// { "pay", Payment },
 				{ "view rooms", ViewRooms },
 				{ "add room", AddRoom },
 				{ "remove room", RemoveRoom },
@@ -39,7 +39,7 @@ namespace App
 				{ "exit", Exit }
 			};
 			
-			Basket = new List<OrderItem>();
+			Basket = new Order();
 		}
 
 		public void Begin(Server server)
@@ -232,13 +232,15 @@ namespace App
 			foreach (var room in Rooms){
 				if (room.Name == roomName){
 					Int64 roomid = room.ProductId;
-					Console.Write("amount: ");
-					tickets = ReadField("");
+					tickets = ReadField("amount: ");
 					if (!Int32.TryParse(tickets, out ntickets)) {
 						Console.WriteLine("Invalid number");
 						return;
 					}
-					Basket.Add(new OrderItem(roomid,ntickets));
+					ntickets = Convert.ToInt32(tickets);
+					Console.WriteLine("Date of reservation in the format 'YYYY-MM-DD.'");
+					DateTime day = Convert.ToDateTime(Console.ReadLine());
+					Basket.Reservations.Add(new Reservation (roomid, ntickets, day));
 					return;
 				}
 			}
@@ -250,23 +252,24 @@ namespace App
 			if (CurrentUser == null) {
 				return;
 			}
-
-			foreach(var item in Basket){
-				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.ProductId, item.Amount);
+			Console.WriteLine("Reservations");
+			foreach(var item in Basket.Reservations){
+				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.RoomId, item.GroupSize);
+				Console.WriteLine("Date  " + item.DateTime.ToString("F"));
 			}
 		}
 
-		public void Payment()
-		{
-			MemoryStream stream = new MemoryStream();
-			var pay_json = JsonSerializer.SerializeToUtf8Bytes<List<OrderItem>>(Basket);
-			stream.Write(pay_json, 0, pay_json.Length);
-			if(!Connection.TryPay(CurrentUser.SessionToken, stream)){
-				Console.WriteLine("Unsuccessful payment, Please try again");
-			}
-			Console.WriteLine("Payment succeed");
+		// public void Payment()
+		// {
+		// 	MemoryStream stream = new MemoryStream();
+		// 	var pay_json = JsonSerializer.SerializeToUtf8Bytes<List<OrderItem>>(Basket;
+		// 	stream.Write(pay_json, 0, pay_json.Length);
+		// 	if(!Connection.TryPay(CurrentUser.SessionToken, stream)){
+		// 		Console.WriteLine("Unsuccessful payment, Please try again");
+		// 	}
+		// 	Console.WriteLine("Payment succeed");
 
-		}
+		// }
 		public void AddRoom()
 		{
 			if (CurrentUser == null){
