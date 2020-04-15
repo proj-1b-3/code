@@ -28,7 +28,7 @@ namespace App
 				{ "register", Register },
 				{ "deregister", Deregister },
 				{ "logout", Logout },
-				{ "buy ticket", BuyTicket },
+				{ "make reservation", MakeReservation },
 				{ "view basket", ViewBasket },
 			    { "pay", Payment },
 				{ "view rooms", ViewRooms },
@@ -220,7 +220,7 @@ namespace App
 			return;
 		}
 
-		public void BuyTicket()
+		public void MakeReservation()
 		{
 			if (CurrentUser == null) {
 				Console.WriteLine("You must be logged in to buy a ticket");
@@ -241,6 +241,9 @@ namespace App
 					ntickets = Convert.ToInt32(tickets);
 					Console.WriteLine("Date of reservation in the format 'YYYY-MM-DD'.");
 					DateTime day = Convert.ToDateTime(Console.ReadLine());
+					if(day < DateTime.Now){
+						Console.WriteLine("Invalid date");
+					}
 					Basket.Reservations.Add(new Reservation (roomid, ntickets, day));
 					return;
 				}
