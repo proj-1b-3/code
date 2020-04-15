@@ -108,8 +108,20 @@ namespace App
 			orderItemTable.Columns.Add(col);
 			orderItemTable.PrimaryKey = primaryKeys;
 
+			var reservationTable = new DataTable("Reservations");
+			primaryKeys = new DataColumn[2];
+			col = new DataColumn("OrderId", typeof(Int64));
+			reservationTable.Columns.Add(col);
+			primaryKeys[0] = col;
+			col = new DataColumn("RoomId", typeof(Int64));
+			reservationTable.Columns.Add(col);
+			primaryKeys[1] = col;
+			col = new DataColumn("ReservationDateTime", typeof(DateTime));
+			reservationTable.Columns.Add(col);
+			reservationTable.PrimaryKey = primaryKeys;
+
 			DataBase.Tables.AddRange(new DataTable[]{
-				userTable, productTable, roomAttributeTable, orderTable, orderItemTable});
+				userTable, productTable, roomAttributeTable, orderTable, orderItemTable, reservationTable});
 
 			var rel = new DataRelation("ProductRoomAttribute", productTable.Columns["ProductId"],
 				roomAttributeTable.Columns["ProductId"]);
@@ -310,18 +322,26 @@ namespace App
 				return false;
 			}
 
-			var orderItems = JsonSerializer.Deserialize<List<OrderItem>>(stream.ToArray());
+			var order = JsonSerializer.Deserialize<Order>(stream.ToArray());
+
 			var orderRow = DataBase.Tables["Orders"].NewRow();
 			orderRow["OrderDateTime"] = DateTime.Now;
-			foreach (OrderItem item in orderItems) {
+			DataBase.Tables["Orders"].Rows.Add(orderRow);
+
+			foreach (var reservation in order.Reservations) {
+				var reservationRow = DataBase.Tables["Reservations"].NewRow();
+				reservationRow["OrderId"] = orderRow["OrderId"];
+				reservationRow["RoomId"] = reservation.RoomId;
+				reservationRow["ReservationDateTime"] = reservation.DateTime;
+			}
+
+			foreach (var item in order.Items) {
 				var orderItemRow = DataBase.Tables["OrderItems"].NewRow();
 				orderItemRow["OrderId"] = orderRow["OrderId"];
 				orderItemRow["ProductId"] = item.ProductId;
 				orderItemRow["Amount"] = item.Amount;
 				DataBase.Tables["OrderItems"].Rows.Add(orderItemRow);
 			}
-
-			DataBase.Tables["Orders"].Rows.Add(orderRow);
 
 			return true;
 		}
