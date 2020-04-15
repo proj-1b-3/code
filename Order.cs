@@ -20,11 +20,11 @@ namespace App
 			OrderDateTime = new DateTime();
 		}
 
-		public Order(List<Reservation> rooms, List<OrderItem> items, DateTime dateTime)
+		public Order(List<Reservation> reservations, List<OrderItem> items, DateTime dateTime)
 		{
 			OrderId = -1;
 			UserId = -1;
-			Reservations = rooms;
+			Reservations = reservations;
 			Items = items;
 			OrderDateTime = dateTime;
 		}
