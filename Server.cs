@@ -333,6 +333,7 @@ namespace App
 				reservationRow["OrderId"] = orderRow["OrderId"];
 				reservationRow["RoomId"] = reservation.RoomId;
 				reservationRow["ReservationDateTime"] = reservation.DateTime;
+				DataBase.Tables["Reservations"].Rows.Add(reservationRow);
 			}
 
 			foreach (var item in order.Items) {
