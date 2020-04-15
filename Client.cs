@@ -243,6 +243,7 @@ namespace App
 					DateTime day = Convert.ToDateTime(Console.ReadLine());
 					if(day < DateTime.Now){
 						Console.WriteLine("Invalid date");
+						return;
 					}
 					Basket.Reservations.Add(new Reservation (roomid, ntickets, day));
 					return;
