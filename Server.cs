@@ -97,25 +97,31 @@ namespace App
 			orderTable.PrimaryKey = primaryKeys;
 
 			var orderItemTable = new DataTable("OrderItems");
-			primaryKeys = new DataColumn[2];
-			col = new DataColumn("OrderId", typeof(Int64));
+			primaryKeys = new DataColumn[1];
+			col = new DataColumn("OrderItemId", typeof(Int64));
+			col.AutoIncrement = true;
 			orderItemTable.Columns.Add(col);
 			primaryKeys[0] = col;
+			col = new DataColumn("OrderId", typeof(Int64));
+			orderItemTable.Columns.Add(col);
 			col = new DataColumn("ProductId", typeof(Int64));
 			orderItemTable.Columns.Add(col);
-			primaryKeys[1] = col;
 			col = new DataColumn("Amount", typeof(Int32));
 			orderItemTable.Columns.Add(col);
 			orderItemTable.PrimaryKey = primaryKeys;
 
 			var reservationTable = new DataTable("Reservations");
-			primaryKeys = new DataColumn[2];
-			col = new DataColumn("OrderId", typeof(Int64));
+			primaryKeys = new DataColumn[1];
+			col = new DataColumn("ReservationId", typeof(Int64));
+			col.AutoIncrement = true;
 			reservationTable.Columns.Add(col);
 			primaryKeys[0] = col;
+			col = new DataColumn("OrderId", typeof(Int64));
+			reservationTable.Columns.Add(col);
 			col = new DataColumn("RoomId", typeof(Int64));
 			reservationTable.Columns.Add(col);
-			primaryKeys[1] = col;
+			col = new DataColumn("GroupSize", typeof(Int32));
+			reservationTable.Columns.Add(col);
 			col = new DataColumn("ReservationDateTime", typeof(DateTime));
 			reservationTable.Columns.Add(col);
 			reservationTable.PrimaryKey = primaryKeys;
@@ -332,6 +338,7 @@ namespace App
 				var reservationRow = DataBase.Tables["Reservations"].NewRow();
 				reservationRow["OrderId"] = orderRow["OrderId"];
 				reservationRow["RoomId"] = reservation.RoomId;
+				reservationRow["GroupSize"] = reservation.GroupSize;
 				reservationRow["ReservationDateTime"] = reservation.DateTime;
 				DataBase.Tables["Reservations"].Rows.Add(reservationRow);
 			}

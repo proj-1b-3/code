@@ -46,8 +46,9 @@
         <xs:element name="OrderItems">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="OrderId" type="xs:long" />
-              <xs:element name="ProductId" type="xs:long" />
+              <xs:element name="OrderItemId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="OrderId" type="xs:long" minOccurs="0" />
+              <xs:element name="ProductId" type="xs:long" minOccurs="0" />
               <xs:element name="Amount" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
@@ -55,8 +56,10 @@
         <xs:element name="Reservations">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="OrderId" type="xs:long" />
-              <xs:element name="RoomId" type="xs:long" />
+              <xs:element name="ReservationId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="OrderId" type="xs:long" minOccurs="0" />
+              <xs:element name="RoomId" type="xs:long" minOccurs="0" />
+              <xs:element name="GroupSize" type="xs:int" minOccurs="0" />
               <xs:element name="ReservationDateTime" type="xs:dateTime" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
@@ -89,13 +92,11 @@
     </xs:unique>
     <xs:unique name="OrderItems_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
       <xs:selector xpath=".//OrderItems" />
-      <xs:field xpath="OrderId" />
-      <xs:field xpath="ProductId" />
+      <xs:field xpath="OrderItemId" />
     </xs:unique>
     <xs:unique name="Reservations_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
       <xs:selector xpath=".//Reservations" />
-      <xs:field xpath="OrderId" />
-      <xs:field xpath="RoomId" />
+      <xs:field xpath="ReservationId" />
     </xs:unique>
     <xs:keyref name="ProductRoomAttribute" refer="Products_Constraint2">
       <xs:selector xpath=".//RoomAttributes" />
