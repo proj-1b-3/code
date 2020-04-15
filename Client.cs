@@ -28,7 +28,7 @@ namespace App
 				{ "register", Register },
 				{ "deregister", Deregister },
 				{ "logout", Logout },
-				{ "buy ticket", BuyTicket },
+				{ "make reservation", MakeReservation },
 				{ "view basket", ViewBasket },
 			    { "pay", Payment },
 				{ "view rooms", ViewRooms },
@@ -220,7 +220,7 @@ namespace App
 			return;
 		}
 
-		public void BuyTicket()
+		public void MakeReservation()
 		{
 			if (CurrentUser == null) {
 				Console.WriteLine("You must be logged in to buy a ticket");
@@ -228,12 +228,12 @@ namespace App
 			}
 			String tickets;
 			Int32 ntickets = 0;
-			string roomName = ReadField("Room name:");
+			string roomName = ReadField("Room name: ");
 
 			foreach (var room in Rooms){
 				if (room.Name == roomName){
 					Int64 roomid = room.ProductId;
-					tickets = ReadField("amount:");
+					tickets = ReadField("amount: ");
 					if (!Int32.TryParse(tickets, out ntickets)) {
 						Console.WriteLine("Invalid number");
 						return;
@@ -241,6 +241,9 @@ namespace App
 					ntickets = Convert.ToInt32(tickets);
 					Console.WriteLine("Date of reservation in the format 'YYYY-MM-DD'.");
 					DateTime day = Convert.ToDateTime(Console.ReadLine());
+					if(day < DateTime.Now){
+						Console.WriteLine("Invalid date");
+					}
 					Basket.Reservations.Add(new Reservation (roomid, ntickets, day));
 					return;
 				}
@@ -255,8 +258,8 @@ namespace App
 			}
 			Console.WriteLine("Basket:");
 			foreach(var item in Basket.Reservations){
-				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tAmount {1}" , item.RoomId, item.GroupSize);
-				Console.WriteLine("Date  " + item.DateTime.ToString("F"));
+				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tGroup size {1}" , item.RoomId, item.GroupSize);
+				Console.WriteLine("\tDate " + item.DateTime.ToString("F"));
 			}
 			Console.WriteLine("");
 			foreach(var item in Basket.Items){
