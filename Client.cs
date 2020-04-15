@@ -233,7 +233,7 @@ namespace App
 			foreach (var room in Rooms){
 				if (room.Name == roomName){
 					Int64 roomid = room.ProductId;
-					tickets = ReadField("amount: ");
+					tickets = ReadField("Group size: ");
 					if (!Int32.TryParse(tickets, out ntickets)) {
 						Console.WriteLine("Invalid number");
 						return;
