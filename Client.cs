@@ -252,24 +252,28 @@ namespace App
 			if (CurrentUser == null) {
 				return;
 			}
-			Console.WriteLine("Reservations");
+			Console.WriteLine("Reservations:");
 			foreach(var item in Basket.Reservations){
 				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.RoomId, item.GroupSize);
 				Console.WriteLine("Date  " + item.DateTime.ToString("F"));
 			}
+			Console.WriteLine("Items:");
+			foreach(var item in Basket.Items){
+				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.ProductId, item.Amount);
+			}
 		}
 
-		// public void Payment()
-		// {
-		// 	MemoryStream stream = new MemoryStream();
-		// 	var pay_json = JsonSerializer.SerializeToUtf8Bytes<List<OrderItem>>(Basket;
-		// 	stream.Write(pay_json, 0, pay_json.Length);
-		// 	if(!Connection.TryPay(CurrentUser.SessionToken, stream)){
-		// 		Console.WriteLine("Unsuccessful payment, Please try again");
-		// 	}
-		// 	Console.WriteLine("Payment succeed");
+		public void Payment()
+		{
+			MemoryStream stream = new MemoryStream();
+			var pay_json = JsonSerializer.SerializeToUtf8Bytes<Order>(Basket);
+			stream.Write(pay_json, 0, pay_json.Length);
+			if(!Connection.TryPay(CurrentUser.SessionToken, stream)){
+				Console.WriteLine("Unsuccessful payment, Please try again");
+			}
+			Console.WriteLine("Payment succeed");
 
-		// }
+		}
 		public void AddRoom()
 		{
 			if (CurrentUser == null){
