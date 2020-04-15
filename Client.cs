@@ -228,12 +228,12 @@ namespace App
 			}
 			String tickets;
 			Int32 ntickets = 0;
-			string roomName = ReadField("Room name:");
+			string roomName = ReadField("Room name: ");
 
 			foreach (var room in Rooms){
 				if (room.Name == roomName){
 					Int64 roomid = room.ProductId;
-					tickets = ReadField("amount:");
+					tickets = ReadField("amount: ");
 					if (!Int32.TryParse(tickets, out ntickets)) {
 						Console.WriteLine("Invalid number");
 						return;
@@ -255,8 +255,8 @@ namespace App
 			}
 			Console.WriteLine("Basket:");
 			foreach(var item in Basket.Reservations){
-				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tAmount {1}" , item.RoomId, item.GroupSize);
-				Console.WriteLine("Date  " + item.DateTime.ToString("F"));
+				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tGroup size {1}" , item.RoomId, item.GroupSize);
+				Console.WriteLine("\tDate " + item.DateTime.ToString("F"));
 			}
 			Console.WriteLine("");
 			foreach(var item in Basket.Items){
