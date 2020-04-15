@@ -254,12 +254,12 @@ namespace App
 			}
 			Console.WriteLine("Reservations:");
 			foreach(var item in Basket.Reservations){
-				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.RoomId, item.GroupSize);
+				Console.WriteLine("Basket:\n\tRoom ID {0}\n\tAmount {1}" , item.RoomId, item.GroupSize);
 				Console.WriteLine("Date  " + item.DateTime.ToString("F"));
 			}
 			Console.WriteLine("Items:");
 			foreach(var item in Basket.Items){
-				Console.WriteLine("Basket:\n\troom id {0}\n\tAmount {1}" , item.ProductId, item.Amount);
+				Console.WriteLine("Basket:\n\tProduct ID {0}\n\tAmount {1}" , item.ProductId, item.Amount);
 			}
 		}
 
