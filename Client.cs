@@ -261,7 +261,7 @@ namespace App
 			Console.WriteLine("Basket:");
 			foreach(var item in Basket.Reservations){
 				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tGroup size {1}" , item.RoomId, item.GroupSize);
-				Console.WriteLine("\tDate " + item.DateTime.ToString("dddd, MMMM dd yyyy"));
+				Console.WriteLine("\tDate " + item.DateTime.ToString("D"));
 			}
 			Console.WriteLine("");
 			foreach(var item in Basket.Items){
