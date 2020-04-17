@@ -241,6 +241,7 @@ namespace App
 					ntickets = Convert.ToInt32(tickets);
 					Console.WriteLine("Date of reservation in the format 'YYYY-MM-DD'.");
 					DateTime day = Convert.ToDateTime(Console.ReadLine());
+
 					if(day < DateTime.Now){
 						Console.WriteLine("Invalid date");
 						return;
@@ -260,7 +261,7 @@ namespace App
 			Console.WriteLine("Basket:");
 			foreach(var item in Basket.Reservations){
 				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tGroup size {1}" , item.RoomId, item.GroupSize);
-				Console.WriteLine("\tDate " + item.DateTime.ToString("F"));
+				Console.WriteLine("\tDate " + item.DateTime.ToString("dddd, MMMM dd yyyy"));
 			}
 			Console.WriteLine("");
 			foreach(var item in Basket.Items){
