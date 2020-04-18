@@ -254,6 +254,12 @@ namespace App
 
 			Int32 round;
 			if (! Int32.TryParse(ReadField("Round: "), out round)) {
+				Console.WriteLine("Invalid number");
+				return;
+			}
+
+			if (round < 1 || round > room.RoundNumber) {
+				Console.WriteLine("Invalid round number");
 				return;
 			}
 
