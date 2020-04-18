@@ -266,13 +266,13 @@ namespace App
 					Int64 roomid = room.ProductId; 
 
 					Int32 groupSize;
-					if (! Int32.TryParse(ReadField("Group size"), out groupSize)) {
+					if (! Int32.TryParse(ReadField("Group size: "), out groupSize)) {
 						Console.WriteLine("Invalid number");
 						return;
 					}
 
 					DateTime date;
-					if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD):\n"), out date)) {
+					if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date)) {
 						Console.WriteLine("Invalid date");
 						return;
 					}
