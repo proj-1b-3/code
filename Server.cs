@@ -82,6 +82,10 @@ namespace App
 			roomAttributeTable.Columns.Add(col);
 			col = new DataColumn("Capacity", typeof(Int32));
 			roomAttributeTable.Columns.Add(col);
+			col = new DataColumn("NumberOfRounds", typeof(Int32));
+			roomAttributeTable.Columns.Add(col);
+			col = new DataColumn("MaxDuration", typeof(Int32));
+			roomAttributeTable.Columns.Add(col);
 			roomAttributeTable.PrimaryKey = primaryKeys;
 
 			var orderTable = new DataTable("Orders");
@@ -263,6 +267,8 @@ namespace App
 			roomAttributeRow["ProductId"] = productRow["ProductId"];
 			roomAttributeRow["Theme"] = room.Theme;
 			roomAttributeRow["Capacity"] = room.Capacity;
+			roomAttributeRow["NumberOfRounds"] = room.NumberOfRounds;
+			roomAttributeRow["MaxDuration"] = room.MaxDuration;
 			DataBase.Tables["RoomAttributes"].Rows.Add(roomAttributeRow);
 			
 			return true;
@@ -308,6 +314,8 @@ namespace App
 				room.Price = (Single)productRow["Price"];
 				room.Theme = (String)roomAttributeRow["Theme"];
 				room.Capacity = (Int32)roomAttributeRow["Capacity"];
+				room.NumberOfRounds = (Int32)roomAttributeRow["NumberOfRounds"];
+				room.MaxDuration = (Int32)roomAttributeRow["MaxDuration"];
 				rooms.Add(room);
 			}
 

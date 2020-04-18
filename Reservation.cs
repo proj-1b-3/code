@@ -8,6 +8,7 @@ namespace App
 		public Int64 RoomId {get;set;}
 		public Int32 GroupSize {get;set;}
 		public DateTime DateTime {get;set;}
+		public Int32 RoundNumber {get;set;}
 
 		public Reservation()
 		{
@@ -16,7 +17,7 @@ namespace App
 			DateTime = new DateTime();
 		}
 
-		public Reservation(Int64 roomId, Int32 groupSize, DateTime dateTime)
+		public Reservation(Int64 roomId, Int32 groupSize, DateTime dateTime, Int32 RoundNumber)
 		{
 			RoomId = roomId;
 			GroupSize = groupSize;
