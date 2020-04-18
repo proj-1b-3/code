@@ -126,7 +126,9 @@ namespace App
 			reservationTable.Columns.Add(col);
 			col = new DataColumn("GroupSize", typeof(Int32));
 			reservationTable.Columns.Add(col);
-			col = new DataColumn("ReservationDateTime", typeof(DateTime));
+			col = new DataColumn("Date", typeof(DateTime));
+			reservationTable.Columns.Add(col);
+			col = new DataColumn("RoundNumber", typeof(Int32));
 			reservationTable.Columns.Add(col);
 			reservationTable.PrimaryKey = primaryKeys;
 
@@ -347,7 +349,8 @@ namespace App
 				reservationRow["OrderId"] = orderRow["OrderId"];
 				reservationRow["RoomId"] = reservation.RoomId;
 				reservationRow["GroupSize"] = reservation.GroupSize;
-				reservationRow["ReservationDateTime"] = reservation.DateTime;
+				reservationRow["Date"] = reservation.DateTime.Date;
+				reservationRow["RoundNumber"] = reservation.RoundNumber
 				DataBase.Tables["Reservations"].Rows.Add(reservationRow);
 			}
 
@@ -360,6 +363,24 @@ namespace App
 			}
 
 			return true;
+		}
+
+		public Int32 ChechReservation(Reservation reservation)
+		{
+			var query = $"RoomId={reservation.RoomId}" +
+				$" and Date={reservation.DateTime.Date}" +
+				$" and RoundNumber={reservation.RoundNumber}";
+			var rows = this.DataBase.Tables["Reservations"].Select(query);
+			if (rows.Length == 0) {
+				return -1;
+			}
+
+			var n = 0;
+			foreach (var row in rows) {
+				n += (Int32)row["GroupSize"];
+			}
+
+			return (Int32)row["GroupSize"]
 		}
 	}
 }
