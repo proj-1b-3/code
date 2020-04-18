@@ -239,7 +239,7 @@ namespace App
 					}
 
 					DateTime date;
-					if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD):"), out date)) {
+					if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date)) {
 						Console.WriteLine("Invalid date");
 						return;
 					}
