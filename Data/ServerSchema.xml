@@ -31,6 +31,8 @@
               <xs:element name="ProductId" type="xs:long" />
               <xs:element name="Theme" type="xs:string" minOccurs="0" />
               <xs:element name="Capacity" type="xs:int" minOccurs="0" />
+              <xs:element name="NumberOfRounds" type="xs:int" minOccurs="0" />
+              <xs:element name="MaxDuration" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

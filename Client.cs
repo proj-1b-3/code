@@ -239,14 +239,23 @@ namespace App
 						return;
 					}
 					ntickets = Convert.ToInt32(tickets);
-					Console.WriteLine("Date of reservation in the format 'YYYY-MM-DD'.");
-					DateTime day = Convert.ToDateTime(Console.ReadLine());
-
-					if(day < DateTime.Now){
+					DateTime date;
+					if (! DateTime.TryParse(ReadField("Date of reservation in the format YYYY-MM-DD.\n"), out date)) {
 						Console.WriteLine("Invalid date");
 						return;
 					}
-					Basket.Reservations.Add(new Reservation (roomid, ntickets, day));
+			
+					
+					if(date < DateTime.Now){
+						Console.WriteLine("Invalid date");
+						return;
+					}
+
+					Int32 round;
+					if (! Int32.TryParse(ReadField("Round: "), out round)) {
+						return;
+					}
+					Basket.Reservations.Add(new Reservation (roomid, ntickets, date.Date, round));
 					return;
 				}
 			}
@@ -305,6 +314,17 @@ namespace App
 			if (! Int32.TryParse(ReadField("capacity: "), out capacity)) {
 				return;
 			}
+
+			Int32 numberofrounds;
+			if (! Int32.TryParse(ReadField("Number of rounds: "), out numberofrounds)) {
+				return;
+			}
+			
+			Int32 maxduration;
+			if (! Int32.TryParse(ReadField("Maximum Duration: "), out maxduration)) {
+				return;
+			}
+			
 			
 			Single price;
 			if (! Single.TryParse(ReadField("price: "), out price)) {
@@ -313,7 +333,7 @@ namespace App
 
 
 			
-			var room =  new Room(name, theme, discription, capacity, price);
+			var room =  new Room(name, theme, discription, capacity, price, numberofrounds, maxduration);
 			Connection.TryAddRoom(CurrentUser.SessionToken, room);
 		}
 
@@ -361,6 +381,8 @@ namespace App
 				Console.WriteLine("Theme: {0}", room.Theme);
 				Console.WriteLine("Description: {0}", room.Description);
 				Console.WriteLine("Capacity: {0}", room.Capacity);
+				Console.WriteLine("Number of rounds: {0}", room.NumberOfRounds);
+				Console.WriteLine("Maximum duration: {0}", room.MaxDuration);
 				Console.WriteLine("Price: {0}", room.Price);
 			}
 
