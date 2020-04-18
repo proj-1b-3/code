@@ -340,26 +340,31 @@ namespace App
 
 			var order = JsonSerializer.Deserialize<Order>(stream.ToArray());
 
-			var orderRow = DataBase.Tables["Orders"].NewRow();
+			var orderTable = this.DataBase.Tables["Orders"];
+			var reservationTable = this.DataBase.Tables["Reservations"];
+			var orderItemTable = this.DataBase.Tables["OrderItems"];
+
+			var orderRow = orderTable.NewRow();
+			orderRow["UserId"] = (Int64)userRow["UserId"];
 			orderRow["OrderDateTime"] = DateTime.Now;
-			DataBase.Tables["Orders"].Rows.Add(orderRow);
+			orderTable.Rows.Add(orderRow);
 
 			foreach (var reservation in order.Reservations) {
-				var reservationRow = DataBase.Tables["Reservations"].NewRow();
+				var reservationRow = reservationTable.NewRow();
 				reservationRow["OrderId"] = orderRow["OrderId"];
 				reservationRow["RoomId"] = reservation.RoomId;
 				reservationRow["GroupSize"] = reservation.GroupSize;
 				reservationRow["Date"] = reservation.DateTime.Date;
 				reservationRow["RoundNumber"] = reservation.RoundNumber;
-				DataBase.Tables["Reservations"].Rows.Add(reservationRow);
+				reservationTable.Rows.Add(reservationRow);
 			}
 
 			foreach (var item in order.Items) {
-				var orderItemRow = DataBase.Tables["OrderItems"].NewRow();
+				var orderItemRow = orderItemTable.NewRow();
 				orderItemRow["OrderId"] = orderRow["OrderId"];
 				orderItemRow["ProductId"] = item.ProductId;
 				orderItemRow["Amount"] = item.Amount;
-				DataBase.Tables["OrderItems"].Rows.Add(orderItemRow);
+				orderItemTable.Rows.Add(orderItemRow);
 			}
 
 			return true;
