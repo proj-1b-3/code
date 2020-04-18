@@ -10,7 +10,7 @@ namespace App
 		private Boolean Stop = false;
 
 		private User CurrentUser;
-		private Server Connection;
+		private Server Server;
 
 		private List<Room> Rooms;
 		private Order Basket;
@@ -47,7 +47,7 @@ namespace App
 			String input;
 			Command command;
 
-			Connection = server;
+			Server = server;
 
 			while (! Stop) {
 				Console.Write(">>> ");
@@ -61,7 +61,7 @@ namespace App
 				command();
 			}
 
-			Connection = null;
+			Server = null;
 
 			return;
 		}
@@ -142,7 +142,7 @@ namespace App
 				return;
 			}
 
-			if (! Connection.TryLogin(email, password, out CurrentUser)) {
+			if (! Server.TryLogin(email, password, out CurrentUser)) {
 				Console.WriteLine("Wrong email or password");
 				return;
 			}
@@ -160,7 +160,7 @@ namespace App
 				return;
 			}
 			
-			if (! Connection.TryLogout(CurrentUser.SessionToken)) {
+			if (! Server.TryLogout(CurrentUser.SessionToken)) {
 				Console.WriteLine("Something went wrong");
 				return;
 			}
@@ -186,7 +186,7 @@ namespace App
 				return;
 			}
 
-			if (! Connection.TryRegister(username, email, password)) {
+			if (! Server.TryRegister(username, email, password)) {
 				Console.WriteLine("The username is already in use");
 				return;
 			}
@@ -210,7 +210,7 @@ namespace App
 				return;
 			}
 
-			if (! Connection.TryDeregister(CurrentUser.SessionToken, password)) {
+			if (! Server.TryDeregister(CurrentUser.SessionToken, password)) {
 				Console.WriteLine("Something went wrong, please try again");
 				return;
 			}
@@ -228,21 +228,22 @@ namespace App
 			}
 			string roomName = ReadField("Room name: ");
 
-			/*
-			var room = this.Rooms.Find(room => room.Name = roomName);
+
+			var room = this.Rooms.Find(room => room.Name == roomName);
 			if (room == null) {
 				Console.WriteLine("Invalid room name");
 				return;
 			}
 
+
 			Int32 groupSize;
-			if (! Int32.TryParse(ReadField("Group size"), out groupSize)) {
+			if (! Int32.TryParse(ReadField("Group size: "), out groupSize)) {
 				Console.WriteLine("Invalid number");
 				return;
 			}
 
 			DateTime date;
-			if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD):\n"), out date)) {
+			if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date)) {
 				Console.WriteLine("Invalid date");
 				return;
 			}
@@ -254,48 +255,10 @@ namespace App
 
 			Int32 round;
 			if (! Int32.TryParse(ReadField("Round: "), out round)) {
-				Console.WriteLine("Invalid number");
 				return;
 			}
-
-			if (round < 1 || round > room.RoundNumber) {
-				Console.WriteLine("Invalid round number");
-				return;
-			}
-
 			Basket.Reservations.Add(new Reservation(room.ProductId, groupSize, date.Date, round));
 			return;
-			*/
-
-			foreach (var room in Rooms){
-				if (room.Name == roomName){
-					Int64 roomid = room.ProductId; 
-
-					Int32 groupSize;
-					if (! Int32.TryParse(ReadField("Group size: "), out groupSize)) {
-						Console.WriteLine("Invalid number");
-						return;
-					}
-
-					DateTime date;
-					if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date)) {
-						Console.WriteLine("Invalid date");
-						return;
-					}
-
-					if(date < DateTime.Now){
-						Console.WriteLine("Invalid date");
-						return;
-					}
-
-					Int32 round;
-					if (! Int32.TryParse(ReadField("Round: "), out round)) {
-						return;
-					}
-					Basket.Reservations.Add(new Reservation (roomid, groupSize, date.Date, round));
-					return;
-				}
-			}
 		}
 
 		public void ViewBasket()
@@ -319,7 +282,7 @@ namespace App
 			MemoryStream stream = new MemoryStream();
 			var pay_json = JsonSerializer.SerializeToUtf8Bytes<Order>(Basket);
 			stream.Write(pay_json, 0, pay_json.Length);
-			if(!Connection.TryPay(CurrentUser.SessionToken, stream)){
+			if(!Server.TryPay(CurrentUser.SessionToken, stream)){
 				Console.WriteLine("Unsuccessful payment, Please try again");
 			}
 			Console.WriteLine("Payment succeed");
@@ -333,44 +296,51 @@ namespace App
 
 			String name = ReadField("name: ");
 			if (name == "") {
+				Console.WriteLine("invalid name");
 				return;
 			}
 
 			String theme = ReadField("theme: ");
 			if (theme == "") {
+				Console.WriteLine("invalid theme");
 				return;
 			}
 			
 			String discription = ReadField("description: ");
 			if (discription == "") {
+				Console.WriteLine("invalid description");
 				return;
 			}
 
 			Int32 capacity;
 			if (! Int32.TryParse(ReadField("capacity: "), out capacity)) {
+				Console.WriteLine("invalid number");
 				return;
 			}
 
 			Int32 numberofrounds;
 			if (! Int32.TryParse(ReadField("Number of rounds: "), out numberofrounds)) {
+				Console.WriteLine("invalid number");
 				return;
 			}
 			
 			Int32 maxduration;
 			if (! Int32.TryParse(ReadField("Maximum Duration: "), out maxduration)) {
+				Console.WriteLine("invalid number");
 				return;
 			}
 			
 			
 			Single price;
 			if (! Single.TryParse(ReadField("price: "), out price)) {
+				Console.WriteLine("invalid price");
 				return;
 			}
 
 
 			
 			var room =  new Room(name, theme, discription, capacity, price, numberofrounds, maxduration);
-			Connection.TryAddRoom(CurrentUser.SessionToken, room);
+			Server.TryAddRoom(CurrentUser.SessionToken, room);
 		}
 
 		public void RemoveRoom()
@@ -390,13 +360,13 @@ namespace App
 				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
-			Connection.TryRemoveRoom(CurrentUser.SessionToken, roomid);
+			Server.TryRemoveRoom(CurrentUser.SessionToken, roomid);
 		}
 
 		private void FetchRooms()
 		{
 			MemoryStream stream = new MemoryStream();
-			if (!Connection.TryGetRoomData(CurrentUser.SessionToken, stream)) {
+			if (!Server.TryGetRoomData(CurrentUser.SessionToken, stream)) {
 				Console.WriteLine("Something went wrong while trying to get the product data from the server");
 				return;
 			}
