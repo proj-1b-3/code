@@ -226,26 +226,24 @@ namespace App
 				Console.WriteLine("You must be logged in to buy a ticket");
 				return;
 			}
-			String tickets;
-			Int32 ntickets = 0;
 			string roomName = ReadField("Room name: ");
 
 			foreach (var room in Rooms){
 				if (room.Name == roomName){
-					Int64 roomid = room.ProductId;
-					tickets = ReadField("Group size: ");
-					if (!Int32.TryParse(tickets, out ntickets)) {
+					Int64 roomid = room.ProductId; 
+
+					Int32 groupSize;
+					if (! Int32.TryParse(ReadField("Group size"), out groupSize)) {
 						Console.WriteLine("Invalid number");
 						return;
 					}
-					ntickets = Convert.ToInt32(tickets);
+
 					DateTime date;
-					if (! DateTime.TryParse(ReadField("Date of reservation in the format YYYY-MM-DD.\n"), out date)) {
+					if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD):\n"), out date)) {
 						Console.WriteLine("Invalid date");
 						return;
 					}
-			
-					
+
 					if(date < DateTime.Now){
 						Console.WriteLine("Invalid date");
 						return;
@@ -255,7 +253,7 @@ namespace App
 					if (! Int32.TryParse(ReadField("Round: "), out round)) {
 						return;
 					}
-					Basket.Reservations.Add(new Reservation (roomid, ntickets, date.Date, round));
+					Basket.Reservations.Add(new Reservation (roomid, groupSize, date.Date, round));
 					return;
 				}
 			}
