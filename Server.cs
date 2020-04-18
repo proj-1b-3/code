@@ -350,7 +350,7 @@ namespace App
 				reservationRow["RoomId"] = reservation.RoomId;
 				reservationRow["GroupSize"] = reservation.GroupSize;
 				reservationRow["Date"] = reservation.DateTime.Date;
-				reservationRow["RoundNumber"] = reservation.RoundNumber
+				reservationRow["RoundNumber"] = reservation.RoundNumber;
 				DataBase.Tables["Reservations"].Rows.Add(reservationRow);
 			}
 
@@ -380,7 +380,7 @@ namespace App
 				n += (Int32)row["GroupSize"];
 			}
 
-			return (Int32)row["GroupSize"]
+			return n;
 		}
 	}
 }
