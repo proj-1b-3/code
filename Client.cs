@@ -228,6 +228,39 @@ namespace App
 			}
 			string roomName = ReadField("Room name: ");
 
+			/*
+			var room = this.Rooms.Find(room => room.Name = roomName);
+			if (room == null) {
+				Console.WriteLine("Invalid room name");
+				return;
+			}
+
+			Int32 groupSize;
+			if (! Int32.TryParse(ReadField("Group size"), out groupSize)) {
+				Console.WriteLine("Invalid number");
+				return;
+			}
+
+			DateTime date;
+			if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD):\n"), out date)) {
+				Console.WriteLine("Invalid date");
+				return;
+			}
+
+			if(date < DateTime.Now){
+				Console.WriteLine("Invalid date");
+				return;
+			}
+
+			Int32 round;
+			if (! Int32.TryParse(ReadField("Round: "), out round)) {
+				return;
+			}
+
+			Basket.Reservations.Add(new Reservation(room.ProductId, groupSize, date.Date, round));
+			return;
+			*/
+
 			foreach (var room in Rooms){
 				if (room.Name == roomName){
 					Int64 roomid = room.ProductId; 
@@ -257,7 +290,6 @@ namespace App
 					return;
 				}
 			}
-			Console.WriteLine("Invalid room name");
 		}
 
 		public void ViewBasket()
