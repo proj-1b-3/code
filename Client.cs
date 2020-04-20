@@ -18,10 +18,34 @@ namespace App
 		public delegate void Command();
 
 		private Dictionary<String, Command> Commands;
+		private Dictionary<String, Command> NewCommands;
 
 
 		public Client()
 		{
+			this.NewCommands = new Dictionary<String, Command>
+			{
+				{ "login", this.Login },
+				{ "logout", this.Logout },
+				{ "register", this.Register },
+				{ "pay", this.Payment },
+				{ "exit", this.Exit },
+				{ "list rooms", this.ViewRooms },
+				{ "select room", this.MakeReservation },
+				{ "list consumables", null },
+				{ "select consumable", null },
+				{ "list basket", this.ViewBasket },
+				{ "remove basket", null },
+				{ "deregister", this.Deregister },
+				{ "list orders", null },
+				{ "make room", this.AddRoom },
+				{ "remove room", this.RemoveRoom },
+				{ "edit room", null },
+				{ "make consumable", null },
+				{ "remove consumable", null },
+				{ "edit consumable", null },
+			};
+
 			Commands = new Dictionary<String, Command>
 			{
 				{ "login", Login },
@@ -53,7 +77,7 @@ namespace App
 				Console.Write(">>> ");
 				input = Console.ReadLine().ToLower().Trim();
 
-				if (! Commands.TryGetValue(input, out command)) {
+				if (!this.NewCommands.TryGetValue(input, out command)) {
 					Console.WriteLine("Invalid command");
 					continue;
 				}
@@ -71,8 +95,6 @@ namespace App
 			Console.Write(field_name);
 			return Console.ReadLine().Trim();
 		}
-
-		/* Commands */
 
 		public void Help()
 		{
