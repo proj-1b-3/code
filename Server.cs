@@ -370,7 +370,7 @@ namespace App
 			return true;
 		}
 
-		public Int32 ChechReservation(Reservation reservation)
+		public Int32 CheckReservation(Reservation reservation)
 		{
 			var query = $"RoomId={reservation.RoomId}" +
 				$" and Date={reservation.DateTime.Date}" +
