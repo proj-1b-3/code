@@ -39,9 +39,9 @@ namespace App
 				{ "make room", this.AddRoom },
 				{ "remove room", this.RemoveRoom },
 				{ "edit room", null },
-				{ "make consumable", null },
-				{ "remove consumable", null },
-				{ "edit consumable", null },
+				{ "make consumable", MakeConsumable },
+				{ "remove consumable", RemoveConsumable },
+				{ "edit consumable", EditConsumables },
 			};
 
 			Basket = new Order();
@@ -377,78 +377,95 @@ namespace App
 			}
 			Server.TryRemoveRoom(CurrentUser.SessionToken, roomId);
 		}
+		public void EditRooms()
+		{
+			if (CurrentUser == null){
+				return;
+			}
 
-		// public void MakeConsumable()
-		// {
-		// 	if (CurrentUser == null){
-		// 		return;
-		// 	}
+			if (CurrentUser.Role != Role.Owner || CurrentUser.Role != Role.Manager){
+				Console.WriteLine("You do not have the permissions to perform this action");
+				return;
+			}
 
-		// 	if (CurrentUser.Role != Role.Owner) {
-		// 		Console.WriteLine("You do not have the permissions to perform this action");
-		// 		return;
-		// 	}
+			Int64 roomId;
+			if (!Int64.TryParse(ReadField("Room ID"), out roomId)){
+				Console.WriteLine("That is not a valid Product ID");
+				return;
+			}
+		}
 
-		// 	String name = ReadField("name: ");
-		// 	if (name == "") {
-		// 		Console.WriteLine("invalid name");
-		// 		return;
-		// 	}
+		public void MakeConsumable()
+		{
+			if (CurrentUser == null){
+				return;
+			}
 
-		// 	String discription = ReadField("description: ");
-		// 	if (discription == "") {
-		// 		Console.WriteLine("invalid description");
-		// 		return;
-		// 	}
+			if (CurrentUser.Role != Role.Owner) {
+				Console.WriteLine("You do not have the permissions to perform this action");
+				return;
+			}
 
-		// 	Single price;
-		// 	if (! Single.TryParse(ReadField("price: "), out price)) {
-		// 		Console.WriteLine("invalid price");
-		// 		return;
-		// 	}
+			String name = ReadField("name: ");
+			if (name == "") {
+				Console.WriteLine("invalid name");
+				return;
+			}
 
-		// 	Boolean availability = false;
-		// 	String avb = ReadField("Available ([Y]es or [N]o): ");
-		// 	if(avb == "Y"){
-		// 		availability = true;
-		// 	}
-		// }
+			String discription = ReadField("description: ");
+			if (discription == "") {
+				Console.WriteLine("invalid description");
+				return;
+			}
 
-		// public void RemoveConsumable()
-		// {
-		// 	if (CurrentUser == null) {
-		// 		return;
-		// 	}
+			Single price;
+			if (! Single.TryParse(ReadField("price: "), out price)) {
+				Console.WriteLine("invalid price");
+				return;
+			}
 
-		// 	if (CurrentUser.Role != Role.Owner) {
-		// 		Console.WriteLine("You do not have the permissions to perform this action");
-		// 		return;
-		// 	}
+			Boolean availability = false;
+			String avb = ReadField("Available ([Y]es or [N]o): ");
+			if(avb == "Y"){
+				availability = true;
+			}
+		}
 
-		// 	Int64 productId;
-		// 	if (!Int64.TryParse(ReadField("Product ID"), out productId)){
-		// 		Console.WriteLine("That is not a valid Product ID");
-		// 		return;
-		// 	}
-		// }
+		public void RemoveConsumable()
+		{
+			if (CurrentUser == null) {
+				return;
+			}
 
-		// public void EditConsumables()
-		// {
-		// 	if (CurrentUser == null){
-		// 		return;
-		// 	}
+			if (CurrentUser.Role != Role.Owner) {
+				Console.WriteLine("You do not have the permissions to perform this action");
+				return;
+			}
 
-		// 	if (CurrentUser.Role != Role.Owner || CurrentUser.Role != Role.Manager){
-		// 		Console.WriteLine("You do not have the permissions to perform this action");
-		// 		return;
-		// 	}
+			Int64 productId;
+			if (!Int64.TryParse(ReadField("Product ID"), out productId)){
+				Console.WriteLine("That is not a valid Product ID");
+				return;
+			}
+		}
 
-		// 	Int64 productId;
-		// 	if (!Int64.TryParse(ReadField("Product ID"), out productId)){
-		// 		Console.WriteLine("That is not a valid Product ID");
-		// 		return;
-		// 	}
-		// }
+		public void EditConsumables()
+		{
+			if (CurrentUser == null){
+				return;
+			}
+
+			if (CurrentUser.Role != Role.Owner || CurrentUser.Role != Role.Manager){
+				Console.WriteLine("You do not have the permissions to perform this action");
+				return;
+			}
+
+			Int64 productId;
+			if (!Int64.TryParse(ReadField("Product ID"), out productId)){
+				Console.WriteLine("That is not a valid Product ID");
+				return;
+			}
+		}
 
 		private void FetchRooms()
 		{
