@@ -58,7 +58,7 @@ namespace App
 				Console.Write(">>> ");
 				input = Console.ReadLine().ToLower().Trim();
 
-				if (!this.NewCommands.TryGetValue(input, out command)) {
+				if (!this.Commands.TryGetValue(input, out command)) {
 					Console.WriteLine("Invalid command");
 					continue;
 				}
