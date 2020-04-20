@@ -372,9 +372,9 @@ namespace App
 
 		public Int32 CheckReservation(Reservation reservation)
 		{
-			var query = $"RoomId={reservation.RoomId}" +
-				$" and Date='{reservation.DateTime.Date}'" +
-				$" and RoundNumber={reservation.RoundNumber}";
+			var query = $"RoomId = {reservation.RoomId}" +
+				$" AND Date = #{reservation.DateTime.Date}#" +
+				$" AND RoundNumber = {reservation.RoundNumber}";
 			var rows = this.DataBase.Tables["Reservations"].Select(query);
 			if (rows.Length == 0) {
 				return -1;
