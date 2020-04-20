@@ -429,6 +429,24 @@ namespace App
 		// 	}
 		// }
 
+		// public void EditConsumables()
+		// {
+		// 	if (CurrentUser == null){
+		// 		return;
+		// 	}
+
+		// 	if (CurrentUser.Role != Role.Owner || CurrentUser.Role != Role.Manager){
+		// 		Console.WriteLine("You do not have the permissions to perform this action");
+		// 		return;
+		// 	}
+
+		// 	Int64 productId;
+		// 	if (!Int64.TryParse(ReadField("Product ID"), out productId)){
+		// 		Console.WriteLine("That is not a valid Product ID");
+		// 		return;
+		// 	}
+		// }
+
 		private void FetchRooms()
 		{
 			MemoryStream stream = new MemoryStream();
