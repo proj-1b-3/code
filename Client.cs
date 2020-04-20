@@ -377,6 +377,7 @@ namespace App
 			}
 			Server.TryRemoveRoom(CurrentUser.SessionToken, roomId);
 		}
+		/*
 		public void EditRooms()
 		{
 			if (CurrentUser == null){
@@ -394,6 +395,7 @@ namespace App
 				return;
 			}
 		}
+		*/
 
 		public void MakeConsumable()
 		{
