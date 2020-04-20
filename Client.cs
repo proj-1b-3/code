@@ -228,13 +228,11 @@ namespace App
 			}
 			string roomName = ReadField("Room name: ");
 
-
 			var room = this.Rooms.Find(room => room.Name == roomName);
 			if (room == null) {
 				Console.WriteLine("Invalid room name");
 				return;
 			}
-
 
 			Int32 groupSize;
 			if (! Int32.TryParse(ReadField("Group size: "), out groupSize)) {
