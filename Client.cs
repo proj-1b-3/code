@@ -255,7 +255,17 @@ namespace App
 			if (! Int32.TryParse(ReadField("Round: "), out round)) {
 				return;
 			}
-			Basket.Reservations.Add(new Reservation(room.ProductId, groupSize, date.Date, round));
+
+			Int32 freePlaces = room.Capacity - Server.CheckReservation(new Reservation (room.ProductId, groupSize, date.Date, round));
+			if (groupSize > freePlaces){
+				Console.WriteLine("there's no enough places");
+				return;
+			}
+			Console.WriteLine("Places left: " + freePlaces);
+			string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
+			if (confirm == "Y"){
+				Basket.Reservations.Add(new Reservation(room.ProductId, groupSize, date.Date, round));
+			}
 			return;
 		}
 
