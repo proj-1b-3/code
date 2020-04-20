@@ -302,6 +302,11 @@ namespace App
 				return;
 			}
 
+			if (CurrentUser.Role != Role.Owner) {
+				Console.WriteLine("You do not have the permissions to perform this action");
+				return;
+			}
+
 			String name = ReadField("name: ");
 			if (name == "") {
 				Console.WriteLine("invalid name");
@@ -357,19 +362,72 @@ namespace App
 				return;
 			}
 
-			if (CurrentUser.Role != Role.Manager || CurrentUser.Role != Role.Owner) {
+			if (CurrentUser.Role != Role.Owner) {
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
 				
-			Console.WriteLine("Room ID");
-			Int64 roomid;
-			if (!Int64.TryParse(ReadField(""), out roomid)){
+			Int64 roomId;
+			if (!Int64.TryParse(ReadField("Room ID"), out roomId)){
 				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
-			Server.TryRemoveRoom(CurrentUser.SessionToken, roomid);
+			Server.TryRemoveRoom(CurrentUser.SessionToken, roomId);
 		}
+
+		// public void MakeConsumable()
+		// {
+		// 	if (CurrentUser == null){
+		// 		return;
+		// 	}
+
+		// 	if (CurrentUser.Role != Role.Owner) {
+		// 		Console.WriteLine("You do not have the permissions to perform this action");
+		// 		return;
+		// 	}
+
+		// 	String name = ReadField("name: ");
+		// 	if (name == "") {
+		// 		Console.WriteLine("invalid name");
+		// 		return;
+		// 	}
+
+		// 	String discription = ReadField("description: ");
+		// 	if (discription == "") {
+		// 		Console.WriteLine("invalid description");
+		// 		return;
+		// 	}
+
+		// 	Single price;
+		// 	if (! Single.TryParse(ReadField("price: "), out price)) {
+		// 		Console.WriteLine("invalid price");
+		// 		return;
+		// 	}
+
+		// 	Boolean availability = false;
+		// 	String avb = ReadField("Available ([Y]es or [N]o): ");
+		// 	if(avb == "Y"){
+		// 		availability = true;
+		// 	}
+		// }
+
+		// public void RemoveConsumable()
+		// {
+		// 	if (CurrentUser == null) {
+		// 		return;
+		// 	}
+
+		// 	if (CurrentUser.Role != Role.Owner) {
+		// 		Console.WriteLine("You do not have the permissions to perform this action");
+		// 		return;
+		// 	}
+
+		// 	Int64 productId;
+		// 	if (!Int64.TryParse(ReadField("Product ID"), out productId)){
+		// 		Console.WriteLine("That is not a valid Product ID");
+		// 		return;
+		// 	}
+		// }
 
 		private void FetchRooms()
 		{
