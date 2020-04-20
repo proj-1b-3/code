@@ -67,6 +67,13 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="ConsumableAttribute">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProductId" type="xs:long" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
     <xs:unique name="Constraint1">
@@ -101,6 +108,14 @@
       <xs:selector xpath=".//Reservations" />
       <xs:field xpath="ReservationId" />
     </xs:unique>
+    <xs:unique name="ConsumableAttribute_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//ConsumableAttribute" />
+      <xs:field xpath="ProductId" />
+    </xs:unique>
+    <xs:keyref name="ProductConsumableAttribute" refer="Products_Constraint2">
+      <xs:selector xpath=".//ConsumableAttribute" />
+      <xs:field xpath="ProductId" />
+    </xs:keyref>
     <xs:keyref name="ProductRoomAttribute" refer="Products_Constraint2">
       <xs:selector xpath=".//RoomAttributes" />
       <xs:field xpath="ProductId" />

@@ -60,8 +60,6 @@ namespace App
 			col.AutoIncrement = true;
 			productTable.Columns.Add(col);
 			primaryKeys[0] = col;
-			// col = new DataColumn("ProductType", typeof(ProductType));
-			// productTable.Columns.Add(col);
 			col = new DataColumn("ProductName", typeof(String));
 			col.Unique = true;
 			productTable.Columns.Add(col);
@@ -87,6 +85,13 @@ namespace App
 			col = new DataColumn("MaxDuration", typeof(Int32));
 			roomAttributeTable.Columns.Add(col);
 			roomAttributeTable.PrimaryKey = primaryKeys;
+
+			var consumableAttributeTable = new DataTable("ConsumableAttribute");
+			primaryKeys = new DataColumn[1];
+			col = new DataColumn("ProductId", typeof(Int64));
+			primaryKeys[0] = col;
+			consumableAttributeTable.Columns.Add(col);
+			consumableAttributeTable.PrimaryKey = primaryKeys;
 
 			var orderTable = new DataTable("Orders");
 			primaryKeys = new DataColumn[1];
@@ -133,10 +138,14 @@ namespace App
 			reservationTable.PrimaryKey = primaryKeys;
 
 			DataBase.Tables.AddRange(new DataTable[]{
-				userTable, productTable, roomAttributeTable, orderTable, orderItemTable, reservationTable});
+				userTable, productTable, roomAttributeTable, orderTable, orderItemTable,
+				reservationTable, consumableAttributeTable});
 
 			var rel = new DataRelation("ProductRoomAttribute", productTable.Columns["ProductId"],
 				roomAttributeTable.Columns["ProductId"]);
+			DataBase.Relations.Add(rel);
+			rel = new DataRelation("ProductConsumableAttribute", productTable.Columns["ProductId"],
+				consumableAttributeTable.Columns["ProductId"]);
 			DataBase.Relations.Add(rel);
 
 			ActiveUsers = new Dictionary<Guid, Int64>();
@@ -160,7 +169,7 @@ namespace App
 		private DataRow GetUserRow(String email)
 		{
 			var query = $"Email = '{email}'";
-			var userRows = DataBase.Tables["Users"].Select(query);
+			var userRows = this.DataBase.Tables["Users"].Select(query);
 			if (userRows.Length == 0) {
 				return null;
 			}
@@ -172,22 +181,19 @@ namespace App
 		{
 			Int64 userId;
 
-			if (!ActiveUsers.TryGetValue(sessionToken, out userId)) {
+			if (!this.ActiveUsers.TryGetValue(sessionToken, out userId)) {
 				return null;
 			}
 
-			return DataBase.Tables["Users"].Rows.Find(userId);
+			return this.DataBase.Tables["Users"].Rows.Find(userId);
 		}
-
-		// COMMANDS
-		// user commands
 
 		public Boolean TryLogin(String userName, String password, out User user)
 		{
 			DataRow userRow;
 			
 			user = null;
-			userRow = GetUserRow(userName);
+			userRow = this.GetUserRow(userName);
 			if (userRow == null || (String)userRow["Password"] != password) {
 				return false;
 			}
@@ -201,11 +207,11 @@ namespace App
 
 		public Boolean TryLogout(Guid sessionToken)
 		{
-			if (!ActiveUsers.ContainsKey(sessionToken)) {
+			if (!this.ActiveUsers.ContainsKey(sessionToken)) {
 				return false;
 			}
 
-			ActiveUsers.Remove(sessionToken);
+			this.ActiveUsers.Remove(sessionToken);
 
 			return true;
 		}
@@ -217,17 +223,17 @@ namespace App
 			}
 
 			var query = $"Email = '{email}'";
-			var userRows = DataBase.Tables["Users"].Select(query);
+			var userRows = this.DataBase.Tables["Users"].Select(query);
 			if (userRows.Length != 0) {
 				return false; 
 			}
 
-			var userRow = DataBase.Tables["Users"].NewRow();
+			var userRow = this.DataBase.Tables["Users"].NewRow();
 			userRow["UserName"] = userName;
 			userRow["Email"] = email;
 			userRow["Password"] = password;
 			userRow["Role"] = Role.Consumer;
-			DataBase.Tables["Users"].Rows.Add(userRow);
+			this.DataBase.Tables["Users"].Rows.Add(userRow);
 
 			return true;
 		}
@@ -238,18 +244,16 @@ namespace App
 				return false;
 			}
 			
-			var userRow = GetUserRow(sessionToken);
+			var userRow = this.GetUserRow(sessionToken);
 			if (userRow == null || (String)userRow["Password"] != password) {
 				return false;
 			}
 
-			ActiveUsers.Remove(sessionToken);
-			DataBase.Tables["Users"].Rows.Remove(userRow);
+			this.ActiveUsers.Remove(sessionToken);
+			this.DataBase.Tables["Users"].Rows.Remove(userRow);
 
 			return true;
 		}
-
-		// room commands
 
 		public Boolean TryAddRoom(Guid sessionToken, Room room)
 		{
@@ -258,8 +262,8 @@ namespace App
 				return false;
 			}
 
+			// TODO: CHECK IF THE ROOM IS ALREADY IN THE TABLE
 			var productRow = DataBase.Tables["Products"].NewRow();
-			// productRow["ProductType"] = ProductType.EscapeRoom;
 			productRow["ProductName"] = room.Name;
 			productRow["Description"] = room.Description;
 			productRow["Price"] = room.Price;
@@ -278,42 +282,43 @@ namespace App
 
 		public Boolean TryRemoveRoom(Guid sessionToken, Int64 productId)
 		{
-			var userRow = GetUserRow(sessionToken);
+			var userRow = this.GetUserRow(sessionToken);
 			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
 				return false;
 			}
 
 			var query = $"ProductId = '{productId}'";
-			var roomRow = DataBase.Tables["Products"].Select(query);
+			var roomRow = this.DataBase.Tables["Products"].Select(query);
 			if (roomRow.Length == 0) {
 				return false;
 			}
 
 			DataBase.Tables["Products"].Rows.Remove(roomRow[0]);
+			DataBase.Tables["RoomAttributes"].Rows.Remove(roomRow[0]);
 			
 			return true;
 		}
 
 		public Boolean TryFetchRooms(Guid sessionToken, MemoryStream stream)
 		{
-			var userRow = GetUserRow(sessionToken);
+			var userRow = this.GetUserRow(sessionToken);
 			if (userRow == null) {
 				return false;
 			}
 
-			var rel = DataBase.Relations["ProductRoomAttribute"];
+			var rel = this.DataBase.Relations["ProductRoomAttribute"];
 			var productTable = rel.ParentTable;
 			var roomAttributeTable = rel.ChildTable;
 			var rooms = new List<Room>();
 
-			for (int i = 0; i < roomAttributeTable.Rows.Count; i += 1) {
-				var roomAttributeRow = roomAttributeTable.Rows[i];
-				var productRow = roomAttributeRow.GetParentRow(rel);
+			foreach (DataRow roomAttributeRow in roomAttributeTable.Rows) {
 				var room = new Room();
+				var productRow = roomAttributeRow.GetParentRow(rel);
 				room.ProductId = (Int64)productRow["ProductId"];
 				room.Name = (String)productRow["ProductName"];
 				room.Description = (String)productRow["Description"];
 				room.Price = (Single)productRow["Price"];
+				room.Available = (Boolean)productRow["Available"];
 				room.Theme = (String)roomAttributeRow["Theme"];
 				room.Capacity = (Int32)roomAttributeRow["Capacity"];
 				room.NumberOfRounds = (Int32)roomAttributeRow["NumberOfRounds"];
@@ -321,8 +326,8 @@ namespace App
 				rooms.Add(room);
 			}
 
-			var raw_json = JsonSerializer.SerializeToUtf8Bytes<List<Room>>(rooms);
-			stream.Write(raw_json, 0, raw_json.Length);
+			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Room>>(rooms);
+			stream.Write(rawJson, 0, rawJson.Length);
 			stream.Position = 0;
 			if (stream.Length == 0) {
 				return false;
@@ -331,9 +336,100 @@ namespace App
 			return true;
 		}
 		
-		public Boolean TryPay(Guid sessionToken, MemoryStream stream) 
+		public Int32 CheckReservation(Reservation reservation)
+		{
+			var query = $"RoomId = {reservation.RoomId}" +
+				$" AND Date = #{reservation.DateTime.Date}#" +
+				$" AND RoundNumber = {reservation.RoundNumber}";
+			var rows = this.DataBase.Tables["Reservations"].Select(query);
+			if (rows.Length == 0) {
+				return -1;
+			}
+
+			var n = 0;
+			foreach (var row in rows) {
+				n += (Int32)row["GroupSize"];
+			}
+
+			return n;
+		}
+
+		public Boolean TryAddConsumable(Guid sessionToken, Product consumable)
+		{
+			var userRow = this.GetUserRow(sessionToken);
+			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
+				return false;
+			}
+
+			// TODO: CHECK IF THE ROW IS ALREADY IN THE TABLE
+			var productRow = this.DataBase.Tables["Products"].NewRow();
+			productRow["ProductName"] = consumable.Name;
+			productRow["Description"] = consumable.Description;
+			productRow["Price"] = consumable.Price;
+			productRow["Available"] = consumable.Available;
+			this.DataBase.Tables["Product"].Rows.Add(productRow);
+			var consumableAttributeRow = this.DataBase.Tables["Products"].NewRow();
+			consumableAttributeRow["ProductId"] = productRow["ProductId"];
+			this.DataBase.Tables["ConsumableAttributes"].Rows.Add(consumableAttributeRow);
+
+			return true;
+		}
+
+		public Boolean TryRemoveConsumable(Guid sessionToken, Product consumable)
 		{
 			var userRow = GetUserRow(sessionToken);
+			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
+				return false;
+			}
+
+			var query = $"ProductId = {consumable.ProductId}";
+			var rows = this.DataBase.Tables["Products"].Select(query);
+			if (rows.Length == 0) {
+				return false;
+			}
+
+			this.DataBase.Tables["Products"].Rows.Remove(rows[0]);
+			this.DataBase.Tables["ConsumableAttributes"].Rows.Remove(rows[0]);
+
+			return true;
+		}
+
+		public Boolean TryFetchConsumables(Guid sessionToken, MemoryStream stream)
+		{
+			var userRow = this.GetUserRow(sessionToken);
+			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
+				return false;
+			}
+
+			var rel = this.DataBase.Relations["ProductConsumableAttribute"];
+			var productTable = rel.ParentTable;
+			var consumableAttributeTable = rel.ChildTable;
+			var consumables = new List<Product>();
+
+			foreach (DataRow consumableRow in consumableAttributeTable.Rows) {
+				var consumable = new Product();
+				var productRow = consumableRow.GetParentRow(rel);
+				consumable.ProductId = (Int64)productRow["ProductId"];
+				consumable.Name = (String)productRow["ProductName"];
+				consumable.Description = (String)productRow["Description"];
+				consumable.Price = (Single)productRow["Price"];
+				consumable.Available = (Boolean)productRow["Available"];
+				consumables.Add(consumable);
+			}
+
+			var raw_json = JsonSerializer.SerializeToUtf8Bytes<List<Product>>(consumables);
+			stream.Write(raw_json, 0, raw_json.Length);
+			stream.Position = 0;
+			if (stream.Length == 0) {
+				return false;
+			}
+
+			return true;
+		}
+
+		public Boolean TryPay(Guid sessionToken, MemoryStream stream) 
+		{
+			var userRow = this.GetUserRow(sessionToken);
 			if (userRow == null) {
 				return false;
 			}
@@ -368,24 +464,6 @@ namespace App
 			}
 
 			return true;
-		}
-
-		public Int32 CheckReservation(Reservation reservation)
-		{
-			var query = $"RoomId = {reservation.RoomId}" +
-				$" AND Date = #{reservation.DateTime.Date}#" +
-				$" AND RoundNumber = {reservation.RoundNumber}";
-			var rows = this.DataBase.Tables["Reservations"].Select(query);
-			if (rows.Length == 0) {
-				return -1;
-			}
-
-			var n = 0;
-			foreach (var row in rows) {
-				n += (Int32)row["GroupSize"];
-			}
-
-			return n;
 		}
 	}
 }
