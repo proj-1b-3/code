@@ -18,12 +18,10 @@ namespace App
 		public delegate void Command();
 
 		private Dictionary<String, Command> Commands;
-		private Dictionary<String, Command> NewCommands;
-
 
 		public Client()
 		{
-			this.NewCommands = new Dictionary<String, Command>
+			this.Commands = new Dictionary<String, Command>
 			{
 				{ "login", this.Login },
 				{ "logout", this.Logout },
@@ -46,23 +44,6 @@ namespace App
 				{ "edit consumable", null },
 			};
 
-			Commands = new Dictionary<String, Command>
-			{
-				{ "login", Login },
-				{ "register", Register },
-				{ "deregister", Deregister },
-				{ "logout", Logout },
-				{ "make reservation", MakeReservation },
-				{ "view basket", ViewBasket },
-			    { "pay", Payment },
-				{ "view rooms", ViewRooms },
-				{ "add room", AddRoom },
-				{ "remove room", RemoveRoom },
-				{ "sync", FetchRooms },
-				{ "help", Help },
-				{ "exit", Exit }
-			};
-			
 			Basket = new Order();
 		}
 
