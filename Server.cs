@@ -294,7 +294,7 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryGetRoomData(Guid sessionToken, MemoryStream stream)
+		public Boolean TryFetchRooms(Guid sessionToken, MemoryStream stream)
 		{
 			var userRow = GetUserRow(sessionToken);
 			if (userRow == null) {

@@ -453,7 +453,7 @@ namespace App
 		private void FetchRooms()
 		{
 			MemoryStream stream = new MemoryStream();
-			if (!Server.TryGetRoomData(CurrentUser.SessionToken, stream)) {
+			if (!Server.TryFetchRooms(CurrentUser.SessionToken, stream)) {
 				Console.WriteLine("Something went wrong while trying to get the product data from the server");
 				return;
 			}
