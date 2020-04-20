@@ -277,7 +277,17 @@ namespace App
 			if (! Int32.TryParse(ReadField("Round: "), out round)) {
 				return;
 			}
-			Basket.Reservations.Add(new Reservation(room.ProductId, groupSize, date.Date, round));
+
+			Int32 freePlaces = room.Capacity - Server.CheckReservation(new Reservation (room.ProductId, groupSize, date.Date, round));
+			if (groupSize > freePlaces){
+				Console.WriteLine("there's no enough places");
+				return;
+			}
+			Console.WriteLine("Places left: " + freePlaces);
+			string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
+			if (confirm == "Y"){
+				Basket.Reservations.Add(new Reservation(room.ProductId, groupSize, date.Date, round));
+			}
 			return;
 		}
 
@@ -311,6 +321,11 @@ namespace App
 		public void AddRoom()
 		{
 			if (CurrentUser == null){
+				return;
+			}
+
+			if (CurrentUser.Role != Role.Owner) {
+				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
 
@@ -369,19 +384,90 @@ namespace App
 				return;
 			}
 
-			if (CurrentUser.Role != Role.Manager || CurrentUser.Role != Role.Owner) {
+			if (CurrentUser.Role != Role.Owner) {
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
 				
-			Console.WriteLine("Room ID");
-			Int64 roomid;
-			if (!Int64.TryParse(ReadField(""), out roomid)){
+			Int64 roomId;
+			if (!Int64.TryParse(ReadField("Room ID"), out roomId)){
 				Console.WriteLine("That is not a valid Room ID");
 				return;
 			}
-			Server.TryRemoveRoom(CurrentUser.SessionToken, roomid);
+			Server.TryRemoveRoom(CurrentUser.SessionToken, roomId);
 		}
+
+		// public void MakeConsumable()
+		// {
+		// 	if (CurrentUser == null){
+		// 		return;
+		// 	}
+
+		// 	if (CurrentUser.Role != Role.Owner) {
+		// 		Console.WriteLine("You do not have the permissions to perform this action");
+		// 		return;
+		// 	}
+
+		// 	String name = ReadField("name: ");
+		// 	if (name == "") {
+		// 		Console.WriteLine("invalid name");
+		// 		return;
+		// 	}
+
+		// 	String discription = ReadField("description: ");
+		// 	if (discription == "") {
+		// 		Console.WriteLine("invalid description");
+		// 		return;
+		// 	}
+
+		// 	Single price;
+		// 	if (! Single.TryParse(ReadField("price: "), out price)) {
+		// 		Console.WriteLine("invalid price");
+		// 		return;
+		// 	}
+
+		// 	Boolean availability = false;
+		// 	String avb = ReadField("Available ([Y]es or [N]o): ");
+		// 	if(avb == "Y"){
+		// 		availability = true;
+		// 	}
+		// }
+
+		// public void RemoveConsumable()
+		// {
+		// 	if (CurrentUser == null) {
+		// 		return;
+		// 	}
+
+		// 	if (CurrentUser.Role != Role.Owner) {
+		// 		Console.WriteLine("You do not have the permissions to perform this action");
+		// 		return;
+		// 	}
+
+		// 	Int64 productId;
+		// 	if (!Int64.TryParse(ReadField("Product ID"), out productId)){
+		// 		Console.WriteLine("That is not a valid Product ID");
+		// 		return;
+		// 	}
+		// }
+
+		// public void EditConsumables()
+		// {
+		// 	if (CurrentUser == null){
+		// 		return;
+		// 	}
+
+		// 	if (CurrentUser.Role != Role.Owner || CurrentUser.Role != Role.Manager){
+		// 		Console.WriteLine("You do not have the permissions to perform this action");
+		// 		return;
+		// 	}
+
+		// 	Int64 productId;
+		// 	if (!Int64.TryParse(ReadField("Product ID"), out productId)){
+		// 		Console.WriteLine("That is not a valid Product ID");
+		// 		return;
+		// 	}
+		// }
 
 		private void FetchRooms()
 		{
