@@ -507,16 +507,9 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryFetchUserOrders(Guid sessionToken, MemoryStream stream)
+		private List<Order> OrderRowArrayToOrderList(DataRow[] orderRows)
 		{
-			var userRow = GetUserRow(sessionToken);
-			if (userRow == null) {
-				return false;
-			}
-
 			var orders = new List<Order>();
-			var query = $"UserId = " + (Int64)userRow["UserId"];
-			var orderRows = this.DataBase.Tables["Orders"].Select(query);
 			foreach (var orderRow in orderRows) {
 				var order = new Order();
 				var reservationRows = this.DataBase.Tables["Reservations"].Select(
@@ -532,7 +525,21 @@ namespace App
 					var orderItem = new OrderItem(orderItemRow);
 					order.Items.Add(orderItem);
 				}
+				orders.Add(order);
 			}
+			return orders;
+		}
+
+		public Boolean TryFetchUserOrders(Guid sessionToken, MemoryStream stream)
+		{
+			var userRow = GetUserRow(sessionToken);
+			if (userRow == null) {
+				return false;
+			}
+
+			var query = $"UserId = " + (Int64)userRow["UserId"];
+			var orderRows = this.DataBase.Tables["Orders"].Select(query);
+			var orders = this.OrderRowArrayToOrderList(orderRows);
 
 			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Order>>(orders);
 			stream.Write(rawJson, 0, rawJson.Length);
@@ -544,10 +551,22 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryFetchOrdersByDate(Guid sessionToken, DateTime date)
+		public Boolean TryFetchOrdersBetween(Guid sessionToken, MemoryStream stream,
+			DateTime dateTimeStart, DateTime dateTimeEnd)
 		{
 			var userRow = GetUserRow(sessionToken);
 			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
+				return false;
+			}
+
+			var orderRows = this.DataBase.Tables["Orders"].Select(
+				$"OrderDateTime >= #{dateTimeStart}# AND OrderDateTime < #{dateTimeEnd}#");
+			var orders = this.OrderRowArrayToOrderList(orderRows);
+
+			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Order>>(orders);
+			stream.Write(rawJson, 0, rawJson.Length);
+			stream.Position = 0;
+			if (stream.Length == 0) {
 				return false;
 			}
 
