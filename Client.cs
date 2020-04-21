@@ -13,6 +13,7 @@ namespace App
 		private Server Server;
 
 		private List<Room> Rooms;
+		private List<Product> Consumables;
 		private Order Basket;
 
 		public delegate void Command();
@@ -407,7 +408,7 @@ namespace App
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
-
+			Int64 productId = -1;
 			String name = ReadField("name: ");
 			if (name == "") {
 				Console.WriteLine("invalid name");
@@ -431,6 +432,8 @@ namespace App
 			if(avb == "Y"){
 				availability = true;
 			}
+
+			Server.TryAddConsumable(CurrentUser.SessionToken, new Product(productId, name, discription, price, availability));
 		}
 
 		public void RemoveConsumable()
@@ -447,6 +450,12 @@ namespace App
 			Int64 productId;
 			if (!Int64.TryParse(ReadField("Product ID"), out productId)){
 				Console.WriteLine("That is not a valid Product ID");
+				return;
+			}
+
+			var Consumable = this.Consumables.Find(Consumable => Consumable.ProductId == productId);
+			if (Consumable == null) {
+				Console.WriteLine("Invalid product ID");
 				return;
 			}
 		}
@@ -469,11 +478,23 @@ namespace App
 			}
 		}
 
+		public void FetchConsumables()
+		{
+			MemoryStream stream = new MemoryStream();
+			if (!Server.TryFetchConsumables(CurrentUser.SessionToken, stream)) {
+				Console.WriteLine("Something went wrong while trying to get the product data from the server");
+				return;
+			}
+			byte[] raw_json = stream.ToArray();
+			this.Consumables = JsonSerializer.Deserialize<List<Product>>(raw_json);
+			stream.Close();
+		}	
+
 		private void FetchRooms()
 		{
 			MemoryStream stream = new MemoryStream();
 			if (!Server.TryFetchRooms(CurrentUser.SessionToken, stream)) {
-				Console.WriteLine("Something went wrong while trying to get the product data from the server");
+				Console.WriteLine("Something went wrong while trying to get the rooms data from the server");
 				return;
 			}
 			byte[] raw_json = stream.ToArray();
