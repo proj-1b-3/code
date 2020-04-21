@@ -450,7 +450,6 @@ namespace App
 			}
 
 			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Consumable>>(consumables);
-			Console.WriteLine(rawJson);
 			stream.Write(rawJson, 0, rawJson.Length);
 			stream.Position = 0;
 			if (stream.Length == 0) {
