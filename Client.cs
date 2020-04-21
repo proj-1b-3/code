@@ -154,6 +154,7 @@ namespace App
 
 			Console.WriteLine("Login successful");
 			FetchRooms();
+			FetchConsumables();
 
 			return;
 		}
@@ -402,7 +403,7 @@ namespace App
 				return;
 			}
 
-			if (CurrentUser.Role != Role.Owner) {
+			if (CurrentUser.Role != Role.CafeManager) {
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
@@ -439,20 +440,17 @@ namespace App
 				return;
 			}
 
-			if (CurrentUser.Role != Role.Owner) {
+			if (CurrentUser.Role != Role.CafeManager) {
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
 
-			Int64 productId;
-			if (!Int64.TryParse(ReadField("Product ID"), out productId)){
-				Console.WriteLine("That is not a valid Product ID");
-				return;
-			}
+			string consumableName = ReadField("Product name: ");
 
-			var Consumable = this.Consumables.Find(Consumable => Consumable.ProductId == productId);
+
+			var Consumable = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
 			if (Consumable == null) {
-				Console.WriteLine("Invalid product ID");
+				Console.WriteLine("Invalid name");
 				return;
 			}
 
@@ -539,6 +537,7 @@ namespace App
 			if (CurrentUser == null) {
 				return;
 			}
+			FetchRooms();
 			
 			foreach (var room in Rooms) {
 				Console.WriteLine("\nName: {0}", room.Name);
