@@ -307,7 +307,7 @@ namespace App
 			var roomAttributeRow = rel.ChildTable.Rows.Find(room.ProductId);
 			var productRow = roomAttributeRow.GetParentRow(rel);
 			productRow["ProductName"] = room.Name;
-			productRow["Descriptopn"] = room.Description;
+			productRow["Description"] = room.Description;
 			productRow["Price"] = room.Price;
 			productRow["Available"] = room.Available;
 			roomAttributeRow["Theme"] = room.Theme;
