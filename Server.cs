@@ -396,13 +396,13 @@ namespace App
 				return false;
 			}
 
-			var row = this.DataBase.Tables["Products"].Rows.Find(consumable.ProductId);
-			if (row == null) {
+			var productRow = this.DataBase.Tables["Products"].Rows.Find(
+				consumable.ProductId);
+			if (productRow == null) {
 				return false;
 			}
 
-			this.DataBase.Tables["Products"].Rows.Remove(row);
-			this.DataBase.Tables["ConsumableAttributes"].Rows.Remove(row);
+			this.DataBase.Tables["Products"].Rows.Remove(productRow);
 
 			return true;
 		}
