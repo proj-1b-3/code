@@ -22,7 +22,7 @@ namespace App
 			MaxDuration = maxDuration;
 		}
 
-		public Room Copy()
+		public Room Clone()
 		{
 			var obj = new Room();
 			obj.ProductId = this.ProductId;

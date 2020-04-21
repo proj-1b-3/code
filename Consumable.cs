@@ -11,7 +11,7 @@ namespace App
 		{
 		}
 
-		public Consumable Copy()
+		public Consumable Clone()
 		{
 			var obj = new Consumable();
 			obj.ProductId = this.ProductId;

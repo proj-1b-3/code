@@ -291,17 +291,16 @@ namespace App
 			}
 		}
 
-		// public void EditBasket()
-		// {
-		// 	string consumableName = ReadField("Product name: ");
+		public void EditBasket()
+		{
+			string consumableName = ReadField("Product name: ");
 
-
-		// 	var Consumable = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
-		// 	if (Consumable == null) {
-		// 		Console.WriteLine("Invalid name");
-		// 		return;
-		// 	}
-		// }
+			var Consumable = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
+			if (Consumable == null) {
+				Console.WriteLine("Invalid name");
+				return;
+			}
+		}
 
 		public void Payment()
 		{
@@ -475,24 +474,47 @@ namespace App
 				return;
 			}
 
-			if (CurrentUser.Role != Role.Owner || CurrentUser.Role != Role.Manager){
+			if (CurrentUser.Role != Role.CafeManager){
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
 
-			Int64 productId;
-			if (!Int64.TryParse(ReadField("Product ID"), out productId)){
-				Console.WriteLine("That is not a valid Product ID");
+			
+			string chosenConsumable = ReadField("Product name: ");
+			var consumable = this.Consumables.Find(Consumable => Consumable.Name == chosenConsumable);
+			if (consumable == null) {
+				Console.WriteLine("Invalid name");
 				return;
 			}
-
-			var Consumable = this.Consumables.Find(Consumable => Consumable.ProductId == productId);
-			if (Consumable == null) {
-				Console.WriteLine("Invalid product ID");
-				return;
+			Consumable copied = consumable.Clone();
+			String name = ReadField("Name: ");
+			String description = ReadField("Description: ");
+			String price = ReadField("Price: ");
+			Single _price;
+			String availabile = ReadField("Available ([Y]es or [N]o): ");
+			if(name != ""){
+				copied.Name = name;
 			}
-
-			Server.TryEditConsumable(CurrentUser.SessionToken, Consumable);
+			if(description != ""){
+				copied.Description = description;
+			}
+			if(price != ""){
+				if(Single.TryParse(price, out _price)){
+					copied.Price = _price;
+				}
+				else{
+					Console.WriteLine("Invalid number");
+				}
+			if(availabile != ""){
+				if(availabile == "Y"){
+					copied.Available = true;
+				}
+				else{
+					copied.Available = false;
+				}
+			}
+			}
+			Server.TryEditConsumable(CurrentUser.SessionToken, copied);
 		}
 
 		public void FetchConsumables()
@@ -516,6 +538,7 @@ namespace App
 			}
 
 			foreach (var con in Consumables) {
+
 				Console.WriteLine("\nName: {0}", con.Name);
 				Console.WriteLine("Description: {0}", con.Description);
 				Console.WriteLine("Price: {0}", con.Price);
