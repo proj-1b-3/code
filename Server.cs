@@ -80,7 +80,7 @@ namespace App
 			roomAttributeTable.Columns.Add(col);
 			roomAttributeTable.PrimaryKey = primaryKeys;
 
-			var consumableAttributeTable = new DataTable("ConsumableAttribute");
+			var consumableAttributeTable = new DataTable("ConsumableAttributes");
 			primaryKeys = new DataColumn[1];
 			col = new DataColumn("ProductId", typeof(Int64));
 			primaryKeys[0] = col;
@@ -381,8 +381,8 @@ namespace App
 			productRow["Description"] = consumable.Description;
 			productRow["Price"] = consumable.Price;
 			productRow["Available"] = consumable.Available;
-			this.DataBase.Tables["Product"].Rows.Add(productRow);
-			var consumableAttributeRow = this.DataBase.Tables["Products"].NewRow();
+			this.DataBase.Tables["Products"].Rows.Add(productRow);
+			var consumableAttributeRow = this.DataBase.Tables["ConsumableAttributes"].NewRow();
 			consumableAttributeRow["ProductId"] = productRow["ProductId"];
 			this.DataBase.Tables["ConsumableAttributes"].Rows.Add(consumableAttributeRow);
 
