@@ -35,15 +35,15 @@ namespace App
 				{ "Fetch consumables", FetchConsumables },
 				{ "select consumable", null },
 				{ "list basket", this.ViewBasket },
-				{ "remove basket", null },
+				{ "edit basket", null },
 				{ "deregister", this.Deregister },
 				{ "list orders", null },
 				{ "make room", this.AddRoom },
 				{ "remove room", this.RemoveRoom },
 				{ "edit room", EditRooms },
-				{ "make consumable", MakeConsumable },
-				{ "remove consumable", RemoveConsumable },
-				{ "edit consumable", EditConsumables },
+				{ "make consumable", this.MakeConsumable },
+				{ "remove consumable", this.RemoveConsumable },
+				{ "edit consumable", this.EditConsumables },
 			};
 
 			Basket = new Order();
@@ -291,6 +291,18 @@ namespace App
 			}
 		}
 
+		// public void EditBasket()
+		// {
+		// 	string consumableName = ReadField("Product name: ");
+
+
+		// 	var Consumable = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
+		// 	if (Consumable == null) {
+		// 		Console.WriteLine("Invalid name");
+		// 		return;
+		// 	}
+		// }
+
 		public void Payment()
 		{
 			MemoryStream stream = new MemoryStream();
@@ -300,7 +312,7 @@ namespace App
 				Console.WriteLine("Unsuccessful payment, Please try again");
 			}
 			Console.WriteLine("Payment succeed");
-
+			Basket = new Order();
 		}
 		public void AddRoom()
 		{
