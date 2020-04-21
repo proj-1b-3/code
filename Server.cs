@@ -368,7 +368,7 @@ namespace App
 			return n;
 		}
 
-		public Boolean TryAddConsumable(Guid sessionToken, Product consumable)
+		public Boolean TryAddConsumable(Guid sessionToken, Consumable consumable)
 		{
 			var userRow = this.GetUserRow(sessionToken);
 			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
@@ -389,7 +389,7 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryRemoveConsumable(Guid sessionToken, Product consumable)
+		public Boolean TryRemoveConsumable(Guid sessionToken, Consumable consumable)
 		{
 			var userRow = GetUserRow(sessionToken);
 			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
@@ -408,7 +408,7 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryEditConsumable(Guid sessionToken, Product consumable)
+		public Boolean TryEditConsumable(Guid sessionToken, Consumable consumable)
 		{
 			var userRow = this.GetUserRow(sessionToken);
 			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
@@ -436,10 +436,10 @@ namespace App
 			var rel = this.DataBase.Relations["ProductConsumableAttribute"];
 			var productTable = rel.ParentTable;
 			var consumableAttributeTable = rel.ChildTable;
-			var consumables = new List<Product>();
+			var consumables = new List<Consumable>();
 
 			foreach (DataRow consumableRow in consumableAttributeTable.Rows) {
-				var consumable = new Product();
+				var consumable = new Consumable();
 				var productRow = consumableRow.GetParentRow(rel);
 				consumable.ProductId = (Int64)productRow["ProductId"];
 				consumable.Name = (String)productRow["ProductName"];
@@ -449,8 +449,8 @@ namespace App
 				consumables.Add(consumable);
 			}
 
-			var raw_json = JsonSerializer.SerializeToUtf8Bytes<List<Product>>(consumables);
-			stream.Write(raw_json, 0, raw_json.Length);
+			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Consumable>>(consumables);
+			stream.Write(rawJson, 0, rawJson.Length);
 			stream.Position = 0;
 			if (stream.Length == 0) {
 				return false;
