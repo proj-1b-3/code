@@ -254,7 +254,12 @@ namespace App
 				return false;
 			}
 
-			// TODO: CHECK IF THE ROOM IS ALREADY IN THE TABLE
+			var rows = this.DataBase.Tables["Products"].Select(
+				"ProductName = '" + room.Name + "'");
+			if (rows.Length != 0) {
+				return false;
+			}
+
 			var productRow = DataBase.Tables["Products"].NewRow();
 			productRow["ProductName"] = room.Name;
 			productRow["Description"] = room.Description;
@@ -357,10 +362,10 @@ namespace App
 				$" AND RoundNumber = {reservation.RoundNumber}";
 			var rows = this.DataBase.Tables["Reservations"].Select(query);
 			if (rows.Length == 0) {
-				return -1;
+				return 0;
 			}
 
-			var n = 0;
+			Int32 n = 0;
 			foreach (var row in rows) {
 				n += (Int32)row["GroupSize"];
 			}
@@ -375,7 +380,12 @@ namespace App
 				return false;
 			}
 
-			// TODO: CHECK IF THE ROW IS ALREADY IN THE TABLE
+			var rows = this.DataBase.Tables["Products"].Select(
+				"ProductName = '" + consumable.Name + "'");
+			if (rows.Length != 0) {
+				return false;
+			}
+
 			var productRow = this.DataBase.Tables["Products"].NewRow();
 			productRow["ProductName"] = consumable.Name;
 			productRow["Description"] = consumable.Description;

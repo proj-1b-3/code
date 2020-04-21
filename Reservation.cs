@@ -28,9 +28,10 @@ namespace App
 
 		public Reservation(Int64 roomId, Int32 groupSize, DateTime dateTime, Int32 RoundNumber)
 		{
-			RoomId = roomId;
-			GroupSize = groupSize;
-			DateTime = dateTime;
+			this.RoomId = roomId;
+			this.GroupSize = groupSize;
+			this.DateTime = dateTime;
+			this.RoundNumber = RoundNumber;
 		}
 	}
 }
