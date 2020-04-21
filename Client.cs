@@ -40,7 +40,7 @@ namespace App
 				{ "list orders", null },
 				{ "make room", this.AddRoom },
 				{ "remove room", this.RemoveRoom },
-				{ "edit room", EditRooms },
+				{ "edit room", EditRoom },
 				{ "make consumable", this.MakeConsumable },
 				{ "remove consumable", this.RemoveConsumable },
 				{ "edit consumable", this.EditConsumables },
@@ -390,22 +390,88 @@ namespace App
 			Server.TryRemoveRoom(CurrentUser.SessionToken, roomId);
 		}
 
-		public void EditRooms()
+		public void EditRoom()
 		{
 			if (CurrentUser == null){
 				return;
 			}
 
-			if (CurrentUser.Role != Role.Owner || CurrentUser.Role != Role.Manager){
+			if (CurrentUser.Role != Role.Owner){
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
 
-			Int64 roomId;
-			if (!Int64.TryParse(ReadField("Room ID"), out roomId)){
-				Console.WriteLine("That is not a valid Product ID");
+			String chosenRoom = ReadField("Room name: ");
+			var room = this.Rooms.Find(room => room.Name == chosenRoom);
+			if (room == null) {
+				Console.WriteLine("Invalid name");
 				return;
 			}
+			Room copied = room.Clone();
+			String name = ReadField("Name: ");
+			String theme = ReadField("Theme: ");
+			String description = ReadField("Description: ");
+			String price = ReadField("Price: ");
+			Single _price;
+			String availabile = ReadField("Available ([Y]es or [N]o): ");
+			String capacity = ReadField("Capacity: ");
+			Int32 _capacity;
+			String roundsAmount = ReadField("Number of rounds: ");
+			Int32 _roundsAmount;
+			String maxDuration = ReadField("Maximum duration: ");
+			Int32 _maxDuration;
+
+			if(name != ""){
+				copied.Name = name;
+			}
+			if(description != ""){
+				copied.Description = description;
+			}
+			if(price != ""){
+				if(Single.TryParse(price, out _price)){
+					copied.Price = _price;
+				}
+				else{
+					Console.WriteLine("Invalid number");
+				}
+			}
+			if(availabile != ""){
+				if(availabile == "Y"){
+					copied.Available = true;
+				}
+				else{
+					copied.Available = false;
+				}
+			}
+			if(theme != ""){
+				copied.Theme = theme;
+			}
+			if(capacity != ""){
+				if(Int32.TryParse(price, out _capacity)){
+					copied.Capacity = _capacity;
+				}
+				else{
+					Console.WriteLine("Invalid number");
+				}
+			}
+			if(roundsAmount != ""){
+				if(Int32.TryParse(roundsAmount, out _roundsAmount)){
+					copied.NumberOfRounds = _roundsAmount;
+				}
+				else{
+					Console.WriteLine("Invalid number");
+				}
+			}
+			if(maxDuration != ""){
+				if(Int32.TryParse(maxDuration, out _maxDuration)){
+					copied.MaxDuration = _maxDuration;
+				}
+				else{
+					Console.WriteLine("Invalid number");
+				}
+			}
+
+			Server.TryEditRoom(CurrentUser.SessionToken, copied);
 		}
 
 		public void MakeConsumable()
@@ -504,7 +570,9 @@ namespace App
 				}
 				else{
 					Console.WriteLine("Invalid number");
+					return;
 				}
+			}
 			if(availabile != ""){
 				if(availabile == "Y"){
 					copied.Available = true;
@@ -512,7 +580,6 @@ namespace App
 				else{
 					copied.Available = false;
 				}
-			}
 			}
 			Server.TryEditConsumable(CurrentUser.SessionToken, copied);
 		}
