@@ -1,6 +1,7 @@
 namespace App
 {
 	using System;
+	using System.Data;
 	using System.Collections.Generic;
 
 	class Reservation
@@ -12,9 +13,17 @@ namespace App
 
 		public Reservation()
 		{
-			RoomId = -1;
-			GroupSize = 0;
-			DateTime = new DateTime();
+			this.RoomId = -1;
+			this.GroupSize = 0;
+			this.DateTime = new DateTime();
+		}
+
+		public Reservation(DataRow row)
+		{
+			this.RoomId = (Int64)row["RoomId"];
+			this.GroupSize = (Int32)row["GroupSize"];
+			this.DateTime = (DateTime)row["Date"];
+			this.RoundNumber = (Int32)row["RoundNumber"];
 		}
 
 		public Reservation(Int64 roomId, Int32 groupSize, DateTime dateTime, Int32 RoundNumber)

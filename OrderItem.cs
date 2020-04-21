@@ -1,6 +1,7 @@
 namespace App
 {
 	using System;
+	using System.Data;
 
 	class OrderItem
 	{
@@ -9,10 +10,16 @@ namespace App
 
 		public OrderItem() {}
 
-		public OrderItem(Int64 productId, Int32 amout)
+		public OrderItem(Int64 productId, Int32 amount)
 		{
 			ProductId = productId;
-			Amount = amout;
+			Amount = amount;
+		}
+		
+		public OrderItem(DataRow row)
+		{
+			this.ProductId = (Int64)row["ProductId"];
+			this.Amount = (Int32)row["Amount"];
 		}
 	}
 }

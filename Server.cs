@@ -396,14 +396,13 @@ namespace App
 				return false;
 			}
 
-			var query = $"ProductId = {consumable.ProductId}";
-			var rows = this.DataBase.Tables["Products"].Select(query);
-			if (rows.Length == 0) {
+			var productRow = this.DataBase.Tables["Products"].Rows.Find(
+				consumable.ProductId);
+			if (productRow == null) {
 				return false;
 			}
 
-			this.DataBase.Tables["Products"].Rows.Remove(rows[0]);
-			this.DataBase.Tables["ConsumableAttributes"].Rows.Remove(rows[0]);
+			this.DataBase.Tables["Products"].Rows.Remove(productRow);
 
 			return true;
 		}
@@ -493,6 +492,43 @@ namespace App
 				orderItemRow["ProductId"] = item.ProductId;
 				orderItemRow["Amount"] = item.Amount;
 				orderItemTable.Rows.Add(orderItemRow);
+			}
+
+			return true;
+		}
+
+		public Boolean TryFetchUserOrders(Guid sessionToken, MemoryStream stream)
+		{
+			var userRow = GetUserRow(sessionToken);
+			if (userRow == null) {
+				return false;
+			}
+
+			var orders = new List<Order>();
+			var query = $"UserId = " + (Int64)userRow["UserId"];
+			var orderRows = this.DataBase.Tables["Orders"].Select(query);
+			foreach (var orderRow in orderRows) {
+				var order = new Order();
+				var reservationRows = this.DataBase.Tables["Reservations"].Select(
+					$"OrderId = " + (Int64)orderRow["UserId"]);
+				foreach (var reservationRow in reservationRows) {
+					var reservation = new Reservation(reservationRow);
+					order.Reservations.Add(reservation);
+				}
+
+				var orderItemRows = this.DataBase.Tables["OrderItems"].Select(
+					$"OrderId = " + (Int64)orderRow["OrderId"]);
+				foreach (var orderItemRow in orderItemRows) {
+					var orderItem = new OrderItem(orderItemRow);
+					order.Items.Add(orderItem);
+				}
+			}
+
+			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Order>>(orders);
+			stream.Write(rawJson, 0, rawJson.Length);
+			stream.Position = 0;
+			if (stream.Length == 0) {
+				return false;
 			}
 
 			return true;
