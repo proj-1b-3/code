@@ -13,7 +13,7 @@ namespace App
 		private Server Server;
 
 		private List<Room> Rooms;
-		private List<Product> Consumables;
+		private List<Consumable> Consumables;
 		private Order Basket;
 
 		public delegate void Command();
@@ -29,9 +29,10 @@ namespace App
 				{ "register", this.Register },
 				{ "pay", this.Payment },
 				{ "exit", this.Exit },
-				{ "list rooms", this.ViewRooms },
+				{ "list rooms", this.ListRooms },
 				{ "select room", this.MakeReservation },
-				{ "list consumables", null },
+				{ "list consumables", ListConsumables },
+				{ "Fetch consumables", FetchConsumables },
 				{ "select consumable", null },
 				{ "list basket", this.ViewBasket },
 				{ "remove basket", null },
@@ -39,7 +40,7 @@ namespace App
 				{ "list orders", null },
 				{ "make room", this.AddRoom },
 				{ "remove room", this.RemoveRoom },
-				{ "edit room", null },
+				{ "edit room", EditRooms },
 				{ "make consumable", MakeConsumable },
 				{ "remove consumable", RemoveConsumable },
 				{ "edit consumable", EditConsumables },
@@ -353,8 +354,6 @@ namespace App
 				Console.WriteLine("invalid price");
 				return;
 			}
-
-
 			
 			var room =  new Room(name, theme, discription, capacity, price, numberofrounds, maxduration);
 			Server.TryAddRoom(CurrentUser.SessionToken, room);
@@ -378,7 +377,7 @@ namespace App
 			}
 			Server.TryRemoveRoom(CurrentUser.SessionToken, roomId);
 		}
-		/*
+
 		public void EditRooms()
 		{
 			if (CurrentUser == null){
@@ -396,7 +395,6 @@ namespace App
 				return;
 			}
 		}
-		*/
 
 		public void MakeConsumable()
 		{
@@ -408,7 +406,6 @@ namespace App
 				Console.WriteLine("You do not have the permissions to perform this action");
 				return;
 			}
-			Int64 productId = -1;
 			String name = ReadField("name: ");
 			if (name == "") {
 				Console.WriteLine("invalid name");
@@ -433,7 +430,7 @@ namespace App
 				availability = true;
 			}
 
-			Server.TryAddConsumable(CurrentUser.SessionToken, new Product(productId, name, discription, price, availability));
+			Server.TryAddConsumable(CurrentUser.SessionToken, new Consumable(name, discription, price, availability));
 		}
 
 		public void RemoveConsumable()
@@ -458,6 +455,8 @@ namespace App
 				Console.WriteLine("Invalid product ID");
 				return;
 			}
+
+			Server.TryRemoveConsumable(CurrentUser.SessionToken, Consumable);
 		}
 
 		public void EditConsumables()
@@ -476,6 +475,14 @@ namespace App
 				Console.WriteLine("That is not a valid Product ID");
 				return;
 			}
+
+			var Consumable = this.Consumables.Find(Consumable => Consumable.ProductId == productId);
+			if (Consumable == null) {
+				Console.WriteLine("Invalid product ID");
+				return;
+			}
+
+			Server.TryEditConsumable(CurrentUser.SessionToken, Consumable);
 		}
 
 		public void FetchConsumables()
@@ -486,9 +493,32 @@ namespace App
 				return;
 			}
 			byte[] raw_json = stream.ToArray();
-			this.Consumables = JsonSerializer.Deserialize<List<Product>>(raw_json);
+			this.Consumables = JsonSerializer.Deserialize<List<Consumable>>(raw_json);
 			stream.Close();
 		}	
+
+		public void ListConsumables()
+		{
+			FetchConsumables();
+
+			if (CurrentUser == null) {
+				return;
+			}
+
+			foreach (var con in Consumables) {
+				Console.WriteLine("\nName: {0}", con.Name);
+				Console.WriteLine("Description: {0}", con.Description);
+				Console.WriteLine("Price: {0}", con.Price);
+				if(con.Available){
+					Console.WriteLine("Available: Yes");
+				}
+				else
+				{
+					Console.WriteLine("Available: No");
+				}
+				
+			}
+		}
 
 		private void FetchRooms()
 		{
@@ -503,7 +533,8 @@ namespace App
 			stream.Close();
 		}
 
-		public void ViewRooms()
+		
+		public void ListRooms()
 		{
 			if (CurrentUser == null) {
 				return;
