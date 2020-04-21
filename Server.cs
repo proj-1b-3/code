@@ -543,5 +543,15 @@ namespace App
 
 			return true;
 		}
+
+		public Boolean TryFetchOrdersByDate(Guid sessionToken, DateTime date)
+		{
+			var userRow = GetUserRow(sessionToken);
+			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
+				return false;
+			}
+
+			return true;
+		}
 	}
 }

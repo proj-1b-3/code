@@ -10,5 +10,16 @@ namespace App
 			: base(-1, name, desc, price, available)
 		{
 		}
+
+		public Consumable Copy()
+		{
+			var obj = new Consumable();
+			obj.ProductId = this.ProductId;
+			obj.Name = this.Name;
+			obj.Description = this.Description;
+			obj.Price = this.Price;
+			obj.Available = this.Available;
+			return obj;
+		}
 	}
 }
