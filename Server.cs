@@ -17,12 +17,6 @@ namespace App
 		Consumer
 	}
 
-	enum ProductType
-	{
-		EscapeRoom,
-		Consumable
-	}
-
 	class Server
 	{
 		private Dictionary<Guid, Int64> ActiveUsers;
@@ -190,10 +184,8 @@ namespace App
 
 		public Boolean TryLogin(String userName, String password, out User user)
 		{
-			DataRow userRow;
-			
 			user = null;
-			userRow = this.GetUserRow(userName);
+			var userRow = this.GetUserRow(userName);
 			if (userRow == null || (String)userRow["Password"] != password) {
 				return false;
 			}
@@ -299,6 +291,28 @@ namespace App
 			return true;
 		}
 
+		public Boolean TryEditRoom(Guid sessionToken, Room room)
+		{
+			var userRow = GetUserRow(sessionToken);
+			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
+				return false;
+			}
+	
+			var rel = this.DataBase.Relations["ProductRoomAttribute"];
+			var roomAttributeRow = rel.ChildTable.Rows.Find(room.ProductId);
+			var productRow = roomAttributeRow.GetParentRow(rel);
+			productRow["ProductName"] = room.Name;
+			productRow["Descriptopn"] = room.Description;
+			productRow["Price"] = room.Price;
+			productRow["Available"] = room.Available;
+			roomAttributeRow["Theme"] = room.Theme;
+			roomAttributeRow["Capacity"] = room.Capacity;
+			roomAttributeRow["NumberOfRounds"] = room.NumberOfRounds;
+			roomAttributeRow["MaxDuration"] = room.MaxDuration;
+
+			return true;
+		}
+
 		public Boolean TryFetchRooms(Guid sessionToken, MemoryStream stream)
 		{
 			var userRow = this.GetUserRow(sessionToken);
@@ -390,6 +404,24 @@ namespace App
 
 			this.DataBase.Tables["Products"].Rows.Remove(rows[0]);
 			this.DataBase.Tables["ConsumableAttributes"].Rows.Remove(rows[0]);
+
+			return true;
+		}
+
+		public Boolean TryEditConsumable(Guid sessionToken, Product consumable)
+		{
+			var userRow = this.GetUserRow(sessionToken);
+			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
+				return false;
+			}
+		
+			var rel = this.DataBase.Relations["ProductConsumableAttribute"];	
+			var consumableRow = rel.ChildTable.Rows.Find(consumable.ProductId);
+			var productRow = consumableRow.GetParentRow(rel);
+			productRow["ProductName"] = consumable.Name;
+			productRow["Description"] = consumable.Description;
+			productRow["Price"] = consumable.Price;
+			productRow["Available"] = consumable.Available;
 
 			return true;
 		}

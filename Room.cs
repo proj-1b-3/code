@@ -14,15 +14,12 @@ namespace App
 
 		public Room(String name, String theme, String desc, Int32 cap, Single price,
 			Int32 numberOfRounds, Int32 maxDuration)
+			: base(-1, name, desc, price, true)
 		{
-			Name = name;
 			Theme = theme;
-			Description = desc;
 			Capacity = cap;
-			Price = price;
 			NumberOfRounds = numberOfRounds;
 			MaxDuration = maxDuration;
-			Available = true;
 		}
 	}
 }
