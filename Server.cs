@@ -429,7 +429,7 @@ namespace App
 		public Boolean TryFetchConsumables(Guid sessionToken, MemoryStream stream)
 		{
 			var userRow = this.GetUserRow(sessionToken);
-			if (userRow == null || (Role)userRow["Role"] != Role.CafeManager) {
+			if (userRow == null) {
 				return false;
 			}
 
@@ -450,6 +450,7 @@ namespace App
 			}
 
 			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Consumable>>(consumables);
+			Console.WriteLine(rawJson);
 			stream.Write(rawJson, 0, rawJson.Length);
 			stream.Position = 0;
 			if (stream.Length == 0) {
