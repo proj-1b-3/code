@@ -1,37 +1,29 @@
 namespace App
 {
 	using System;
-	using System.Data;
 	using System.Collections.Generic;
 
 	class Reservation
 	{
-		public Int64 RoomId {get;set;}
+		public Int64 ReservationId {get;set;}
+		public Int64 UserId {get;set;}
+		public Room Room {get;set;}
 		public Int32 GroupSize {get;set;}
-		public DateTime DateTime {get;set;}
-		public Int32 RoundNumber {get;set;}
+		public List<Consumable> Consumables {get;set;}
+		public DateTime OrderDateTime {get;set;}
+		public DateTime TargetDateTime {get;set;}
+		public DateTime RoundNumber {get;set;}
 
-		public Reservation()
-		{
-			this.RoomId = -1;
-			this.GroupSize = 0;
-			this.DateTime = new DateTime();
-		}
+		public Order() {}
 
-		public Reservation(DataRow row)
+		public Order(Room room, List<Consumable> consumables, DateTime targetDate, Int32 roundNumber)
 		{
-			this.RoomId = (Int64)row["RoomId"];
-			this.GroupSize = (Int32)row["GroupSize"];
-			this.DateTime = (DateTime)row["Date"];
-			this.RoundNumber = (Int32)row["RoundNumber"];
-		}
-
-		public Reservation(Int64 roomId, Int32 groupSize, DateTime dateTime, Int32 RoundNumber)
-		{
-			this.RoomId = roomId;
-			this.GroupSize = groupSize;
-			this.DateTime = dateTime;
-			this.RoundNumber = RoundNumber;
+			this.OrderId = -1;
+			this.UserId = -1;
+			this.Reservations = room;
+			this.Consumables = consumable;
+			this.TargetDate = targetDateTime.Date;
+			this.RoundNumber = roundNumber;
 		}
 	}
 }
