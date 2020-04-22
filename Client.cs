@@ -33,9 +33,9 @@ namespace App
 				{ "select room", this.MakeReservation },
 				{ "list consumables", ListConsumables },
 				{ "Fetch consumables", FetchConsumables },
-				{ "select consumable", null },
+				{ "select consumable", SelectConsumable },
 				{ "list basket", this.ViewBasket },
-				{ "edit basket", null },
+				{ "edit basket", EditBasket },
 				{ "deregister", this.Deregister },
 				{ "list orders", null },
 				{ "make room", this.AddRoom },
@@ -293,13 +293,33 @@ namespace App
 
 		public void EditBasket()
 		{
-			string consumableName = ReadField("Product name: ");
+			String chosenGenre = ReadField("[P]roduct or [R]oom: ");
 
-			var Consumable = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
-			if (Consumable == null) {
-				Console.WriteLine("Invalid name");
-				return;
+			if (chosenGenre == "P"){
+				string consumableName = ReadField("Product name: ");
+				var chosenProduct = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
+				if (chosenProduct == null) {
+					Console.WriteLine("Invalid name");
+					return;
+				}
+				Int32 newAmount;
+				if (! Int32.TryParse(ReadField("New amount: "), out newAmount)) {
+					Console.WriteLine("invalid number");
+					return;
+				}
+
+				foreach(var item in Basket.Items){
+					if(item.ProductId == chosenProduct.ProductId){
+						item.Amount = newAmount;
+						return;
+					}
+				}
+				
+
 			}
+			
+
+			
 		}
 
 		public void Payment()
@@ -582,6 +602,27 @@ namespace App
 				}
 			}
 			Server.TryEditConsumable(CurrentUser.SessionToken, copied);
+		}
+
+		public void SelectConsumable()
+		{
+			if (CurrentUser == null) {
+				Console.WriteLine("You must be logged in to select a consumbale");
+				return;
+			}
+			string consumableName = ReadField("Name: ");
+			var consumable = this.Consumables.Find(consumable => consumable.Name == consumableName);
+			if (consumable == null) {
+				Console.WriteLine("Invalid room name");
+				return;
+			}
+
+			Int32 amount;
+			if (! Int32.TryParse(ReadField("Amount: "), out amount)) {
+				Console.WriteLine("Invalid number");
+				return;
+			}
+			Basket.Items.Add(new OrderItem(consumable.ProductId, amount));
 		}
 
 		public void FetchConsumables()
