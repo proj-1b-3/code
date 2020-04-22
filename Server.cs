@@ -87,14 +87,14 @@ namespace App
 			consumableAttributeTable.Columns.Add(col);
 			consumableAttributeTable.PrimaryKey = primaryKeys;
 
-			var orderTable = new DataTable("Reservations");
+			var reservationTable = new DataTable("Reservations");
 			primaryKeys = new DataColumn[1];
 			col = new DataColumn("ReservationId", typeof(Int64));
 			col.AutoIncrement = true;
-			orderTable.Columns.Add(col);
+			reservationTable.Columns.Add(col);
 			primaryKeys[0] = col;
 			col = new DataColumn("UserId", typeof(Int64));
-			orderTable.Columns.Add(col);
+			reservationTable.Columns.Add(col);
 			col = new DataColumn("RoomId", typeof(Int64));
 			reservationTable.Columns.Add(col);
 			col = new DataColumn("TargetDate", typeof(DateTime));
@@ -104,12 +104,12 @@ namespace App
 			col = new DataColumn("GroupSize", typeof(Int32));
 			reservationTable.Columns.Add(col);
 			col = new DataColumn("OrderDateTime", typeof(DateTime));
-			orderTable.Columns.Add(col);
-			orderTable.PrimaryKey = primaryKeys;
+			reservationTable.Columns.Add(col);
+			reservationTable.PrimaryKey = primaryKeys;
 
-			var orderItemTable = new DataTable("ReservationConsumables");
+			var orderItemTable = new DataTable("ReservationConsumable");
 			primaryKeys = new DataColumn[1];
-			col = new DataColumn("OrderItemId", typeof(Int64));
+			col = new DataColumn("ReservationConsumableId", typeof(Int64));
 			col.AutoIncrement = true;
 			orderItemTable.Columns.Add(col);
 			primaryKeys[0] = col;
@@ -124,8 +124,8 @@ namespace App
 			reservationTable.PrimaryKey = primaryKeys;
 
 			DataBase.Tables.AddRange(new DataTable[]{
-				userTable, productTable, roomAttributeTable, orderTable, orderItemTable,
-				reservationTable, consumableAttributeTable});
+				userTable, productTable, roomAttributeTable, reservationTable, 
+				consumableAttributeTable});
 
 			var rel = new DataRelation("ProductRoomAttribute", productTable.Columns["ProductId"],
 				roomAttributeTable.Columns["ProductId"]);
@@ -133,11 +133,8 @@ namespace App
 			rel = new DataRelation("ProductConsumableAttribute", productTable.Columns["ProductId"],
 				consumableAttributeTable.Columns["ProductId"]);
 			DataBase.Relations.Add(rel);
-			rel = new DataRelation("OrderReservation", orderTable.Columns["OrderId"],
-				reservationTable.Columns["OrderId"]);
-			DataBase.Relations.Add(rel);
-			rel = new DataRelation("OrderConsumable", orderTable.Columns["OrderId"],
-				orderItemTable.Columns["OrderId"]);
+			rel = new DataRelation("ReservationConsumable", reservationTable.Columns["ReservationId"],
+				reservationTable.Columns["ReservationId"]);
 			DataBase.Relations.Add(rel);
 
 			ActiveUsers = new Dictionary<Guid, Int64>();
@@ -356,12 +353,9 @@ namespace App
 		public Int32 CheckReservation(Reservation reservation)
 		{
 			var query = $"RoomId = {reservation.RoomId}" +
-				$" AND Date = #{reservation.DateTime.Date}#" +
+				$" AND Date = #{reservation.TargetDate}#" +
 				$" AND RoundNumber = {reservation.RoundNumber}";
 			var rows = this.DataBase.Tables["Reservations"].Select(query);
-			if (rows.Length == 0) {
-				return 0;
-			}
 
 			Int32 n = 0;
 			foreach (var row in rows) {
@@ -473,29 +467,23 @@ namespace App
 				return false;
 			}
 
-			var order = JsonSerializer.Deserialize<Order>(stream.ToArray());
+			var reservation = JsonSerializer.Deserialize<Reservation>(stream.ToArray());
 
-			var orderTable = this.DataBase.Tables["Orders"];
-			var reservationTable = this.DataBase.Tables["Reservations"];
-			var orderItemTable = this.DataBase.Tables["OrderItems"];
+			var reservationConsumableRel = this.DataBase.Relations["ReservationConsumable"];
+			var reservationTable = reservationConsumableRel.ParentTable;
+			var reservationConsumableTable = reservationConsumableRel.ChildTable;
 
-			var orderRow = orderTable.NewRow();
-			orderRow["UserId"] = (Int64)userRow["UserId"];
-			orderRow["OrderDateTime"] = DateTime.Now;
-			orderTable.Rows.Add(orderRow);
+			var reservationRow = reservationTable.NewRow();
+			reservationRow["RoomId"] = reservation.RoomId;
+			reservationRow["UserId"] = (Int64)userRow["UserId"];
+			reservationRow["TargetDate"] = reservation.TargetDate;
+			reservationRow["RoundNumber"] = reservation.RoundNumber;
+			reservationRow["GroupSize"] = reservation.GroupSize;
+			reservationRow["OrderDateTime"] = DateTime.Now;
+			reservationTable.Rows.Add(orderRow);
 
-			foreach (var reservation in order.Reservations) {
-				var reservationRow = reservationTable.NewRow();
-				reservationRow["OrderId"] = orderRow["OrderId"];
-				reservationRow["RoomId"] = reservation.RoomId;
-				reservationRow["GroupSize"] = reservation.GroupSize;
-				reservationRow["Date"] = reservation.DateTime.Date;
-				reservationRow["RoundNumber"] = reservation.RoundNumber;
-				reservationTable.Rows.Add(reservationRow);
-			}
-
-			foreach (var item in order.Items) {
-				var orderItemRow = orderItemTable.NewRow();
+			foreach (var consumable in reservation.Consumables) {
+				var reservationConsum = reservationConsumableTable.NewRow();
 				orderItemRow["OrderId"] = orderRow["OrderId"];
 				orderItemRow["ProductId"] = item.ProductId;
 				orderItemRow["Amount"] = item.Amount;
