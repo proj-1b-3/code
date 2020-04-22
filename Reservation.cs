@@ -16,7 +16,7 @@ namespace App
 
 		public Reservation() {}
 
-		public Reservation(Room room, Int32 groupSize, DateTime targetDate, Int32 roundNumber)
+		public Reservation(Room room, DateTime targetDate, Int32 roundNumber, Int32 groupSize)
 		{
 			this.OrderId = -1;
 			this.UserId = -1;

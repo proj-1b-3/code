@@ -97,14 +97,14 @@ namespace App
 			orderTable.Columns.Add(col);
 			col = new DataColumn("RoomId", typeof(Int64));
 			reservationTable.Columns.Add(col);
-			col = new DataColumn("GroupSize", typeof(Int32));
+			col = new DataColumn("TargetDate", typeof(DateTime));
 			reservationTable.Columns.Add(col);
 			col = new DataColumn("RoundNumber", typeof(Int32));
 			reservationTable.Columns.Add(col);
+			col = new DataColumn("GroupSize", typeof(Int32));
+			reservationTable.Columns.Add(col);
 			col = new DataColumn("OrderDateTime", typeof(DateTime));
 			orderTable.Columns.Add(col);
-			col = new DataColumn("TargetDate", typeof(DateTime));
-			reservationTable.Columns.Add(col);
 			orderTable.PrimaryKey = primaryKeys;
 
 			var orderItemTable = new DataTable("ReservationConsumables");
