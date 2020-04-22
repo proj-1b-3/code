@@ -14,14 +14,14 @@ namespace App
 		public DateTime TargetDateTime {get;set;}
 		public DateTime RoundNumber {get;set;}
 
-		public Order() {}
+		public Reservation() {}
 
-		public Order(Room room, List<Consumable> consumables, DateTime targetDate, Int32 roundNumber)
+		public Reservation(Room room, Int32 groupSize, DateTime targetDate, Int32 roundNumber)
 		{
 			this.OrderId = -1;
 			this.UserId = -1;
 			this.Reservations = room;
-			this.Consumables = consumable;
+			this.GroupSize = groupSize;
 			this.TargetDate = targetDateTime.Date;
 			this.RoundNumber = roundNumber;
 		}

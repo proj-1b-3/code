@@ -87,25 +87,33 @@ namespace App
 			consumableAttributeTable.Columns.Add(col);
 			consumableAttributeTable.PrimaryKey = primaryKeys;
 
-			var orderTable = new DataTable("Orders");
+			var orderTable = new DataTable("Reservations");
 			primaryKeys = new DataColumn[1];
-			col = new DataColumn("OrderId", typeof(Int64));
+			col = new DataColumn("ReservationId", typeof(Int64));
 			col.AutoIncrement = true;
 			orderTable.Columns.Add(col);
 			primaryKeys[0] = col;
 			col = new DataColumn("UserId", typeof(Int64));
 			orderTable.Columns.Add(col);
+			col = new DataColumn("RoomId", typeof(Int64));
+			reservationTable.Columns.Add(col);
+			col = new DataColumn("GroupSize", typeof(Int32));
+			reservationTable.Columns.Add(col);
+			col = new DataColumn("RoundNumber", typeof(Int32));
+			reservationTable.Columns.Add(col);
 			col = new DataColumn("OrderDateTime", typeof(DateTime));
 			orderTable.Columns.Add(col);
+			col = new DataColumn("TargetDate", typeof(DateTime));
+			reservationTable.Columns.Add(col);
 			orderTable.PrimaryKey = primaryKeys;
 
-			var orderItemTable = new DataTable("OrderItems");
+			var orderItemTable = new DataTable("ReservationConsumables");
 			primaryKeys = new DataColumn[1];
 			col = new DataColumn("OrderItemId", typeof(Int64));
 			col.AutoIncrement = true;
 			orderItemTable.Columns.Add(col);
 			primaryKeys[0] = col;
-			col = new DataColumn("OrderId", typeof(Int64));
+			col = new DataColumn("ReservationId", typeof(Int64));
 			orderItemTable.Columns.Add(col);
 			col = new DataColumn("ProductId", typeof(Int64));
 			orderItemTable.Columns.Add(col);
@@ -113,22 +121,6 @@ namespace App
 			orderItemTable.Columns.Add(col);
 			orderItemTable.PrimaryKey = primaryKeys;
 
-			var reservationTable = new DataTable("Reservations");
-			primaryKeys = new DataColumn[1];
-			col = new DataColumn("ReservationId", typeof(Int64));
-			col.AutoIncrement = true;
-			reservationTable.Columns.Add(col);
-			primaryKeys[0] = col;
-			col = new DataColumn("OrderId", typeof(Int64));
-			reservationTable.Columns.Add(col);
-			col = new DataColumn("RoomId", typeof(Int64));
-			reservationTable.Columns.Add(col);
-			col = new DataColumn("GroupSize", typeof(Int32));
-			reservationTable.Columns.Add(col);
-			col = new DataColumn("Date", typeof(DateTime));
-			reservationTable.Columns.Add(col);
-			col = new DataColumn("RoundNumber", typeof(Int32));
-			reservationTable.Columns.Add(col);
 			reservationTable.PrimaryKey = primaryKeys;
 
 			DataBase.Tables.AddRange(new DataTable[]{
