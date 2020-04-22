@@ -263,7 +263,7 @@ namespace App
 				return;
 			}
 
-			Int32 freePlaces = room.Capacity - Server.CheckReservation(new Reservation (room, date.Date, round, groupSize));
+			Int32 freePlaces = room.Capacity - Server.CheckReservation(new Reservation (room, date.Date, round, groupSize, null));
 			if (groupSize > freePlaces){
 				Console.WriteLine("there's no enough places");
 				return;
@@ -271,7 +271,7 @@ namespace App
 			Console.WriteLine("Places left: " + freePlaces);
 			string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
 			if (confirm == "Y"){
-				Basket = new Reservation(room, date.Date, round, groupSize);
+				Basket = new Reservation(room, date.Date, round, groupSize, null);
 			}
 			return;
 		}
@@ -288,7 +288,7 @@ namespace App
 			Console.WriteLine("Date: " + Basket.TargetDateTime.ToString("D"));
 
 			Console.WriteLine("");
-			foreach(var item in Basket.Consumables){
+			foreach(var item in Basket.ConsumableItems.Consumable){
 				Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}" , item.Name, item.Amount);
 			}
 		}
@@ -310,7 +310,7 @@ namespace App
 					return;
 				}
 
-				foreach(var item in Basket.Items){
+				foreach(var item in Basket.ConsumableItems){
 					if(item.ProductId == chosenProduct.ProductId){
 						item.Amount = newAmount;
 						return;
