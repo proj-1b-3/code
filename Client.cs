@@ -681,6 +681,7 @@ namespace App
 				}
 				
 			}
+			Console.WriteLine("");
 		}
 
 		public void FetchUserOrders()
