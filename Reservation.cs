@@ -13,10 +13,11 @@ namespace App
 		public DateTime OrderDateTime {get;set;}
 		public DateTime TargetDateTime {get;set;}
 		public DateTime RoundNumber {get;set;}
+		public ConsumableItem ConsumableItems {get;set;}
 
 		public Reservation() {}
 
-		public Reservation(Room room, DateTime targetDate, Int32 roundNumber, Int32 groupSize)
+		public Reservation(Room room, DateTime targetDate, Int32 roundNumber, Int32 groupSize, ConsumableItem consumableItems)
 		{
 			this.OrderId = -1;
 			this.UserId = -1;
@@ -24,6 +25,7 @@ namespace App
 			this.GroupSize = groupSize;
 			this.TargetDate = targetDateTime.Date;
 			this.RoundNumber = roundNumber;
+			this.ConsumableItems = consumableItems;
 		}
 	}
 }

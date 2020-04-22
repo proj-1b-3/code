@@ -13,9 +13,9 @@ namespace App
 		private Server Server;
 
 		private List<Room> Rooms;
-		private List<Order> Orders;
+		private List<Reservation> Orders;
 		private List<Consumable> Consumables;
-		private Order Basket;
+		private Reservation Basket;
 
 		public delegate void Command();
 
@@ -47,7 +47,7 @@ namespace App
 				{ "edit consumable", this.EditConsumables },
 			};
 
-			Basket = new Order();
+			Basket = new Reservation();
 		}
 
 		public void Begin(Server server)
@@ -263,7 +263,7 @@ namespace App
 				return;
 			}
 
-			Int32 freePlaces = room.Capacity - Server.CheckReservation(new Reservation (room.ProductId, groupSize, date.Date, round));
+			Int32 freePlaces = room.Capacity - Server.CheckReservation(new Reservation (room, date.Date, round, groupSize));
 			if (groupSize > freePlaces){
 				Console.WriteLine("there's no enough places");
 				return;
@@ -271,7 +271,7 @@ namespace App
 			Console.WriteLine("Places left: " + freePlaces);
 			string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
 			if (confirm == "Y"){
-				Basket.Reservations.Add(new Reservation(room.ProductId, groupSize, date.Date, round));
+				Basket = new Reservation(room, date.Date, round, groupSize);
 			}
 			return;
 		}
@@ -282,15 +282,14 @@ namespace App
 				return;
 			}
 			Console.WriteLine("Basket:");
-			foreach(var item in Basket.Reservations){
-				var room = this.Rooms.Find(room => room.ProductId == item.RoomId);
-				Console.WriteLine("Reservations:\n\tRoom name: {0}\n\tGroup size: {1}" , room.Name, item.GroupSize);
-				Console.WriteLine("\tDate: " + item.DateTime.ToString("D"));
-			}
+			Console.WriteLine("Room: ");
+			Console.WriteLine("Name: " + Basket.Room.Name);
+			Console.WriteLine("Group size" + Basket.GroupSize);
+			Console.WriteLine("Date: " + Basket.TargetDateTime.ToString("D"));
+
 			Console.WriteLine("");
-			foreach(var item in Basket.Items){
-				var consumable = this.Consumables.Find(Consumable => Consumable.ProductId == item.ProductId);
-				Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}" , consumable.Name, item.Amount);
+			foreach(var item in Basket.Consumables){
+				Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}" , item.Name, item.Amount);
 			}
 		}
 
@@ -330,7 +329,7 @@ namespace App
 					Console.WriteLine("invalid number");
 					return;
 				}
-				foreach(var item in Basket.Reservations){
+				foreach(var item in Basket.Room){
 					if(item.RoomId == chosenRoom.ProductId){
 						Int32 freePlaces = chosenRoom.Capacity - Server.CheckReservation(item);
 						if (newGroupsize > freePlaces){
