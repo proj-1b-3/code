@@ -13,6 +13,7 @@ namespace App
 		private Server Server;
 
 		private List<Room> Rooms;
+		private List<Order> Orders;
 		private List<Consumable> Consumables;
 		private Order Basket;
 
@@ -655,7 +656,7 @@ namespace App
 		{
 			MemoryStream stream = new MemoryStream();
 			if (!Server.TryFetchConsumables(CurrentUser.SessionToken, stream)) {
-				Console.WriteLine("Something went wrong while trying to get the product data from the server");
+				Console.WriteLine("Something went wrong while trying to get the products data from the server");
 				return;
 			}
 			byte[] raw_json = stream.ToArray();
@@ -665,11 +666,11 @@ namespace App
 
 		public void ListConsumables()
 		{
-			FetchConsumables();
-
 			if (CurrentUser == null) {
 				return;
 			}
+
+			FetchConsumables();
 
 			foreach (var con in Consumables) {
 
@@ -679,13 +680,44 @@ namespace App
 				if(con.Available){
 					Console.WriteLine("Available: Yes");
 				}
-				else
-				{
+				else{
 					Console.WriteLine("Available: No");
 				}
 				
 			}
 		}
+
+		public void FetchUserOrders()
+		{
+			MemoryStream stream = new MemoryStream();
+			if (!Server.TryFetchRooms(CurrentUser.SessionToken, stream)) {
+				Console.WriteLine("Something went wrong while trying to get the Orders data from the server");
+				return;
+			}
+			byte[] rawJson = stream.ToArray();
+			this.Orders = JsonSerializer.Deserialize<List<Order>>(rawJson);
+		}
+
+		// public void ListOrders()
+		// {
+		// 	if (CurrentUser == null) {
+		// 		return;
+		// 	}
+		// 	FetchUserOrders();
+
+		// 	foreach (var ord in Orders) {
+
+		// 		Console.WriteLine("\nName: {0}", ord.Reservations);
+		// 		Console.WriteLine("Description: {0}", ord.Description);
+		// 		Console.WriteLine("Price: {0}", ord.Price);
+		// 		if(con.Available){
+		// 			Console.WriteLine("Available: Yes");
+		// 		}
+		// 		else{
+		// 			Console.WriteLine("Available: No");
+		// 		}
+		// 	}
+		// }
 
 		private void FetchRooms()
 		{
