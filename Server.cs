@@ -358,7 +358,7 @@ namespace App
 		public Int32 CheckReservation(Reservation reservation)
 		{
 			var query = $"RoomId = {reservation.Room.ProductId}" +
-				$" AND Date = #{reservation.TargetDateTime}#" +
+				$" AND TargetDateTime = #{reservation.TargetDateTime}#" +
 				$" AND RoundNumber = {reservation.RoundNumber}";
 			var rows = this.DataBase.Tables["Reservations"].Select(query);
 
@@ -579,6 +579,22 @@ namespace App
 			}
 
 			report = new Report();
+			var startDate = date.Date;
+			var endDate = startDate + new TimeSpan(1, 0, 0, 0);
+			var query = $"OrderDateTime >= #{startDate}# AND OrderDateTime < #{endDate}#";
+			var reservationRows = this.DataBase.Tables["Reservations"].Select(query);
+			var reservations = this.ReservationRowsToList(reservationRows);
+	
+			foreach (var reservation in reservations) {
+				var groupSize = reservation.GroupSize;
+				report.TicketsSold += groupSize;
+				report.Income += reservation.Room.Price * groupSize;
+				foreach (var item in reservation.ConsumableItems) {
+					var amount = item.Amount;
+					report.ConsumablesSold += amount;
+					report.Income += item.Consumable.Price * amount;
+				}
+			}
 			
 			return true;
 		}
