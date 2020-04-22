@@ -282,12 +282,14 @@ namespace App
 			}
 			Console.WriteLine("Basket:");
 			foreach(var item in Basket.Reservations){
-				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tGroup size {1}" , item.RoomId, item.GroupSize);
-				Console.WriteLine("\tDate " + item.DateTime.ToString("D"));
+				var room = this.Rooms.Find(room => room.ProductId == item.RoomId);
+				Console.WriteLine("Reservations:\n\tRoom name: {0}\n\tGroup size: {1}" , room.Name, item.GroupSize);
+				Console.WriteLine("\tDate: " + item.DateTime.ToString("D"));
 			}
 			Console.WriteLine("");
 			foreach(var item in Basket.Items){
-				Console.WriteLine("Items:\n\tProduct ID {0}\n\tAmount {1}" , item.ProductId, item.Amount);
+				var consumable = this.Consumables.Find(Consumable => Consumable.ProductId == item.ProductId);
+				Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}" , consumable.Name, item.Amount);
 			}
 		}
 
@@ -314,12 +316,36 @@ namespace App
 						return;
 					}
 				}
-				
+			}
+			else if (chosenGenre == "R"){
+				string roomName = ReadField("Room name: ");
+				var chosenRoom = this.Rooms.Find(room => room.Name == roomName);
+				if (chosenRoom == null) {
+					Console.WriteLine("Invalid name");
+					return;
+				}
+				Int32 newGroupsize;
+				if (! Int32.TryParse(ReadField("New group size: "), out newGroupsize)) {
+					Console.WriteLine("invalid number");
+					return;
+				}
+				foreach(var item in Basket.Reservations){
+					if(item.RoomId == chosenRoom.ProductId){
+						Int32 freePlaces = chosenRoom.Capacity - Server.CheckReservation(item);
+						if (newGroupsize > freePlaces){
+							Console.WriteLine("there's no enough places");
+							return;
+						}
+						Console.WriteLine("Places left: " + freePlaces);
+						string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
+						if (confirm == "Y"){
+							item.GroupSize = newGroupsize;
+						}
+						return;
+					}
+				}
 
 			}
-			
-
-			
 		}
 
 		public void Payment()
