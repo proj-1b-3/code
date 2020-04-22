@@ -283,10 +283,10 @@ namespace App
 				return;
 			}
 			Console.WriteLine("Basket:");
-			Console.WriteLine("Room: ");
-			Console.WriteLine("Name: " + Basket.Room.Name);
-			Console.WriteLine("Group size" + Basket.GroupSize);
-			Console.WriteLine("Date: " + Basket.TargetDateTime.ToString("D"));
+			Console.WriteLine("Room");
+			Console.WriteLine("\tName: " + Basket.Room.Name);
+			Console.WriteLine("\tGroup size: " + Basket.GroupSize);
+			Console.WriteLine("\tDate: " + Basket.TargetDateTime.ToString("D"));
 
 			Console.WriteLine("");
 			foreach(var item in Basket.ConsumableItems){
@@ -636,7 +636,7 @@ namespace App
 			string consumableName = ReadField("Name: ");
 			var consumable = this.Consumables.Find(consumable => consumable.Name == consumableName);
 			if (consumable == null) {
-				Console.WriteLine("Invalid room name");
+				Console.WriteLine("Invalid product name");
 				return;
 			}
 
