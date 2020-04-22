@@ -263,7 +263,8 @@ namespace App
 				return;
 			}
 
-			Int32 freePlaces = room.Capacity - Server.CheckReservation(new Reservation (room, date.Date, round, groupSize, null));
+			Int32 freePlaces =
+				room.Capacity - Server.CheckReservation(new Reservation (room, date.Date, round, groupSize));
 			if (groupSize > freePlaces){
 				Console.WriteLine("there's no enough places");
 				return;
@@ -271,7 +272,7 @@ namespace App
 			Console.WriteLine("Places left: " + freePlaces);
 			string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
 			if (confirm == "Y"){
-				Basket = new Reservation(room, date.Date, round, groupSize, null);
+				Basket = new Reservation(room, date.Date, round, groupSize);
 			}
 			return;
 		}

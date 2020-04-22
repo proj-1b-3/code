@@ -22,6 +22,19 @@ namespace App
 			MaxDuration = maxDuration;
 		}
 
+		public Room(DataRow prodRow, DataRow attrRow)
+		{
+			this.ProductId = (Int64)prodRow["ProductId"];
+			this.Name = (String)prodRow["ProductName"];
+			this.Description = (String)prodRow["Description"];
+			this.Price = (Single)prodRow["Price"];
+			this.Available = (Boolean)prodRow["Available"];
+			this.Theme = (String)attrRow["Theme"];
+			this.Capacity = (Int32)attrRow["Capacity"];
+			this.NumberOfRounds = (Int32)attrRow["NumberOfRounds"];
+			this.MaxDuration = (Int32)attrRow["MaxDuration"];
+		}
+
 		public Room Clone()
 		{
 			var obj = new Room();

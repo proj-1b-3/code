@@ -2,6 +2,7 @@ namespace App
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Data;
 
 	class Reservation
 	{
@@ -12,20 +13,31 @@ namespace App
 		public List<Consumable> Consumables {get;set;}
 		public DateTime OrderDateTime {get;set;}
 		public DateTime TargetDateTime {get;set;}
-		public DateTime RoundNumber {get;set;}
+		public Int32 RoundNumber {get;set;}
 		public List<ConsumableItem> ConsumableItems {get;set;}
 
 		public Reservation() {}
 
-		public Reservation(Room room, DateTime targetDate, Int32 roundNumber, Int32 groupSize, List<ConsumableItem> consumableItems)
+		public Reservation(Room room, DateTime targetDateTime, Int32 roundNumber, Int32 groupSize)
 		{
-			this.OrderId = -1;
+			this.ReservationId = -1;
 			this.UserId = -1;
-			this.Reservations = room;
+			this.Room = room;
 			this.GroupSize = groupSize;
-			this.TargetDate = targetDateTime.Date;
+			this.TargetDateTime = targetDateTime.Date;
 			this.RoundNumber = roundNumber;
-			this.ConsumableItems = consumableItems;
+			this.ConsumableItems = new List<ConsumableItem>();
+		}
+
+		public Reservation(DataRow row)
+		{
+			this.ReservationId = (Int64)row["ReservationId"];
+			this.UserId = (Int64)row["UserId"];
+			this.Room = null;
+			this.GroupSize = (Int32)row["GroupSize"];
+			this.TargetDateTime = (DateTime)row["TargetDate"];
+			this.RoundNumber = (Int32)row["RoundNumber"];
+			this.ConsumableItems = null;
 		}
 	}
 }

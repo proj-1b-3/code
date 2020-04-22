@@ -1,6 +1,7 @@
 namespace App
 {
 	using System;
+	using System.Data;
 
 	class Consumable : Product
 	{
@@ -9,6 +10,15 @@ namespace App
 		public Consumable(String name, String desc, Single price, Boolean available)
 			: base(-1, name, desc, price, available)
 		{
+		}
+
+		public Consumable(DataRow row)
+		{
+			this.ProductId = (Int64)row["ProductId"];
+			this.Name = (String)row["ProductName"];
+			this.Description = (String)row["Description"];
+			this.Price = (Single)row["Price"];
+			this.Available = (Boolean)row["Available"];
 		}
 
 		public Consumable Clone()

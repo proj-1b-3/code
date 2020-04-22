@@ -15,5 +15,11 @@ namespace App
 			this.Consumable = consumable;
 			this.Amount = amount;
 		}
+	
+		public ConsumableItem(DataRow row)
+		{
+			this.Consumable = null;
+			this.Amount = (Int32)row["Amount"];
+		}
 	}
 }
