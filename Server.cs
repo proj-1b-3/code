@@ -141,6 +141,12 @@ namespace App
 			rel = new DataRelation("ProductConsumableAttribute", productTable.Columns["ProductId"],
 				consumableAttributeTable.Columns["ProductId"]);
 			DataBase.Relations.Add(rel);
+			rel = new DataRelation("OrderReservation", orderTable.Columns["OrderId"],
+				reservationTable.Columns["OrderId"]);
+			DataBase.Relations.Add(rel);
+			rel = new DataRelation("OrderConsumable", orderTable.Columns["OrderId"],
+				orderItemTable.Columns["OrderId"]);
+			DataBase.Relations.Add(rel);
 
 			ActiveUsers = new Dictionary<Guid, Int64>();
 		}
@@ -570,6 +576,40 @@ namespace App
 				return false;
 			}
 
+			return true;
+		}
+
+		public Boolean TryFetchReport(Guid sessionToken, out Report report, DateTime date)
+		{
+			report = null;
+			var userRow = this.GetUserRow(sessionToken);
+			if (userRow == null || (Role)userRow["Role"] != Role.Owner) {
+				return false;
+			}
+
+			report = new Report();
+			var orderReservation = this.DataBase.Relations("OrderReservation");
+			var orderConsumable = this.DataBase.Relations("OrderConsumable");
+			var orderRows = orderReservation.ParentTable.Select();
+			foreach (var orderRow in orderRows) {
+				var reservationRows = orderRow.GetChildRows(orderReservation);
+				foreach (var reservationRow in reservationRows) {
+					if (date.Date != (Date)reservationRow["Date"]) {
+						continue;
+					}
+					var groupSize = (Int32)reservationRow["GroupSize"];
+					order.TicketsSold += groupSize;
+					order.Income += (Sinlge)reservationRow["Price"] * groupSize;
+				}
+
+				var consumableRows = orderRow.GetChildRows(orderConsumable);
+				foreach (var consumableRow in consumableRows) {
+					var amount = (Int32)consumableRow["Amount"];
+					report.ConsumablesSold += amount;
+					report.Income += (Single)consumableRow["Price"] * amount;
+				}
+			}
+			
 			return true;
 		}
 	}
