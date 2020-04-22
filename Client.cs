@@ -288,8 +288,8 @@ namespace App
 			Console.WriteLine("Date: " + Basket.TargetDateTime.ToString("D"));
 
 			Console.WriteLine("");
-			foreach(var item in Basket.ConsumableItems.Consumable){
-				Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}" , item.Name, item.Amount);
+			foreach(var item in Basket.ConsumableItems){
+				Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}" , item.Consumable.Name, item.Amount);
 			}
 		}
 
@@ -311,7 +311,7 @@ namespace App
 				}
 
 				foreach(var item in Basket.ConsumableItems){
-					if(item.ProductId == chosenProduct.ProductId){
+					if(item.Consumable.ProductId == chosenProduct.ProductId){
 						item.Amount = newAmount;
 						return;
 					}
@@ -329,35 +329,31 @@ namespace App
 					Console.WriteLine("invalid number");
 					return;
 				}
-				foreach(var item in Basket.Room){
-					if(item.RoomId == chosenRoom.ProductId){
-						Int32 freePlaces = chosenRoom.Capacity - Server.CheckReservation(item);
-						if (newGroupsize > freePlaces){
-							Console.WriteLine("there's no enough places");
+				Int32 freePlaces = chosenRoom.Capacity - Server.CheckReservation(Basket);
+					if (newGroupsize > freePlaces){
+						Console.WriteLine("there's no enough places");
 							return;
-						}
-						Console.WriteLine("Places left: " + freePlaces);
-						string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
-						if (confirm == "Y"){
-							item.GroupSize = newGroupsize;
-						}
-						return;
 					}
-				}
-
+					Console.WriteLine("Places left: " + freePlaces);
+					string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
+					if (confirm == "Y"){
+						Basket.GroupSize = newGroupsize;
+					}
+					return;
 			}
 		}
+
 
 		public void Payment()
 		{
 			MemoryStream stream = new MemoryStream();
-			var pay_json = JsonSerializer.SerializeToUtf8Bytes<Order>(Basket);
+			var pay_json = JsonSerializer.SerializeToUtf8Bytes<Reservation>(Basket);
 			stream.Write(pay_json, 0, pay_json.Length);
 			if(!Server.TryPay(CurrentUser.SessionToken, stream)){
 				Console.WriteLine("Unsuccessful payment, Please try again");
 			}
 			Console.WriteLine("Payment succeed");
-			Basket = new Order();
+			Basket = new Reservation();
 		}
 		public void AddRoom()
 		{
@@ -648,7 +644,7 @@ namespace App
 				Console.WriteLine("Invalid number");
 				return;
 			}
-			Basket.Items.Add(new OrderItem(consumable.ProductId, amount));
+			Basket.ConsumableItems.Add(new ConsumableItem(consumable, amount));
 		}
 
 		public void FetchConsumables()
@@ -694,7 +690,7 @@ namespace App
 				return;
 			}
 			byte[] rawJson = stream.ToArray();
-			this.Orders = JsonSerializer.Deserialize<List<Order>>(rawJson);
+			this.Orders = JsonSerializer.Deserialize<List<Reservation>>(rawJson);
 		}
 
 		// public void ListOrders()
