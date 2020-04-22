@@ -33,9 +33,9 @@ namespace App
 				{ "select room", this.MakeReservation },
 				{ "list consumables", ListConsumables },
 				{ "Fetch consumables", FetchConsumables },
-				{ "select consumable", null },
+				{ "select consumable", SelectConsumable },
 				{ "list basket", this.ViewBasket },
-				{ "edit basket", null },
+				{ "edit basket", EditBasket },
 				{ "deregister", this.Deregister },
 				{ "list orders", null },
 				{ "make room", this.AddRoom },
@@ -282,23 +282,69 @@ namespace App
 			}
 			Console.WriteLine("Basket:");
 			foreach(var item in Basket.Reservations){
-				Console.WriteLine("Reservations:\n\tRoom ID {0}\n\tGroup size {1}" , item.RoomId, item.GroupSize);
-				Console.WriteLine("\tDate " + item.DateTime.ToString("D"));
+				var room = this.Rooms.Find(room => room.ProductId == item.RoomId);
+				Console.WriteLine("Reservations:\n\tRoom name: {0}\n\tGroup size: {1}" , room.Name, item.GroupSize);
+				Console.WriteLine("\tDate: " + item.DateTime.ToString("D"));
 			}
 			Console.WriteLine("");
 			foreach(var item in Basket.Items){
-				Console.WriteLine("Items:\n\tProduct ID {0}\n\tAmount {1}" , item.ProductId, item.Amount);
+				var consumable = this.Consumables.Find(Consumable => Consumable.ProductId == item.ProductId);
+				Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}" , consumable.Name, item.Amount);
 			}
 		}
 
 		public void EditBasket()
 		{
-			string consumableName = ReadField("Product name: ");
+			String chosenGenre = ReadField("[P]roduct or [R]oom: ");
 
-			var Consumable = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
-			if (Consumable == null) {
-				Console.WriteLine("Invalid name");
-				return;
+			if (chosenGenre == "P"){
+				string consumableName = ReadField("Product name: ");
+				var chosenProduct = this.Consumables.Find(Consumable => Consumable.Name == consumableName);
+				if (chosenProduct == null) {
+					Console.WriteLine("Invalid name");
+					return;
+				}
+				Int32 newAmount;
+				if (! Int32.TryParse(ReadField("New amount: "), out newAmount)) {
+					Console.WriteLine("invalid number");
+					return;
+				}
+
+				foreach(var item in Basket.Items){
+					if(item.ProductId == chosenProduct.ProductId){
+						item.Amount = newAmount;
+						return;
+					}
+				}
+			}
+			else if (chosenGenre == "R"){
+				string roomName = ReadField("Room name: ");
+				var chosenRoom = this.Rooms.Find(room => room.Name == roomName);
+				if (chosenRoom == null) {
+					Console.WriteLine("Invalid name");
+					return;
+				}
+				Int32 newGroupsize;
+				if (! Int32.TryParse(ReadField("New group size: "), out newGroupsize)) {
+					Console.WriteLine("invalid number");
+					return;
+				}
+				foreach(var item in Basket.Reservations){
+					if(item.RoomId == chosenRoom.ProductId){
+						Int32 freePlaces = chosenRoom.Capacity - Server.CheckReservation(item);
+						if (newGroupsize > freePlaces){
+							Console.WriteLine("there's no enough places");
+							return;
+						}
+						Console.WriteLine("Places left: " + freePlaces);
+						string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
+						if (confirm == "Y"){
+							item.GroupSize = newGroupsize;
+						}
+						return;
+					}
+				}
+
 			}
 		}
 
@@ -582,6 +628,27 @@ namespace App
 				}
 			}
 			Server.TryEditConsumable(CurrentUser.SessionToken, copied);
+		}
+
+		public void SelectConsumable()
+		{
+			if (CurrentUser == null) {
+				Console.WriteLine("You must be logged in to select a consumbale");
+				return;
+			}
+			string consumableName = ReadField("Name: ");
+			var consumable = this.Consumables.Find(consumable => consumable.Name == consumableName);
+			if (consumable == null) {
+				Console.WriteLine("Invalid room name");
+				return;
+			}
+
+			Int32 amount;
+			if (! Int32.TryParse(ReadField("Amount: "), out amount)) {
+				Console.WriteLine("Invalid number");
+				return;
+			}
+			Basket.Items.Add(new OrderItem(consumable.ProductId, amount));
 		}
 
 		public void FetchConsumables()
