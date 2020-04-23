@@ -4,6 +4,7 @@ namespace App
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Text.Json;
+	using System.Globalization;
 
 	class Client
 	{
@@ -15,8 +16,10 @@ namespace App
 		private List<Room> Rooms;
 		private List<Reservation> Reservations;
 		private List<Reservation> ReservationHistory;
+		private List<Review> Reviews;
 		private List<Consumable> Consumables;
 		private Reservation Basket;
+		private CultureInfo Culture;
 
 		public delegate void Command();
 
@@ -31,24 +34,27 @@ namespace App
 				{ "register", this.Register },
 				{ "pay", this.Payment },
 				{ "exit", this.Exit },
-				{ "list rooms", this.ListRooms },
+				{ "list rooms", this.ViewRooms },
 				{ "select room", this.MakeReservation },
-				{ "list consumables", ListConsumables },
-				{ "Fetch consumables", FetchConsumables },
-				{ "select consumable", SelectConsumable },
+				{ "view consumables", this.ViewConsumables },
+				{ "Fetch consumables", this.FetchConsumables },
+				{ "select consumable", this.SelectConsumable },
 				{ "list basket", this.ViewBasket },
-				{ "edit basket", EditBasket },
+				{ "edit basket", this.EditBasket },
 				{ "deregister", this.Deregister },
-				{ "list reservations", this.ListReservations },
-				{ "list reservation history", this.FetchReservationDate },
+				{ "view reservations", this.ViewReservations },
+				{ "view reservation history", this.FetchReservationDate },
+				{ "view report", this.ViewDailyReport },
 				{ "make room", this.AddRoom },
 				{ "remove room", this.RemoveRoom },
 				{ "edit room", EditRoom },
 				{ "make consumable", this.MakeConsumable },
 				{ "remove consumable", this.RemoveConsumable },
 				{ "edit consumable", this.EditConsumables },
+				{ "add review", this.AddReview },
+				{ "view reviews", this.ViewReviews },
 			};
-
+			Culture = CultureInfo.CurrentCulture;
 		}
 
 		public void Begin(Server server)
@@ -720,7 +726,7 @@ namespace App
 			stream.Close();
 		}	
 
-		public void ListConsumables()
+		public void ViewConsumables()
 		{
 			if (CurrentUser == null) {
 				return;
@@ -793,10 +799,34 @@ namespace App
 					Console.WriteLine("\tAmount: " + con.Amount);
 				}
 				Console.WriteLine("________________________________________");
-
 			}
 		}
-		public void ListReservations()
+
+		public void ViewDailyReport()
+		{
+			if (CurrentUser.Role != Role.Owner) {
+				Console.WriteLine("You dont have permission to do this procces");
+				return;
+			}
+			Report report;
+			DateTime date;
+
+			if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), Culture, DateTimeStyles.None, out date)) {
+				Console.WriteLine("Invalid date");
+				return;
+			}
+			if(!Server.TryFetchReport(CurrentUser.SessionToken, out report, date)){
+				Console.WriteLine("Something went wrong while trying to get report information");
+			}
+			if(report == null){
+				Console.WriteLine("No data found");
+				return;
+			}
+			Console.WriteLine("Amount tickets sold: " + report.TicketsSold);
+			Console.WriteLine("Amount consumables sold: " + report.ConsumablesSold);
+			Console.WriteLine("Income: " + report.Income);
+		}
+		public void ViewReservations()
 		{
 			if (CurrentUser == null) {
 				return;
@@ -817,7 +847,6 @@ namespace App
 					Console.WriteLine("\tDescription: " + con.Consumable.Description);
 					Console.WriteLine("\tAmount: " + con.Amount);
 				}
-
 			}
 		}
 
@@ -835,7 +864,7 @@ namespace App
 		}
 
 		
-		public void ListRooms()
+		public void ViewRooms()
 		{
 			if (CurrentUser == null) {
 				return;
@@ -857,6 +886,47 @@ namespace App
 			return;
 		}
 
+		public void AddReview()
+		{	
+			Review review = new Review();
+			String roomName = ReadField("Room name: ");
+			var room = this.Rooms.Find(room => room.Name == roomName);
+			String reviewText = ReadField("Review: ");
+			Int32 reviewRating;
+			if (! Int32.TryParse(ReadField("Rating: "), out reviewRating)) {
+				Console.WriteLine("Invalid number");
+				return;
+			}
+			else if(reviewRating < 0 || reviewRating > 5){
+				Console.WriteLine("Invalid number");
+				return;
+			}
+			review.RoomId = room.ProductId;
+			review.Text = reviewText;
+			review.Rating = reviewRating;
+			if(!Server.TryAddReview(CurrentUser.SessionToken, review)){
+				Console.WriteLine("Something went wrong when trying to add your review");
+				return;
+			}
+		}
+		public void ViewReviews()
+		{
+			MemoryStream stream = new MemoryStream();
+			String roomName = ReadField("Room name: ");
+			var room = this.Rooms.Find(room => room.Name == roomName);
+			if (!Server.TryFetchReviews(CurrentUser.SessionToken, stream, room)) {
+				Console.WriteLine("Something went wrong while trying to get the Orders data from the server");
+				return;
+			}
+			byte[] rawJson = stream.ToArray();
+			this.Reviews = JsonSerializer.Deserialize<List<Review>>(rawJson);
+			foreach(var review in Reviews){
+				Console.WriteLine("Name: " + review.UserName);
+				Console.WriteLine("Rating: " + review.Rating);
+				Console.WriteLine("Review:\n" + review.Text);
+				Console.WriteLine("Date: " + review.DateTime.ToString("D"));
+			}
+		}
 		public void Exit()
 		{
 			Stop = true;
