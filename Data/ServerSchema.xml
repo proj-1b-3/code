@@ -66,6 +66,17 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="Reviews">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ReviewId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="UserId" type="xs:long" minOccurs="0" />
+              <xs:element name="RoomId" type="xs:long" minOccurs="0" />
+              <xs:element name="DateTime" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="Text" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
     <xs:unique name="Constraint1">
@@ -99,6 +110,10 @@
     <xs:unique name="ConsumableItems_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
       <xs:selector xpath=".//ConsumableItems" />
       <xs:field xpath="ConsumableItemId" />
+    </xs:unique>
+    <xs:unique name="Reviews_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Reviews" />
+      <xs:field xpath="ReviewId" />
     </xs:unique>
     <xs:keyref name="ConsumableAttribute-ConsumableItem" refer="ConsumableAttributes_Constraint1">
       <xs:selector xpath=".//ConsumableItems" />

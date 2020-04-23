@@ -121,9 +121,25 @@ namespace App
 			consumableItemTable.Columns.Add(col);
 			consumableItemTable.PrimaryKey = primaryKeys;
 
+			var reviewTable = new DataTable("Reviews");
+			primaryKeys = new DataColumn[1];
+			col = new DataColumn("ReviewId", typeof(Int64));
+			col.AutoIncrement = true;
+			primaryKeys[0] = col;
+			reviewTable.Columns.Add(col);
+			col = new DataColumn("UserId", typeof(Int64));
+			reviewTable.Columns.Add(col);
+			col = new DataColumn("RoomId", typeof(Int64));
+			reviewTable.Columns.Add(col);
+			col = new DataColumn("DateTime", typeof(DateTime));
+			reviewTable.Columns.Add(col);
+			col = new DataColumn("Text", typeof(String));
+			reviewTable.Columns.Add(col);
+			reviewTable.PrimaryKey = primaryKeys;
+
 			DataBase.Tables.AddRange(new DataTable[]{
 				userTable, productTable, roomAttributeTable, reservationTable, 
-				consumableAttributeTable, consumableItemTable});
+				consumableAttributeTable, consumableItemTable, reviewTable});
 
 			var rel = new DataRelation("Product-RoomAttribute",
 				productTable.Columns["ProductId"],
@@ -527,7 +543,7 @@ namespace App
 			return reservations;
 		}
 
-		public Boolean TryFetchUseReservations(Guid sessionToken, MemoryStream stream)
+		public Boolean TryFetchUserReservations(Guid sessionToken, MemoryStream stream)
 		{
 			var userRow = GetUserRow(sessionToken);
 			if (userRow == null) {
