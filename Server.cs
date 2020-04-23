@@ -508,7 +508,7 @@ namespace App
 				consumableItemRow["ReservationId"] = reservationRow["ReservationId"];
 				consumableItemRow["ProductId"] = consumableItem.Consumable.ProductId;
 				consumableItemRow["Amount"] = consumableItem.Amount;
-				consumableItemTable.Rows.Add(consumableItem);
+				consumableItemTable.Rows.Add(consumableItemRow);
 			}
 
 			return true;
