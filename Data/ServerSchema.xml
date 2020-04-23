@@ -8,6 +8,8 @@
             <xs:sequence>
               <xs:element name="UserId" msdata:AutoIncrement="true" type="xs:long" />
               <xs:element name="UserName" type="xs:string" minOccurs="0" />
+              <xs:element name="Forename" type="xs:string" minOccurs="0" />
+              <xs:element name="Suraname" type="xs:string" minOccurs="0" />
               <xs:element name="Email" type="xs:string" minOccurs="0" />
               <xs:element name="Password" type="xs:string" minOccurs="0" />
               <xs:element name="Role" type="xs:int" minOccurs="0" />
@@ -115,6 +117,10 @@
       <xs:selector xpath=".//Reviews" />
       <xs:field xpath="ReviewId" />
     </xs:unique>
+    <xs:keyref name="User-Review" refer="Constraint2">
+      <xs:selector xpath=".//Reviews" />
+      <xs:field xpath="UserId" />
+    </xs:keyref>
     <xs:keyref name="ConsumableAttribute-ConsumableItem" refer="ConsumableAttributes_Constraint1">
       <xs:selector xpath=".//ConsumableItems" />
       <xs:field xpath="ProductId" />

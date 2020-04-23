@@ -39,6 +39,10 @@ namespace App
 			primaryKeys[0] = col;
 			col = new DataColumn("UserName", typeof(String));
 			userTable.Columns.Add(col);
+			col = new DataColumn("Forename", typeof(String));
+			userTable.Columns.Add(col);
+			col = new DataColumn("Suraname", typeof(String));
+			userTable.Columns.Add(col);
 			col = new DataColumn("Email", typeof(String));
 			col.Unique = true;
 			userTable.Columns.Add(col);
@@ -160,6 +164,10 @@ namespace App
 			rel = new DataRelation("RoomAttribute-Reservation",
 				roomAttributeTable.Columns["ProductId"],
 				reservationTable.Columns["RoomId"]);
+			DataBase.Relations.Add(rel);
+			rel = new DataRelation("User-Review",
+				userTable.Columns["UserId"],
+				reviewTable.Columns["UserId"]);
 			DataBase.Relations.Add(rel);
 
 			ActiveUsers = new Dictionary<Guid, Int64>();
@@ -627,12 +635,46 @@ namespace App
 			}
 
 			var reviewRow = this.DataBase.Tables["Reviews"].NewRow();
-			reviewRow["UserId"] = userRow["UserId"];
-			reviewRow["RoomId"] = review.RoomId;
-			reviewRow["DateTime"] = review.DateTime;
+			reviewRow["UserId"] = (Int64)userRow["UserId"];
+			reviewRow["RoomId"] = (Int64)review.RoomId;
+			reviewRow["DateTime"] = DateTime.Now;
 			reviewRow["Text"] = review.Text;
+			reviewRow["Rating"] = review.Rating;
 			this.DataBase.Tables["Reviews"].Rows.Add(reviewRow);
 			
+			return true;
+		}
+
+		public Boolean TryFetchReviews(Guid sessionToken, MemoryStream stream, Room room)
+		{
+			var userRow = this.GetUserRow(sessionToken);
+			if (userRow == null) {
+				return false;
+			}
+
+			var query = $"RoomId = {room.ProductId}";
+			var reviewRows = this.DataBase.Tables["Reviews"].Select(query);
+			var reviews = new List<Review>();
+			var rel0 = this.DataBase.Relations["User-Review"];
+
+			foreach (var reviewRow in reviewRows) {
+				var review = new Review();
+				review.RoomId = room.ProductId;
+				review.RoomName = room.Name;
+				var autherRow = reviewRow.GetParentRow(rel0);
+				review.UserName = (String)autherRow["UserName"];
+				review.DateTime = (DateTime)reviewRow["DateTime"];
+				review.Rating = (Int32)reviewRow["Rating"];
+				reviews.Add(review);
+			}
+
+			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Review>>(reviews);
+			stream.Write(rawJson, 0, (Int32)stream.Length);
+			stream.Position = 0;
+			if (stream.Length == 0) {
+				return false;
+			}
+
 			return true;
 		}
 	}
