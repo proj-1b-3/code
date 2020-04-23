@@ -811,7 +811,7 @@ namespace App
 			Report report;
 			DateTime date;
 
-			if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), Culture, DateTimeStyles.None, out date)) {
+			if (! TryParseDateTime(ReadField("Date (YYYY-MM-DD): "), out date)) {
 				Console.WriteLine("Invalid date");
 				return;
 			}
