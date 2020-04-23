@@ -13,7 +13,7 @@ namespace App
 		private Server Server;
 
 		private List<Room> Rooms;
-		private List<Reservation> Orders;
+		private List<Reservation> Reservations;
 		private List<Consumable> Consumables;
 		private Reservation Basket;
 
@@ -38,7 +38,7 @@ namespace App
 				{ "list basket", this.ViewBasket },
 				{ "edit basket", EditBasket },
 				{ "deregister", this.Deregister },
-				{ "list orders", null },
+				{ "list reservations", ListReservations },
 				{ "make room", this.AddRoom },
 				{ "remove room", this.RemoveRoom },
 				{ "edit room", EditRoom },
@@ -47,7 +47,6 @@ namespace App
 				{ "edit consumable", this.EditConsumables },
 			};
 
-			Basket = new Reservation();
 		}
 
 		public void Begin(Server server)
@@ -60,7 +59,6 @@ namespace App
 			while (! Stop) {
 				Console.Write(">>> ");
 				input = Console.ReadLine().ToLower().Trim();
-
 				if (!this.Commands.TryGetValue(input, out command)) {
 					Console.WriteLine("Invalid command");
 					continue;
@@ -633,6 +631,10 @@ namespace App
 				Console.WriteLine("You must be logged in to select a consumbale");
 				return;
 			}
+			if (Basket == null){
+				return;
+			}
+			FetchConsumables();
 			string consumableName = ReadField("Name: ");
 			var consumable = this.Consumables.Find(consumable => consumable.Name == consumableName);
 			if (consumable == null) {
@@ -687,34 +689,39 @@ namespace App
 		public void FetchUserOrders()
 		{
 			MemoryStream stream = new MemoryStream();
-			if (!Server.TryFetchRooms(CurrentUser.SessionToken, stream)) {
+			if (!Server.TryFetchUserReservations(CurrentUser.SessionToken, stream)) {
 				Console.WriteLine("Something went wrong while trying to get the Orders data from the server");
 				return;
 			}
 			byte[] rawJson = stream.ToArray();
-			this.Orders = JsonSerializer.Deserialize<List<Reservation>>(rawJson);
+			this.Reservations = JsonSerializer.Deserialize<List<Reservation>>(rawJson);
 		}
 
-		// public void ListOrders()
-		// {
-		// 	if (CurrentUser == null) {
-		// 		return;
-		// 	}
-		// 	FetchUserOrders();
+		public void ListReservations()
+		{
+			if (CurrentUser == null) {
+				return;
+			}
+			FetchUserOrders();
 
-		// 	foreach (var ord in Orders) {
+			foreach (var res in Reservations) {
 
-		// 		Console.WriteLine("\nName: {0}", ord.Reservations);
-		// 		Console.WriteLine("Description: {0}", ord.Description);
-		// 		Console.WriteLine("Price: {0}", ord.Price);
-		// 		if(con.Available){
-		// 			Console.WriteLine("Available: Yes");
-		// 		}
-		// 		else{
-		// 			Console.WriteLine("Available: No");
-		// 		}
-		// 	}
-		// }
+				Console.WriteLine("\nRoom name: {0}", res.Room.Name);
+				Console.WriteLine("Description: {0}", res.Room.Description);
+				Console.WriteLine("Price: {0}", res.Room.Price);
+				Console.WriteLine("Group size: {0}", res.GroupSize);
+				Console.WriteLine("Date: {0}", res.TargetDateTime.ToString("D"));
+				Console.WriteLine("Round: {0}", res.RoundNumber);
+				Console.WriteLine("Consumables:");
+				foreach(var con in res.ConsumableItems){
+					Console.WriteLine("Name: " + con.Consumable.Name);
+					Console.WriteLine("Price: " + con.Consumable.Price);
+					Console.WriteLine("Description: " + con.Consumable.Description);
+					Console.WriteLine("Amount: " + con.Amount);
+				}
+
+			}
+		}
 
 		private void FetchRooms()
 		{
