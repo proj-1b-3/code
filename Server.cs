@@ -609,7 +609,7 @@ namespace App
 			report = new Report();
 			var startDate = date.Date;
 			var endDate = startDate + new TimeSpan(1, 0, 0, 0);
-			var query = $"OrderDateTime >= #{startDate}# AND OrderDateTime < #{endDate}#";
+			var query = $"OrderDateTime >= #{startDate.Date}# AND OrderDateTime < #{endDate.Date}#";
 			var reservationRows = this.DataBase.Tables["Reservations"].Select(query);
 			var reservations = this.ReservationRowsToList(reservationRows);
 	
