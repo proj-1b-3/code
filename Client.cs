@@ -632,6 +632,7 @@ namespace App
 				return;
 			}
 			if (Basket == null){
+				Console.WriteLine("Please selecct room first");
 				return;
 			}
 			FetchConsumables();
