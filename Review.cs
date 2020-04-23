@@ -1,0 +1,6 @@
+namespace App
+{
+	class Review
+	{
+	}
+}

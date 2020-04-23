@@ -614,5 +614,15 @@ namespace App
 			
 			return true;
 		}
+
+		public Boolean TryAddReview(Guid sessionToken, Review review)
+		{
+			var userRow = this.GetUserRow(sessionToken);
+			if (userRow == null) {
+				return false;
+			}
+			
+			return true;
+		}
 	}
 }

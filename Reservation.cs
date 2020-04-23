@@ -35,7 +35,8 @@ namespace App
 			this.UserId = (Int64)row["UserId"];
 			this.Room = null;
 			this.GroupSize = (Int32)row["GroupSize"];
-			this.TargetDateTime = (DateTime)row["TargetDate"];
+			this.TargetDateTime = (DateTime)row["TargetDateTime"];
+			this.OrderDateTime = (DateTime)row["OrderDateTime"];
 			this.RoundNumber = (Int32)row["RoundNumber"];
 			this.ConsumableItems = null;
 		}
