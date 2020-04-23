@@ -74,6 +74,61 @@ namespace App
 			return;
 		}
 
+		private static Boolean IsLeapYear(Int32 year)
+		{
+			if (year % 4 != 0) {
+				return false;
+			} else if (year % 100 != 0) {
+				return true;
+			} else if (year % 400 != 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		private static readonly Int32[] monthLength = {
+			31, 28, 31, 30, 29, 30, 31, 31, 30, 30, 30, 31
+		};
+
+		private static Boolean TryParseDateTime(String s, out DateTime dateTime)
+		{
+			dateTime = new DateTime();
+			var parts = s.Split(new Char[]{'-'});
+			var ints = new Int32[3];
+			if (parts.Length != 3) {
+				return false;
+			}
+
+			if (parts[0].Length != 4 || parts[1].Length != 2 || parts[2].Length != 2) {
+				return false;
+			}
+
+			for (int i=0; i < 3; i += 1) {
+				if (!Int32.TryParse(parts[i], out ints[i])) {
+					return false;
+				}
+			}
+
+			if (ints[0] < 1 || ints[0] > 9999) {
+				return false;
+			} else if (ints[1] < 1 || ints[1] > 12) {
+				return false;
+			} else if (IsLeapYear(ints[0])) {
+				if (ints[1] != 2 && (ints[2] < 1 || ints[2] > monthLength[ints[1]])) {
+					return false;
+				} else if (ints[2] < 1 || ints[2] > 29) {
+					return false;
+				}
+			} else if (ints[2] < 1 || ints[2] > monthLength[ints[1]]) {
+				return false;
+			}
+
+			dateTime = new DateTime(ints[0], ints[1], ints[2]);
+
+			return true;
+		}
+
 		private static String ReadField(String field_name)
 		{
 			Console.Write(field_name);
