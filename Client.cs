@@ -14,6 +14,7 @@ namespace App
 
 		private List<Room> Rooms;
 		private List<Reservation> Reservations;
+		private List<Reservation> ReservationHistory;
 		private List<Consumable> Consumables;
 		private Reservation Basket;
 
@@ -38,7 +39,8 @@ namespace App
 				{ "list basket", this.ViewBasket },
 				{ "edit basket", EditBasket },
 				{ "deregister", this.Deregister },
-				{ "list reservations", ListReservations },
+				{ "list reservations", this.ListReservations },
+				{ "list reservation history", this.FetchReservationDate },
 				{ "make room", this.AddRoom },
 				{ "remove room", this.RemoveRoom },
 				{ "edit room", EditRoom },
@@ -698,27 +700,67 @@ namespace App
 			this.Reservations = JsonSerializer.Deserialize<List<Reservation>>(rawJson);
 		}
 
+		public void FetchReservationDate()
+		{	
+			if (CurrentUser.Role != Role.Owner) {
+				Console.WriteLine("You dont have permission to do this procces");
+				return;
+			}
+			MemoryStream stream = new MemoryStream();
+			DateTime firstDate;
+			if (! DateTime.TryParse(ReadField("Start date (YYYY-MM-DD): "), out firstDate)) {
+				Console.WriteLine("Invalid date");
+				return;
+			}
+			DateTime secondDate;
+			if (! DateTime.TryParse(ReadField("End date (YYYY-MM-DD): "), out secondDate)) {
+				Console.WriteLine("Invalid date");
+				return;
+			}
+			if (!Server.TryFetchReservationsBetween(CurrentUser.SessionToken, stream, firstDate, secondDate)) {
+				Console.WriteLine("Something went wrong while trying to get the Orders data from the server");
+				return;
+			}
+			byte[] rawJson = stream.ToArray();
+			this.ReservationHistory = JsonSerializer.Deserialize<List<Reservation>>(rawJson);
+
+			foreach (var res in ReservationHistory){
+				Console.WriteLine("\tRoom name: {0}", res.Room.Name);
+				Console.WriteLine("\tDescription: {0}", res.Room.Description);
+				Console.WriteLine("\tPrice: {0}", res.Room.Price);
+				Console.WriteLine("\tGroup size: {0}", res.GroupSize);
+				Console.WriteLine("\tDate: {0}", res.TargetDateTime.ToString("D"));
+				Console.WriteLine("\tRound: {0}", res.RoundNumber);
+				foreach(var con in res.ConsumableItems){
+					Console.WriteLine("\tproduct name: " + con.Consumable.Name);
+					Console.WriteLine("\tPrice: " + con.Consumable.Price);
+					Console.WriteLine("\tDescription: " + con.Consumable.Description);
+					Console.WriteLine("\tAmount: " + con.Amount);
+				}
+				Console.WriteLine("________________________________________");
+
+			}
+		}
 		public void ListReservations()
 		{
 			if (CurrentUser == null) {
 				return;
 			}
 			FetchUserOrders();
-
+			Console.WriteLine("Reservations: ");
 			foreach (var res in Reservations) {
 
-				Console.WriteLine("\nRoom name: {0}", res.Room.Name);
-				Console.WriteLine("Description: {0}", res.Room.Description);
-				Console.WriteLine("Price: {0}", res.Room.Price);
-				Console.WriteLine("Group size: {0}", res.GroupSize);
-				Console.WriteLine("Date: {0}", res.TargetDateTime.ToString("D"));
-				Console.WriteLine("Round: {0}", res.RoundNumber);
-				Console.WriteLine("Consumables:");
+				Console.WriteLine("\tRoom name: {0}", res.Room.Name);
+				Console.WriteLine("\tDescription: {0}", res.Room.Description);
+				Console.WriteLine("\tPrice: {0}", res.Room.Price);
+				Console.WriteLine("\tGroup size: {0}", res.GroupSize);
+				Console.WriteLine("\tDate: {0}", res.TargetDateTime.ToString("D"));
+				Console.WriteLine("\tRound: {0}", res.RoundNumber);
 				foreach(var con in res.ConsumableItems){
-					Console.WriteLine("Name: " + con.Consumable.Name);
-					Console.WriteLine("Price: " + con.Consumable.Price);
-					Console.WriteLine("Description: " + con.Consumable.Description);
-					Console.WriteLine("Amount: " + con.Amount);
+					Console.WriteLine("\tProduct name: " + con.Consumable.Name);
+					Console.WriteLine("\tPrice: " + con.Consumable.Price);
+					Console.WriteLine("\tDescription: " + con.Consumable.Description);
+					Console.WriteLine("\tAmount: " + con.Amount);
 				}
 
 			}
