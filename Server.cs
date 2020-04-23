@@ -157,6 +157,10 @@ namespace App
 				consumableAttributeTable.Columns["ProductId"],
 				consumableItemTable.Columns["ProductId"]);
 			DataBase.Relations.Add(rel);
+			rel = new DataRelation("RoomAttribute-Reservation",
+				roomAttributeTable.Columns["ProductId"],
+				reservationTable.Columns["RoomId"]);
+			DataBase.Relations.Add(rel);
 
 			ActiveUsers = new Dictionary<Guid, Int64>();
 		}
@@ -520,7 +524,7 @@ namespace App
 			var rel0 = this.DataBase.Relations["Reservation-ConsumableItem"];
 			var rel1 = this.DataBase.Relations["ConsumableAttribute-ConsumableItem"];
 			var rel2 = this.DataBase.Relations["Product-ConsumableAttribute"];
-			var rel3 = this.DataBase.Relations["Reservation-RoomAttribute"];
+			var rel3 = this.DataBase.Relations["RoomAttribute-Reservation"];
 			var rel4 = this.DataBase.Relations["Product-RoomAttribute"];
 			foreach (var reservationRow in reservationRows) {
 				var consumableItemRows = reservationRow.GetChildRows(rel0);
@@ -621,6 +625,13 @@ namespace App
 			if (userRow == null) {
 				return false;
 			}
+
+			var reviewRow = this.DataBase.Tables["Reviews"].NewRow();
+			reviewRow["UserId"] = userRow["UserId"];
+			reviewRow["RoomId"] = review.RoomId;
+			reviewRow["DateTime"] = review.DateTime;
+			reviewRow["Text"] = review.Text;
+			this.DataBase.Tables["Reviews"].Rows.Add(reviewRow);
 			
 			return true;
 		}

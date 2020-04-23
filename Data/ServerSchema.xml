@@ -127,6 +127,10 @@
       <xs:selector xpath=".//ConsumableAttributes" />
       <xs:field xpath="ProductId" />
     </xs:keyref>
+    <xs:keyref name="RoomAttribute-Reservation" refer="RoomAttributes_Constraint1">
+      <xs:selector xpath=".//Reservations" />
+      <xs:field xpath="RoomId" />
+    </xs:keyref>
     <xs:keyref name="Product-RoomAttribute" refer="Products_Constraint2">
       <xs:selector xpath=".//RoomAttributes" />
       <xs:field xpath="ProductId" />
