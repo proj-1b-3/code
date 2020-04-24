@@ -54,7 +54,7 @@ namespace App
 				{ "add review", this.AddReview },
 				{ "view reviews", this.ViewReviews },
 			};
-			Culture = CultureInfo.CurrentCulture;
+			Culture = CultureInfo.InvariantCulture;
 		}
 
 		public void Begin(Server server)
@@ -811,7 +811,7 @@ namespace App
 			Report report;
 			DateTime date;
 
-			if (! TryParseDateTime(ReadField("Date (YYYY-MM-DD): "), out date)) {
+			if (! DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date)) {
 				Console.WriteLine("Invalid date");
 				return;
 			}
