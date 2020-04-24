@@ -680,6 +680,7 @@ namespace App
 				var autherRow = reviewRow.GetParentRow(rel0);
 				review.UserName = (String)autherRow["UserName"];
 				review.DateTime = (DateTime)reviewRow["DateTime"];
+				review.Text = (String)reviewRow["Text"];
 				review.Rating = (Int32)reviewRow["Rating"];
 				reviews.Add(review);
 			}
