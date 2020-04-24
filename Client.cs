@@ -878,6 +878,7 @@ namespace App
 			byte[] raw_Json = stream.ToArray();
 			this.Reviews = JsonSerializer.Deserialize<List<Review>>(raw_Json);
 			foreach(var review in Reviews){
+				Console.WriteLine("");
 				Console.WriteLine("Name: " + review.UserName);
 				Console.WriteLine("Date: " + review.DateTime.ToString("D"));
 				Console.WriteLine("Rating: " + review.Rating);
