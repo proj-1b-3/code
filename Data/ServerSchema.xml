@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 <xs:schema id="DataBase" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-  <xs:element name="DataBase" msdata:IsDataSet="true" msdata:Locale="en-GB">
+  <xs:element name="DataBase" msdata:IsDataSet="true" msdata:Locale="en-US">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="Users">

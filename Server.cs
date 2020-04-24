@@ -645,9 +645,8 @@ namespace App
 			}
 
 			var reviewTable = this.DataBase.Tables["Reviews"];
-			var query = $"ProductName = {review.RoomName} " +
-				"AND COUNT(CHILD(Product - RoomAttribute).ProductId) != 0";
-			var rows = this.DataBase.Tables["Products"].Select(query);
+			var query = $"ProductId = {review.RoomId}";
+			var rows = this.DataBase.Tables["RoomAttributes"].Select(query);
 			if (rows.Length == 0) {
 				return false;
 			}
