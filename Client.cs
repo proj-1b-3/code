@@ -879,9 +879,9 @@ namespace App
 			this.Reviews = JsonSerializer.Deserialize<List<Review>>(raw_Json);
 			foreach(var review in Reviews){
 				Console.WriteLine("Name: " + review.UserName);
+				Console.WriteLine("Date: " + review.DateTime.ToString("D"));
 				Console.WriteLine("Rating: " + review.Rating);
 				Console.WriteLine("Review:\n" + review.Text);
-				Console.WriteLine("Date: " + review.DateTime.ToString("D"));
 			}
 		}
 		public void Exit()
