@@ -686,7 +686,7 @@ namespace App
 			}
 
 			var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Review>>(reviews);
-			stream.Write(rawJson, 0, (Int32)stream.Length);
+			stream.Write(rawJson, 0, rawJson.Length);
 			stream.Position = 0;
 			if (stream.Length == 0) {
 				return false;
