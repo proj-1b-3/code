@@ -238,7 +238,7 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryRegister(String userName, String email, String password)
+		public Boolean TryAddUser(String userName, String email, String password)
 		{
 			if (userName == "" || email == "" || password == "") {
 				return false;
@@ -260,7 +260,7 @@ namespace App
 			return true;
 		}
 
-		public Boolean TryDeregister(Guid sessionToken, String password)
+		public Boolean TryRemoveUser(Guid sessionToken, String password)
 		{
 			if (password == "") {
 				return false;
@@ -284,8 +284,8 @@ namespace App
 				return false;
 			}
 
-			var rows = this.DataBase.Tables["Products"].Select(
-				"ProductName = '" + room.Name + "'");
+			var query = $"ProductName = '{room.Name}'";
+			var rows = this.DataBase.Tables["Products"].Select(query);
 			if (rows.Length != 0) {
 				return false;
 			}
@@ -335,7 +335,15 @@ namespace App
 	
 			var rel = this.DataBase.Relations["Product-RoomAttribute"];
 			var roomAttributeRow = rel.ChildTable.Rows.Find(room.ProductId);
+			if (roomAttributeRow == null) {
+				return false;
+			}
+
 			var productRow = roomAttributeRow.GetParentRow(rel);
+			if (productRow == null) {
+				return false;
+			}
+
 			productRow["ProductName"] = room.Name;
 			productRow["Description"] = room.Description;
 			productRow["Price"] = room.Price;
@@ -636,13 +644,20 @@ namespace App
 				return false;
 			}
 
-			var reviewRow = this.DataBase.Tables["Reviews"].NewRow();
+			var reviewTable = this.DataBase.Tables["Reviews"];
+			var query = $"ProductName = {review.RoomName} " +
+				"AND COUNT(CHILD(Product - RoomAttribute).ProductId) != 0";
+			var rows = this.DataBase.Tables["Products"].Select(query);
+			if (rows.Length == 0) {
+				return false;
+			}
+			var reviewRow = reviewTable.NewRow();
 			reviewRow["UserId"] = (Int64)userRow["UserId"];
 			reviewRow["RoomId"] = (Int64)review.RoomId;
 			reviewRow["DateTime"] = DateTime.Now;
 			reviewRow["Text"] = review.Text;
 			reviewRow["Rating"] = review.Rating;
-			this.DataBase.Tables["Reviews"].Rows.Add(reviewRow);
+			reviewTable.Rows.Add(reviewRow);
 			
 			return true;
 		}
