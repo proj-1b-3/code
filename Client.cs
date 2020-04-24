@@ -27,7 +27,7 @@ namespace App
 
 		public Client()
 		{
-			Console.WriteLine(CultureInfo.CurrentCulture.DisplayName);
+			CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 			this.Commands = new Dictionary<String, Command>
 			{
 				{ "login", this.Login },

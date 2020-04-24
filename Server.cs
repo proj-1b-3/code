@@ -135,6 +135,8 @@ namespace App
 			reviewTable.Columns.Add(col);
 			col = new DataColumn("RoomId", typeof(Int64));
 			reviewTable.Columns.Add(col);
+			col = new DataColumn("Rating", typeof(DateTime));
+			reviewTable.Columns.Add(col);
 			col = new DataColumn("DateTime", typeof(DateTime));
 			reviewTable.Columns.Add(col);
 			col = new DataColumn("Text", typeof(String));
@@ -607,10 +609,9 @@ namespace App
 			}
 
 			report = new Report();
-			var startDate = date.ToUniversalTime();
-			var endDate = startDate.AddDays(1.0).ToUniversalTime();
-			Console.WriteLine("{0} ... {1}\n", startDate.ToString("s"), endDate.ToString("s"));
-			var query = $"OrderDateTime >= #{startDate.Date}# AND OrderDateTime < #{endDate.Date}#";
+			var endDate = date.Date.AddDays(1.0).ToString("O");
+			var startDate = date.Date.ToString("O");
+			var query = $"OrderDateTime >= #{startDate}# AND OrderDateTime < #{endDate}#";
 			var reservationRows = this.DataBase.Tables["Reservations"].Select(query);
 			var reservations = this.ReservationRowsToList(reservationRows);
 	
