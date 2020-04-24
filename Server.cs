@@ -607,8 +607,9 @@ namespace App
 			}
 
 			report = new Report();
-			var startDate = date.Date;
-			var endDate = startDate + new TimeSpan(1, 0, 0, 0);
+			var startDate = date.ToUniversalTime();
+			var endDate = startDate.AddDays(1.0).ToUniversalTime();
+			Console.WriteLine("{0} ... {1}\n", startDate.ToString("s"), endDate.ToString("s"));
 			var query = $"OrderDateTime >= #{startDate.Date}# AND OrderDateTime < #{endDate.Date}#";
 			var reservationRows = this.DataBase.Tables["Reservations"].Select(query);
 			var reservations = this.ReservationRowsToList(reservationRows);
