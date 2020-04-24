@@ -135,7 +135,7 @@ namespace App
 			reviewTable.Columns.Add(col);
 			col = new DataColumn("RoomId", typeof(Int64));
 			reviewTable.Columns.Add(col);
-			col = new DataColumn("Rating", typeof(DateTime));
+			col = new DataColumn("Rating", typeof(Int32));
 			reviewTable.Columns.Add(col);
 			col = new DataColumn("DateTime", typeof(DateTime));
 			reviewTable.Columns.Add(col);
