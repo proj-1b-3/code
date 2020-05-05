@@ -650,6 +650,7 @@ namespace App
 			if (rows.Length == 0) {
 				return false;
 			}
+
 			var reviewRow = reviewTable.NewRow();
 			reviewRow["UserId"] = (Int64)userRow["UserId"];
 			reviewRow["RoomId"] = (Int64)review.RoomId;

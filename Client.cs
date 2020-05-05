@@ -33,27 +33,26 @@ namespace App
 				{ "login", this.Login },
 				{ "logout", this.Logout },
 				{ "register", this.Register },
+				{ "deregister", this.Deregister },
 				{ "pay", this.Payment },
 				{ "exit", this.Exit },
-				{ "list rooms", this.ViewRooms },
-				{ "select room", this.MakeReservation },
+				{ "view rooms", this.ViewRooms },
 				{ "view consumables", this.ViewConsumables },
-				{ "Fetch consumables", this.FetchConsumables },
-				{ "select consumable", this.SelectConsumable },
-				{ "list basket", this.ViewBasket },
-				{ "edit basket", this.EditBasket },
-				{ "deregister", this.Deregister },
+				{ "view basket", this.ViewBasket },
+				{ "view reviews", this.ViewReviews },
 				{ "view reservations", this.ViewReservations },
 				{ "view reservation history", this.FetchReservationDate },
 				{ "view report", this.ViewDailyReport },
+				{ "select consumable", this.SelectConsumable },
+				{ "make reservation", this.MakeReservation },
 				{ "make room", this.AddRoom },
-				{ "remove room", this.RemoveRoom },
-				{ "edit room", EditRoom },
 				{ "make consumable", this.MakeConsumable },
-				{ "remove consumable", this.RemoveConsumable },
+				{ "make review", this.AddReview },
+				{ "edit room", EditRoom },
+				{ "edit basket", this.EditBasket },
 				{ "edit consumable", this.EditConsumables },
-				{ "add review", this.AddReview },
-				{ "view reviews", this.ViewReviews },
+				{ "remove consumable", this.RemoveConsumable },
+				{ "remove room", this.RemoveRoom },
 			};
 			Culture = CultureInfo.InvariantCulture;
 		}
@@ -188,6 +187,7 @@ namespace App
 		public void Register()
 		{
 			if (CurrentUser != null) {
+				Console.WriteLine("Unable to register when logged in");
 				return;
 			}
 
@@ -287,6 +287,11 @@ namespace App
 		public void ViewBasket()
 		{
 			if (CurrentUser == null) {
+				Console.WriteLine("You have to be logged in to use this command");
+				return;
+			}
+			if (Basket == null) {
+				Console.WriteLine("You haven't selected anything yet");
 				return;
 			}
 			Console.WriteLine("Basket:");
@@ -887,6 +892,10 @@ namespace App
 		}
 		public void Exit()
 		{
+			if (CurrentUser != null) {
+				this.Logout();
+			}
+
 			Stop = true;
 		}
 	}
