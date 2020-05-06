@@ -36,21 +36,27 @@ namespace App
 				{ "deregister", this.Deregister },
 				{ "pay", this.Payment },
 				{ "exit", this.Exit },
-				{ "view rooms", this.ViewRooms },
+				{ "help", this.Help },
+
 				{ "view consumables", this.ViewConsumables },
-				{ "view basket", this.ViewBasket },
-				{ "view reviews", this.ViewReviews },
+				{ "view reservation", this.ViewBasket },
 				{ "view reservations", this.ViewReservations },
 				{ "view reservation history", this.FetchReservationDate },
+				{ "view reviews", this.ViewReviews },
 				{ "view report", this.ViewDailyReport },
+				{ "view rooms", this.ViewRooms },
+
 				{ "select consumable", this.SelectConsumable },
-				{ "make reservation", this.MakeReservation },
-				{ "make room", this.AddRoom },
+
 				{ "make consumable", this.MakeConsumable },
+				{ "make reservation", this.MakeReservation },
 				{ "make review", this.AddReview },
+				{ "make room", this.AddRoom },
+
+				{ "edit reservation", this.EditBasket },
 				{ "edit room", EditRoom },
-				{ "edit basket", this.EditBasket },
 				{ "edit consumable", this.EditConsumables },
+
 				{ "remove consumable", this.RemoveConsumable },
 				{ "remove room", this.RemoveRoom },
 			};
@@ -63,6 +69,7 @@ namespace App
 			Command command;
 
 			Server = server;
+			this.Help();
 
 			while (! Stop) {
 				Console.Write(">>> ");
@@ -88,53 +95,39 @@ namespace App
 
 		public void Help()
 		{
+			Console.WriteLine("commands:");
+			Console.WriteLine("\t- help");
+			Console.WriteLine("\t- login");
+			Console.WriteLine("\t- register");
+			Console.WriteLine("\t- deregister");
+			Console.WriteLine("\t- exit");
 			if (CurrentUser == null) {
-				Console.WriteLine(" Register or log in first ");
-				Console.WriteLine(" To register type 'register' ");
-				Console.WriteLine(" To login type 'login' ");
-			} else if (CurrentUser.Role == Role.Owner) { 
-				Console.WriteLine ("Commands you can use:  ");
-				Console.WriteLine ("-\thelp");
-				Console.WriteLine ("-\tlogin" );
-				Console.WriteLine ("-\tlogout");
-				Console.WriteLine ("-\tregister" );
-				Console.WriteLine ("-\tderegister" );
-				Console.WriteLine ("-\tbuy ticket");
-				Console.WriteLine ("-\tview rooms");
-				Console.WriteLine ("-\tadd room ");
-				Console.WriteLine ("-\tremove room ");
-				Console.WriteLine ("-\texit");
-			} else if (CurrentUser.Role == Role.Manager) {
-				Console.WriteLine ("Commands you can use:  ");
-				Console.WriteLine ("-\thelp");
-				Console.WriteLine ("-\tlogin" );
-				Console.WriteLine ("-\tlogout");
-				Console.WriteLine ("-\tregister" );
-				Console.WriteLine ("-\tderegister" );
-				Console.WriteLine ("-\tbuy ticket");
-				Console.WriteLine ("-\tview rooms");
-				Console.WriteLine ("-\tadd room ");
-				Console.WriteLine ("-\tremove room ");
-				Console.WriteLine ("-\texit");
-			} else if (CurrentUser.Role == Role.CafeManager) {
-				Console.WriteLine ("Commands you can use:  ");
-				Console.WriteLine ("-\thelp");
-				Console.WriteLine ("-\tlogin" );
-				Console.WriteLine ("-\tlogout");
-				Console.WriteLine ("-\tregister" );
-				Console.WriteLine ("-\tderegister" );
-				Console.WriteLine ("-\tbuy ticket");
-				Console.WriteLine ("-\tview rooms");
-				Console.WriteLine ("-\texit");
-			} else if (CurrentUser.Role == Role.Consumer) {
-				Console.WriteLine ("Commands you can use:  ");
-				Console.WriteLine ("-\thelp");
-				Console.WriteLine ("-\tlogin" );
-				Console.WriteLine ("-\tlogout");
-				Console.WriteLine ("-\tregister" );
-				Console.WriteLine ("-\tderegister" );
-				Console.WriteLine ("-\tbuy ticket");
-				Console.WriteLine ("-\texit");
+				return;
+			} if (CurrentUser.Role <= Role.Consumer) {
+				Console.WriteLine("\t- view consumables");
+				Console.WriteLine("\t- select consumable");
+				Console.WriteLine("\t- view rooms");
+				Console.WriteLine("\t- view consumables");
+				Console.WriteLine("\t- select consumable");
+				Console.WriteLine("\t- view reservation");
+				Console.WriteLine("\t- view reservations");
+				Console.WriteLine("\t- make reservation");
+				Console.WriteLine("\t- edit reservation");
+				Console.WriteLine("\t- view reviews");
+				Console.WriteLine("\t- make review");
+				Console.WriteLine("\t- pay");
+			} if (CurrentUser.Role == Role.Owner) { 
+				Console.WriteLine("\t- make room");
+				Console.WriteLine("\t- edit room");
+				Console.WriteLine("\t- remove room");
+				Console.WriteLine("\t- view report");
+				Console.WriteLine("\t- view reservation history");
+			} if (CurrentUser.Role == Role.CafeManager) {
+				Console.WriteLine("\t- make consumable");
+				Console.WriteLine("\t- edit consumable");
+				Console.WriteLine("\t- remove consumable");
+			} if (CurrentUser.Role == Role.Manager) {
+				Console.WriteLine("\t- view report");
 			}
 
 			return;
