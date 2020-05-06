@@ -1,67 +1,146 @@
 <?xml version="1.0" standalone="yes"?>
 <xs:schema id="DataBase" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-  <xs:element name="DataBase" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+  <xs:element name="DataBase" msdata:IsDataSet="true" msdata:Locale="en-US">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="Users">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="UserName" type="xs:string" />
+              <xs:element name="UserId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="UserName" type="xs:string" minOccurs="0" />
+              <xs:element name="Forename" type="xs:string" minOccurs="0" />
+              <xs:element name="Suraname" type="xs:string" minOccurs="0" />
+              <xs:element name="Email" type="xs:string" minOccurs="0" />
               <xs:element name="Password" type="xs:string" minOccurs="0" />
-              <xs:element name="Role" msdata:DataType="App.Role, App, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" type="xs:anyType" minOccurs="0" />
+              <xs:element name="Role" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Rooms">
+        <xs:element name="Products">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="RoomName" type="xs:string" />
-              <xs:element name="Theme" type="xs:string" minOccurs="0" />
-              <xs:element name="Discription" type="xs:string" minOccurs="0" />
-              <xs:element name="Capacity" type="xs:int" minOccurs="0" />
+              <xs:element name="ProductId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="ProductName" type="xs:string" minOccurs="0" />
+              <xs:element name="Description" type="xs:string" minOccurs="0" />
               <xs:element name="Price" type="xs:float" minOccurs="0" />
               <xs:element name="Available" type="xs:boolean" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Tickets">
+        <xs:element name="RoomAttributes">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="TicketId" msdata:DataType="System.Guid, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" type="xs:string" />
-              <xs:element name="UserName" type="xs:string" minOccurs="0" />
-              <xs:element name="RoomName" type="xs:string" minOccurs="0" />
+              <xs:element name="ProductId" type="xs:long" />
+              <xs:element name="Theme" type="xs:string" minOccurs="0" />
+              <xs:element name="Capacity" type="xs:int" minOccurs="0" />
+              <xs:element name="NumberOfRounds" type="xs:int" minOccurs="0" />
+              <xs:element name="MaxDuration" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Reservations">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ReservationId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="UserId" type="xs:long" minOccurs="0" />
+              <xs:element name="RoomId" type="xs:long" minOccurs="0" />
+              <xs:element name="TargetDateTime" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="RoundNumber" type="xs:int" minOccurs="0" />
+              <xs:element name="GroupSize" type="xs:int" minOccurs="0" />
+              <xs:element name="OrderDateTime" type="xs:dateTime" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ConsumableAttributes">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProductId" type="xs:long" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ConsumableItems">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ConsumableItemId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="ReservationId" type="xs:long" minOccurs="0" />
+              <xs:element name="ProductId" type="xs:long" minOccurs="0" />
+              <xs:element name="Amount" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Reviews">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ReviewId" msdata:AutoIncrement="true" type="xs:long" />
+              <xs:element name="UserId" type="xs:long" minOccurs="0" />
+              <xs:element name="RoomId" type="xs:long" minOccurs="0" />
+              <xs:element name="Rating" type="xs:int" minOccurs="0" />
+              <xs:element name="DateTime" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="Text" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
       </xs:choice>
     </xs:complexType>
-    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+    <xs:unique name="Constraint1">
       <xs:selector xpath=".//Users" />
-      <xs:field xpath="UserName" />
+      <xs:field xpath="Email" />
     </xs:unique>
-    <xs:unique name="Rooms_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
-      <xs:selector xpath=".//Rooms" />
-      <xs:field xpath="RoomName" />
+    <xs:unique name="Constraint2" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Users" />
+      <xs:field xpath="UserId" />
     </xs:unique>
-    <xs:unique name="Tickets_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="TicketId" />
+    <xs:unique name="Products_Constraint1" msdata:ConstraintName="Constraint1">
+      <xs:selector xpath=".//Products" />
+      <xs:field xpath="ProductName" />
     </xs:unique>
-    <xs:unique name="Constraint2">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="UserName" />
+    <xs:unique name="Products_Constraint2" msdata:ConstraintName="Constraint2" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Products" />
+      <xs:field xpath="ProductId" />
     </xs:unique>
-    <xs:unique name="Constraint3">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="RoomName" />
+    <xs:unique name="RoomAttributes_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//RoomAttributes" />
+      <xs:field xpath="ProductId" />
     </xs:unique>
-    <xs:keyref name="TicketOwner" refer="Constraint1">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="UserName" />
+    <xs:unique name="Reservations_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Reservations" />
+      <xs:field xpath="ReservationId" />
+    </xs:unique>
+    <xs:unique name="ConsumableAttributes_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//ConsumableAttributes" />
+      <xs:field xpath="ProductId" />
+    </xs:unique>
+    <xs:unique name="ConsumableItems_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//ConsumableItems" />
+      <xs:field xpath="ConsumableItemId" />
+    </xs:unique>
+    <xs:unique name="Reviews_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Reviews" />
+      <xs:field xpath="ReviewId" />
+    </xs:unique>
+    <xs:keyref name="User-Review" refer="Constraint2">
+      <xs:selector xpath=".//Reviews" />
+      <xs:field xpath="UserId" />
     </xs:keyref>
-    <xs:keyref name="TicketRoom" refer="Rooms_Constraint1">
-      <xs:selector xpath=".//Tickets" />
-      <xs:field xpath="RoomName" />
+    <xs:keyref name="ConsumableAttribute-ConsumableItem" refer="ConsumableAttributes_Constraint1">
+      <xs:selector xpath=".//ConsumableItems" />
+      <xs:field xpath="ProductId" />
+    </xs:keyref>
+    <xs:keyref name="Reservation-ConsumableItem" refer="Reservations_Constraint1">
+      <xs:selector xpath=".//ConsumableItems" />
+      <xs:field xpath="ReservationId" />
+    </xs:keyref>
+    <xs:keyref name="Product-ConsumableAttribute" refer="Products_Constraint2">
+      <xs:selector xpath=".//ConsumableAttributes" />
+      <xs:field xpath="ProductId" />
+    </xs:keyref>
+    <xs:keyref name="RoomAttribute-Reservation" refer="RoomAttributes_Constraint1">
+      <xs:selector xpath=".//Reservations" />
+      <xs:field xpath="RoomId" />
+    </xs:keyref>
+    <xs:keyref name="Product-RoomAttribute" refer="Products_Constraint2">
+      <xs:selector xpath=".//RoomAttributes" />
+      <xs:field xpath="ProductId" />
     </xs:keyref>
   </xs:element>
 </xs:schema>

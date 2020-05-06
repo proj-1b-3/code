@@ -4,26 +4,17 @@ namespace App
 
 	class User
 	{
-		private String _UserName;
-		public String UserName {
-			get { return _UserName; }
-		}
+		public String UserName {get;set;}
+		public Role Role {get;set;}
+		public Guid SessionToken {get;set;}
 
-		private Role _Role;
-		public Role Role {
-			get { return _Role; }
-		}
+		public User() {}
 
-		private Guid _SessionToken;
-		public Guid SessionToken {
-			get { return _SessionToken; }
-		}
-
-		public User(String username, Guid session_token, Role role)
+		public User(String userName, Guid sessionToken, Role role)
 		{
-			_UserName = username;
-			_SessionToken = session_token;
-			_Role = role;
+			this.UserName = userName;
+			this.SessionToken = sessionToken;
+			this.Role = role;
 		}
 	}
 }
