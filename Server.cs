@@ -172,9 +172,8 @@ namespace App
 
 		public void LoadData()
 		{
-			if(!File.Exists(this.DataBaseFile))
-				return;
-			DataBase.ReadXml(this.DataBaseFile);
+			if(File.Exists(this.DataBaseFile))
+				DataBase.ReadXml(this.DataBaseFile);
 		}
 
 		public void SaveData()
