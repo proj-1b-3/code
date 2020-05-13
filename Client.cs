@@ -183,39 +183,39 @@ namespace App
 
 		public void MakeReservation()
 		{
-			if (CurrentUser == null) {
+			if(CurrentUser == null){
 				Console.WriteLine("You must be logged in to buy a ticket");
 				return;
 			}
 			string roomName = ReadField("Room name: ");
-
 			var room = this.Rooms.Find(room => room.Name == roomName);
-			if (room == null) {
+			if(room == null){
 				Console.WriteLine("Invalid room name");
 				return;
 			}
-
 			Int32 groupSize;
 			Int32 round;
 			DateTime date;
-			if(!Int32.TryParse(ReadField("Group size: "), out groupSize)){
+			if(!Int32.TryParse(ReadField("Group size: "), out groupSize)
+					&& groupSize > 0 && groupSize <= room.Capacity){
 				Console.WriteLine("Invalid number");
-			}else if(!DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date)) {
+			}else if(!DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date)
+					&& date < DateTime.Now){
 				Console.WriteLine("Invalid date");
-			}else if(date < DateTime.Now){
-				Console.WriteLine("Invalid date");
-			}else if(!Int32.TryParse(ReadField("Round: "), out round)){
+			}else if(!Int32.TryParse(ReadField("Round: "), out round)
+					&& round > 0 && round <= room.NumberOfRounds){
 				Console.WriteLine("Invalid number");
 			}else{
+				var rsrv = new Reservation(room, date.Date, round, groupSize);
 				Int32 freePlaces = room.Capacity -
-					Server.CheckReservation(new Reservation (room, date.Date, round, groupSize));
+					Server.CheckReservation(rsrv);
 				if(groupSize > freePlaces){
 					Console.WriteLine("there's no enough places");
 				}else{
 					Console.WriteLine("Places left: {0}", freePlaces);
 					string confirm = ReadField("Confirm reservation ([Y]es or [N]o): ");
 					if (confirm == "Y")
-						Basket = new Reservation(room, date.Date, round, groupSize);
+						Basket = rsrv;
 				}
 			}
 		}
@@ -233,10 +233,9 @@ namespace App
 				Console.WriteLine("\tGroup size: " + Basket.GroupSize);
 				Console.WriteLine("\tDate: " + Basket.TargetDateTime.ToString("D"));
 				Console.WriteLine("");
-				foreach(var item in Basket.ConsumableItems){
+				foreach(var item in Basket.ConsumableItems)
 					Console.WriteLine("Items:\n\tProduct name: {0}\n\tAmount: {1}",
 						item.Consumable.Name, item.Amount);
-				}
 			}
 		}
 
