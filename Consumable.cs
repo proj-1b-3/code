@@ -12,13 +12,13 @@ namespace App
 		{
 		}
 
-		public Consumable(DataRow row)
+		public Consumable(DataRow prodRow)
 		{
-			this.ProductId = (Int64)row["ProductId"];
-			this.Name = (String)row["ProductName"];
-			this.Description = (String)row["Description"];
-			this.Price = (Single)row["Price"];
-			this.Available = (Boolean)row["Available"];
+			this.ProductId = (Int64)prodRow["ProductId"];
+			this.Name = (String)prodRow["ProductName"];
+			this.Description = (String)prodRow["Description"];
+			this.Price = (Single)prodRow["Price"];
+			this.Available = (Boolean)prodRow["Available"];
 		}
 
 		public Consumable Clone()
