@@ -23,9 +23,9 @@ class Server
 	
 	public Server()
 	{
-		DataRelation rel;
 		this.DataBaseFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data.xml");
-		DataBase = new DataSet("DataBase");
+		this.ActiveUsers = new Dictionary<Guid, Int64>();
+		this.DataBase = new DataSet("DataBase");
 		// table for users
 		var userTable = new DataTable("Users");
 		userTable.Columns.AddRange(new DataColumn[] {
@@ -35,55 +35,65 @@ class Server
 			new DataColumn("Surname", typeof(String)),
 			new DataColumn("Email", typeof(String)) { Unique = true },
 			new DataColumn("Password", typeof(String)),
-			new DataColumn("Role", typeof(Int32)) });
+			new DataColumn("Role", typeof(Int32))
+		});
 		userTable.PrimaryKey = new DataColumn[] { userTable.Columns["UserId"] };
-		// table for products
+
 		var productTable = new DataTable("Products");
 		productTable.Columns.AddRange(new DataColumn[] {
 			new DataColumn("ProductId", typeof(Int64)) { AutoIncrement = true },
 			new DataColumn("ProductName", typeof(String)) { Unique = true },
 			new DataColumn("Description", typeof(String)),
 			new DataColumn("Price", typeof(Single)),
-			new DataColumn("Available", typeof(Boolean)) });
+			new DataColumn("Available", typeof(Boolean))
+		});
 		productTable.PrimaryKey = new DataColumn[] { productTable.Columns["ProductId"] };
-		// table for room-attributes
+
 		var roomAttrTable = new DataTable("RoomAttrs");
 		roomAttrTable.Columns.AddRange(new DataColumn[] {
 			new DataColumn("ProductId", typeof(Int64)),
 			new DataColumn("Theme", typeof(String)),
 			new DataColumn("Capacity", typeof(Int32)),
 			new DataColumn("NumberOfRounds", typeof(Int32)),
-			new DataColumn("MaxDuration", typeof(Int32)) });
+			new DataColumn("MaxDuration", typeof(Int32))
+		});
 		roomAttrTable.PrimaryKey = new DataColumn[] { roomAttrTable.Columns["ProductId"] };
-		// table for consumable-attributes
+
 		var consumableAttrTable = new DataTable("ConsumableAttrs");
 		consumableAttrTable.Columns.AddRange(new DataColumn[] {
-			new DataColumn("ProductId", typeof(Int64)) });
+			new DataColumn("ProductId", typeof(Int64))
+		});
 		consumableAttrTable.PrimaryKey = new DataColumn[] {
-			consumableAttrTable.Columns["ProductId"] };
-		// table for reservations
+			consumableAttrTable.Columns["ProductId"]
+		};
+
 		var reservationTable = new DataTable("Reservations");
 		reservationTable.Columns.AddRange(new DataColumn[] {
 			new DataColumn("ReservationId", typeof(Int64)) {
-				AutoIncrement = true },
+				AutoIncrement = true
+			},
 			new DataColumn("UserId", typeof(Int64)),
 			new DataColumn("RoomId", typeof(Int64)),
 			new DataColumn("RoundNumber", typeof(Int32)),
 			new DataColumn("GroupSize", typeof(Int32)),
 			new DataColumn("TargetDateTime", typeof(DateTime)),
-			new DataColumn("OrderDateTime", typeof(DateTime)) });
+			new DataColumn("OrderDateTime", typeof(DateTime))
+		});
 		reservationTable.PrimaryKey = new DataColumn[] {
-			reservationTable.Columns["ReservationId"] };
-		// table for reservation consumables
+			reservationTable.Columns["ReservationId"]
+		};
+
 		var consumableItemTable = new DataTable("ConsumableItems");
 		consumableItemTable.Columns.AddRange(new DataColumn[] {
 			new DataColumn("ConsumableItemId", typeof(Int64)) { AutoIncrement = true },
 			new DataColumn("ReservationId", typeof(Int64)),
 			new DataColumn("ProductId", typeof(Int64)),
-			new DataColumn("Amount", typeof(Int32)) });
+			new DataColumn("Amount", typeof(Int32))
+		});
 		consumableItemTable.PrimaryKey = new DataColumn[] {
-			consumableItemTable.Columns["ConsumableItemId"] };
-		// table for reviews
+			consumableItemTable.Columns["ConsumableItemId"]
+		};
+
 		var reviewTable = new DataTable("Reviews");
 		reviewTable.Columns.AddRange(new DataColumn[] {
 			new DataColumn("ReviewId", typeof(Int64)) { AutoIncrement = true },
@@ -91,12 +101,14 @@ class Server
 			new DataColumn("RoomId", typeof(Int64)),
 			new DataColumn("Rating", typeof(Int32)),
 			new DataColumn("DateTime", typeof(DateTime)),
-			new DataColumn("Text", typeof(String)) });
+			new DataColumn("Text", typeof(String))
+		});
 		reviewTable.PrimaryKey = new DataColumn[] { reviewTable.Columns["ReviewId"] };
-		// add all the tables to the dataset
+
 		DataBase.Tables.AddRange(new DataTable[] { userTable, productTable, roomAttrTable, 
-			reservationTable, consumableAttrTable,consumableItemTable, reviewTable });
-		// making the relations between the tables
+			reservationTable, consumableAttrTable,consumableItemTable, reviewTable
+		});
+
 		DataBase.Relations.AddRange(new DataRelation[] {
 			new DataRelation("Product-RoomAttr", productTable.Columns["ProductId"],
 				roomAttrTable.Columns["ProductId"]),
@@ -112,13 +124,12 @@ class Server
 			new DataRelation("RoomAttr-Reservation", roomAttrTable.Columns["ProductId"],
 				reservationTable.Columns["RoomId"]),
 			new DataRelation("User-Review", userTable.Columns["UserId"],
-				reviewTable.Columns["UserId"]) });
-		this.ActiveUsers = new Dictionary<Guid, Int64>();
+				reviewTable.Columns["UserId"])
+		});
 	}
 
 	public void LoadData()
 	{
-		Console.WriteLine(this.DataBaseFile);
 		if (File.Exists(this.DataBaseFile))
 			DataBase.ReadXml(this.DataBaseFile);
 	}
@@ -264,22 +275,11 @@ class Server
 		if (userRow == null)
 			return false;
 		var rel = this.DataBase.Relations["Product-RoomAttr"];
-		var productTable = rel.ParentTable;
 		var roomAttrTable = rel.ChildTable;
 		var rooms = new List<Room>();
 		foreach (DataRow roomAttrRow in roomAttrTable.Rows) {
-			var room = new Room();
-			var productRow = roomAttrRow.GetParentRow(rel);
-			room.ProductId = (Int64)productRow["ProductId"];
-			room.Name = (String)productRow["ProductName"];
-			room.Description = (String)productRow["Description"];
-			room.Price = (Single)productRow["Price"];
-			room.Available = (Boolean)productRow["Available"];
-			room.Theme = (String)roomAttrRow["Theme"];
-			room.Capacity = (Int32)roomAttrRow["Capacity"];
-			room.NumberOfRounds = (Int32)roomAttrRow["NumberOfRounds"];
-			room.MaxDuration = (Int32)roomAttrRow["MaxDuration"];
-			rooms.Add(room);
+			var prodRow = roomAttrRow.GetParentRow(rel);
+			rooms.Add(new Room(prodRow, roomAttrRow));
 		}
 		var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Room>>(rooms);
 		stream.Write(rawJson, 0, rawJson.Length);
@@ -359,10 +359,8 @@ class Server
 		var productTable = rel.ParentTable;
 		var consumableAttrTable = rel.ChildTable;
 		var consumables = new List<Consumable>();
-		foreach (DataRow consumableRow in consumableAttrTable.Rows) {
-			var productRow = consumableRow.GetParentRow(rel);
-			consumables.Add(new Consumable(productRow));
-		}
+		foreach (DataRow consumableRow in consumableAttrTable.Rows)
+			consumables.Add(new Consumable(consumableRow.GetParentRow(rel)));
 		var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Consumable>>(consumables);
 		stream.Write(rawJson, 0, rawJson.Length);
 		stream.Position = 0;
@@ -377,10 +375,8 @@ class Server
 		if (userRow == null)
 			return false;
 		var reservation = JsonSerializer.Deserialize<Reservation>(stream.ToArray());
-		if (reservation == null || reservation.Room == null) {
-			Console.WriteLine("in func TryPay, Server side...");
+		if (reservation == null || reservation.Room == null)
 			return false; 
-		}
 		var rel = this.DataBase.Relations["Reservation-ConsumableItem"];
 		var reservationTable = rel.ParentTable;
 		var consumableItemTable = rel.ChildTable;
@@ -479,10 +475,10 @@ class Server
 		var reservations = this.ReservationRowsToList(reservationRows);
 		Int32 ticketsSold = 0, consumablesSold = 0;
 		Single income = 0;
-		foreach (var reservation in reservations) {
+		foreach (Reservation reservation in reservations) {
 			ticketsSold += reservation.GroupSize;
 			income += reservation.Room.Price * reservation.GroupSize;
-			foreach (var item in reservation.ConsumableItems) {
+			foreach (ConsumableItem item in reservation.ConsumableItems) {
 				consumablesSold += item.Amount;
 				income += item.Consumable.Price * item.Amount;
 			}
@@ -522,11 +518,14 @@ class Server
 		var rel0 = this.DataBase.Relations["User-Review"];
 		foreach (var reviewRow in reviewRows) {
 			var autherRow = reviewRow.GetParentRow(rel0);
-			reviews.Add(new Review() { RoomId = room.ProductId, RoomName = room.Name,
+			reviews.Add(new Review() {
+				RoomId = room.ProductId,
+				RoomName = room.Name,
 				UserName = (String)autherRow["UserName"],
 				DateTime = (DateTime)reviewRow["UserName"],
 				Text = (String)reviewRow["Text"],
-				Rating = (Int32)reviewRow["Rating"] });
+				Rating = (Int32)reviewRow["Rating"]
+			});
 		}
 		var rawJson = JsonSerializer.SerializeToUtf8Bytes<List<Review>>(reviews);
 		stream.Write(rawJson, 0, rawJson.Length);

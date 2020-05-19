@@ -10,7 +10,6 @@ namespace App
 		public Int64 UserId {get;set;}
 		public Room Room {get;set;}
 		public Int32 GroupSize {get;set;}
-		public List<Consumable> Consumables {get;set;}
 		public DateTime OrderDateTime {get;set;}
 		public DateTime TargetDateTime {get;set;}
 		public Int32 RoundNumber {get;set;}
