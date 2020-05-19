@@ -40,6 +40,7 @@ class Client
 				+ "[4] go to reservations\n"
 				+ "[5] go to reviews\n"
 				+ "[6] go to reports\n"
+				+ "[7] pay\n"
 				+ "[0] exit\n");
 			n = ReadField("> ").ToLower();
 			switch (n) {
@@ -50,6 +51,7 @@ class Client
 			case "4": this.Reservation(); break;
 			case "5": this.Review(); break;
 			case "6": this.Report(); break;
+			case "7": this.Payment(); break;
 			default: Console.Write("Invalid command number\n"); break;
 			}
 			Block();
