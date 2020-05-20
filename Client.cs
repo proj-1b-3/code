@@ -63,13 +63,17 @@ class Client
 	private static String ReadField(String field_name)
 	{
 		Console.Write(field_name);
-		return Console.ReadLine().Trim();
+		var s = Console.ReadLine();
+		if (s == null)
+			return "";
+		else
+			return s.Trim();
 	}
 
 	private static void Block()
 	{
-		Console.Write("\n>> Press enter to continue ");
-		Console.ReadLine();
+		//Console.Write("\n>> Press enter to continue ");
+		//Console.ReadLine();
 		Console.Write("\n");
 	}
 
@@ -339,13 +343,19 @@ class Client
 
 	private void RemoveRoom()
 	{
-		Int64 roomId;
-		if (CurrentUser.Role != Role.Owner)
-			Console.Write("You do not have the permissions to perform this action");
-		else if (!Int64.TryParse(ReadField("Room ID"), out roomId))
-			Console.Write("That is not a valid Room ID\n");
-		else
-			Server.TryRemoveRoom(CurrentUser.SessionToken, roomId);
+		String roomName;
+		Room room;
+		if (CurrentUser.Role != Role.Owner) {
+			Console.Write("You do not have the permissions to perform this action\n");
+			return;
+		}
+		roomName = ReadField("Room name: ");
+		room = this.Rooms.Find(r => r.Name == roomName);
+		if (room == null) {
+			Console.Write("Unknown name, maybe this room does not exist\n");
+		} else {
+			Server.TryRemoveRoom(CurrentUser.SessionToken, room.Name);
+		}
 	}
 
 	private void EditRoom()
@@ -488,7 +498,7 @@ class Client
 	private void ViewSelectedConsumables()
 	{
 		foreach (ConsumableItem ci in this.Basket.ConsumableItems)
-			Console.Write("\nName: {}\nAmount: {}\n", ci.Consumable.Name, ci.Amount);
+			Console.Write("\nName: {0}\nAmount: {1}\n", ci.Consumable.Name, ci.Amount);
 	}
 
 	private void SelectConsumable()

@@ -232,17 +232,18 @@ class Server
 		return true;
 	}
 
-	public Boolean TryRemoveRoom(Guid sessionToken, Int64 productId)
+	public Boolean TryRemoveRoom(Guid sessionToken, String roomName)
 	{
 		var userRow = this.GetUserRow(sessionToken);
 		if (userRow == null || (Role)userRow["Role"] != Role.Owner)
 			return false;
-		var query = String.Format("ProductId = '{0}'", productId);
+		var rel = this.DataBase.Relations["Product-RoomAttr"];
+		var query = String.Format("ProductName = '{0}'", roomName);
 		var roomRow = this.DataBase.Tables["Products"].Select(query);
-		if (roomRow.Length == 0)
+		if (roomRow.Length < 1)
 			return false;
+		DataBase.Tables["RoomAttrs"].Rows.Remove(roomRow[0].GetChildRows(rel)[0]);
 		DataBase.Tables["Products"].Rows.Remove(roomRow[0]);
-		DataBase.Tables["RoomAttrs"].Rows.Remove(roomRow[0]);
 		return true;
 	}
 
