@@ -81,10 +81,10 @@ class Client
 	{
 		String n;
 		while (true) {
-			Console.Write("[1] login\n"
-				+ "[2] logout\n"
-				+ "[3] register\n"
-				+ "[4] deregister\n"
+			Console.Write("   [1] login\n"
+				+ "   [2] logout\n"
+				+ "   [3] register\n"
+				+ "   [4] deregister\n"
 				+ "[0] return\n");
 			n = ReadField("> ");
 			switch (n) {
@@ -202,13 +202,13 @@ class Client
 			return;
 		}
 		while (true) {
-			Console.Write("[1] view rooms\n" 
-				+ "[2] select room\n" 
-				+ "[3] view selected room\n" 
-				+ "[4] edit selected room\n" 
-				+ "[5] create room\n"
-				+ "[6] remove room\n"
-				+ "[7] edit room\n"
+			Console.Write("   [1] view rooms\n" 
+				+ "   [2] select room\n" 
+				+ "   [3] view selected room\n" 
+				+ "   [4] edit selected room\n" 
+				+ "   [5] create room\n"
+				+ "   [6] remove room\n"
+				+ "   [7] edit room\n"
 				+ "[0] return\n");
 			n = ReadField("> ");
 			this.FetchRooms();
@@ -448,14 +448,14 @@ class Client
 			return;
 		}
 		while (true) {
-			Console.Write("[1] view consumables\n" 
-				+ "[2] select consumable\n" 
-				+ "[3] view selected consumables\n" 
-				+ "[4] remove selected consumable\n" 
-				+ "[5] edit selected consumable\n" 
-				+ "[6] create consumable\n" 
-				+ "[7] delete consumable\n" 
-				+ "[8] edit consumable\n"
+			Console.Write("   [1] view consumables\n" 
+				+ "   [2] select consumable\n" 
+				+ "   [3] view selected consumables\n" 
+				+ "   [4] remove selected consumable\n" 
+				+ "   [5] edit selected consumable\n" 
+				+ "   [6] create consumable\n" 
+				+ "   [7] delete consumable\n" 
+				+ "   [8] edit consumable\n"
 				+ "[0] return\n");
 			n = ReadField("> ");
 			this.FetchConsumables();
@@ -649,8 +649,8 @@ class Client
 			return;
 		}
 		Console.Write(
-			"[1] view all my reservations\n" +
-			"[2] view reservations between\n");
+			"   [1] view all my reservations\n" +
+			"   [2] view reservations between\n");
 		n = ReadField("> ");
 		switch (n) {
 		case "1": this.ViewUserReservations(); break;
@@ -734,7 +734,7 @@ class Client
 			Console.Write("Access denied: insufficient permissions\n");
 		} else while (true) {
 			Console.Write("[0] go back\n"
-				+ "[1] view yesterday's report\n");
+				+ "   [1] view yesterday's report\n");
 			n = ReadField("> ");
 			switch (n) {
 			case "0": return;
@@ -771,8 +771,8 @@ class Client
 		if (CurrentUser == null) {
 			Console.Write("You need to be logged in\n");
 		} else while (true) {
-			Console.Write("[1] view reviews\n"
-				+ "[2] create review\n"
+			Console.Write("   [1] view reviews\n"
+				+ "\t[2] create review\n"
 				+ "[0] return\n");
 			n = ReadField("> ");
 			switch (n) {
