@@ -46,7 +46,9 @@ namespace App
 				new DataColumn("Price", typeof(float)),
 				new DataColumn("Available", typeof(bool))
 			});
-			productTable.PrimaryKey = new DataColumn[] { productTable.Columns["ProductId"] };
+			productTable.PrimaryKey = new DataColumn[] { 
+				productTable.Columns["ProductId"]
+			};
 
 			var roomAttrTable = new DataTable("RoomAttrs");
 			roomAttrTable.Columns.AddRange(new DataColumn[] {
@@ -56,7 +58,9 @@ namespace App
 				new DataColumn("NumberOfRounds", typeof(int)),
 				new DataColumn("MaxDuration", typeof(int))
 			});
-			roomAttrTable.PrimaryKey = new DataColumn[] { roomAttrTable.Columns["ProductId"] };
+			roomAttrTable.PrimaryKey = new DataColumn[] {
+				roomAttrTable.Columns["ProductId"]
+			};
 
 			var consumableAttrTable = new DataTable("ConsumableAttrs");
 			consumableAttrTable.Columns.AddRange(new DataColumn[] {
@@ -102,14 +106,17 @@ namespace App
 				new DataColumn("DateTime", typeof(DateTime)),
 				new DataColumn("Text", typeof(string))
 			});
-			reviewTable.PrimaryKey = new DataColumn[] { reviewTable.Columns["ReviewId"] };
+			reviewTable.PrimaryKey = new DataColumn[] {
+				reviewTable.Columns["ReviewId"]
+			};
 
 			DataBase.Tables.AddRange(new DataTable[] { userTable, productTable, roomAttrTable, 
 				reservationTable, consumableAttrTable,consumableItemTable, reviewTable
 			});
 
 			DataBase.Relations.AddRange(new DataRelation[] {
-				new DataRelation("Product-RoomAttr", productTable.Columns["ProductId"],
+				new DataRelation("Product-RoomAttr", 
+					productTable.Columns["ProductId"],
 					roomAttrTable.Columns["ProductId"]),
 				new DataRelation("Product-ConsumableAttr",
 					productTable.Columns["ProductId"],
@@ -120,9 +127,11 @@ namespace App
 				new DataRelation("ConsumableAttr-ConsumableItem",
 					consumableAttrTable.Columns["ProductId"],
 					consumableItemTable.Columns["ProductId"]),
-				new DataRelation("RoomAttr-Reservation", roomAttrTable.Columns["ProductId"],
+				new DataRelation("RoomAttr-Reservation", 
+					roomAttrTable.Columns["ProductId"],
 					reservationTable.Columns["RoomId"]),
-				new DataRelation("User-Review", userTable.Columns["UserId"],
+				new DataRelation("User-Review", 
+					userTable.Columns["UserId"],
 					reviewTable.Columns["UserId"])
 			});
 		}
@@ -387,7 +396,7 @@ namespace App
 				var rel = this.DataBase.Relations["Product-ConsumableAttr"];	
 				var consumable_row = rel.ChildTable.Rows.Find(consumable.ProductId);
 				if (consumable_row == null)
-					return false ;
+					return false;
 				else {
 					var product_row = consumable_row.GetParentRow(rel);
 					product_row["ProductName"] = consumable.Name;
@@ -453,7 +462,7 @@ namespace App
 			}
 		}
 
-		private List<Reservation> ReservationRowsToList(DataRow[] res_rows)
+		private List<Reservation> Reservation_Rows_To_List(DataRow[] res_rows)
 		{
 			var ress = new List<Reservation>();
 			var res_to_cons_item = this.DataBase.Relations["Reservation-ConsumableItem"];
@@ -490,7 +499,7 @@ namespace App
 			else {
 				var query = string.Format("UserId = {0}", (long)user_row["UserId"]);
 				var reservation_rows = this.DataBase.Tables["Reservations"].Select(query);
-				var reservations = this.ReservationRowsToList(reservation_rows);
+				var reservations = this.Reservation_Rows_To_List(reservation_rows);
 				var json_bytes = JsonSerializer
 					.SerializeToUtf8Bytes<List<Reservation>>(reservations);
 				stream.Write(json_bytes, 0, json_bytes.Length);
@@ -512,7 +521,7 @@ namespace App
 				var query = string.Format("OrderDateTime >= #{0}# AND OrderDateTime < #{1}#",
 					dateTimeStart, dateTimeEnd);
 				var reservation_rows = this.DataBase.Tables["Reservations"].Select(query);
-				var reservations = this.ReservationRowsToList(reservation_rows);
+				var reservations = this.Reservation_Rows_To_List(reservation_rows);
 				var json_bytes = JsonSerializer
 					.SerializeToUtf8Bytes<List<Reservation>>(reservations);
 				stream.Write(json_bytes, 0, json_bytes.Length);
@@ -536,7 +545,7 @@ namespace App
 				var query = string.Format("OrderDateTime >= #{0}# AND OrderDateTime < #{1}#",
 					start_date, end_date);
 				var reservation_rows = this.DataBase.Tables["Reservations"].Select(query);
-				var reservations = this.ReservationRowsToList(reservation_rows);
+				var reservations = this.Reservation_Rows_To_List(reservation_rows);
 				int tickets_sold = 0, consumables_sold = 0;
 				float income = 0;
 				foreach (Reservation reservation in reservations) {
@@ -592,7 +601,7 @@ namespace App
 						RoomId = room.ProductId,
 						RoomName = room.Name,
 						UserName = (string)auther_row["UserName"],
-						DateTime = (DateTime)review_row["UserName"],
+						DateTime = (DateTime)review_row["DateTime"],
 						Text = (string)review_row["Text"],
 						Rating = (int)review_row["Rating"]
 					});
