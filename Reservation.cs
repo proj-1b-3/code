@@ -31,12 +31,10 @@ namespace App
 		public Reservation(DataRow row)
 		{
 			this.ReservationId = (Int64)row["ReservationId"];
-			this.UserId = (Int64)row["UserId"];
-			this.Room = null;
 			this.GroupSize = (Int32)row["GroupSize"];
 			this.TargetDateTime = (DateTime)row["TargetDateTime"];
-			this.OrderDateTime = (DateTime)row["OrderDateTime"];
 			this.RoundNumber = (Int32)row["RoundNumber"];
+			this.Room = null;
 			this.ConsumableItems = null;
 		}
 	}

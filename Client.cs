@@ -169,7 +169,11 @@ namespace App
 				return;
 			else {
 				var stream = new MemoryStream();
-				var pay_json = JsonSerializer.SerializeToUtf8Bytes<Reservation>(Basket);
+				var country = ReadField("Country: ");
+				var postal_code = ReadField("Postal code: ");
+				var city = ReadField("City name: ");
+				var order = new Order(country, postal_code, city, this.Basket);
+				var pay_json = JsonSerializer.SerializeToUtf8Bytes<Order>(order);
 				stream.Write(pay_json, 0, pay_json.Length);
 				if (!Server.TryPay(CurrentUser.SessionToken, stream))
 					Console.Write("Unsuccessful payment, Please try again\n");
@@ -277,7 +281,7 @@ namespace App
 					|| groupSize <= 0 || groupSize > room.Capacity)
 				Console.WriteLine("Invalid number");
 			else if (!DateTime.TryParse(ReadField("Date (YYYY-MM-DD): "), out date) 
-					|| date >= DateTime.Now.Date)
+					|| date <= DateTime.Now.Date)
 				Console.WriteLine("Invalid date");
 			else if (!Int32.TryParse(ReadField("Round: "), out round)
 					|| round <= 0 || round > room.NumberOfRounds)
@@ -706,6 +710,7 @@ namespace App
 			else if (!DateTime.TryParse(ReadField("End date (YYYY-MM-DD): "), out t2))
 				Console.Write("Invalid date\n");
 			else {
+				Console.Write("\n");
 				this.FetchReservationsBetween(t1, t2);
 				this.PrintReservations();
 				Block();
@@ -727,26 +732,21 @@ namespace App
 		{
 			for (int i = 0 ;; i += 1) {
 				var res = this.Reservations[i];
-				Console.Write("\tRoom name: {0}\n\tDescription: {1}\n\tPrice: {2}\n\tGroup size: {3}\n"
-					+ "\tDate: {4}\n\tRound: {5}\n", res.Room.Name, res.Room.Description, res.Room.Price,
-					res.GroupSize, res.TargetDateTime.ToString("D"), res.RoundNumber);
+				Console.Write("Room name: {0}\nDescription: {1}\nPrice: {2}\nGroup size: {3}\n"
+					+ "Date: {4}\nRound: {5}\n",
+					res.Room.Name, res.Room.Description, res.Room.Price, res.GroupSize,
+					res.TargetDateTime.ToString("D"), res.RoundNumber);
 				if (res.ConsumableItems.Count == 0)
 					Console.Write("No consumables have been selected for this reservation\n");
 				else for (int j = 0 ;; j += 1) {
 					var con = res.ConsumableItems[j];
-					Console.Write("\tproduct name: {0}\n\tPrice: {1}\n\tDescription: {2}\n\tAmount: {3}\n",
+					Console.Write("product name: {0}\nPrice: {1}\nDescription: {2}\nAmount: {3}\n",
 						con.Consumable.Name, con.Consumable.Price, con.Consumable.Description, con.Amount);
-					if (j < res.ConsumableItems.Count - 1)
-						Console.Write("\n");
-					else
-						break;
-				}
-				if (i < this.Reservations.Count - 1)
+					if (j >= res.ConsumableItems.Count - 1) break;
 					Console.Write("\n");
-				else {
-					Block();
-					break;
 				}
+				if (i >= this.Reservations.Count - 1) break;
+				Console.Write("\n");
 			}
 		}
 
