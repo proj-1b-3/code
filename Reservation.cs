@@ -10,7 +10,6 @@ namespace App
 		public Int64 UserId {get;set;}
 		public Room Room {get;set;}
 		public Int32 GroupSize {get;set;}
-		public List<Consumable> Consumables {get;set;}
 		public DateTime OrderDateTime {get;set;}
 		public DateTime TargetDateTime {get;set;}
 		public Int32 RoundNumber {get;set;}
@@ -32,12 +31,10 @@ namespace App
 		public Reservation(DataRow row)
 		{
 			this.ReservationId = (Int64)row["ReservationId"];
-			this.UserId = (Int64)row["UserId"];
-			this.Room = null;
 			this.GroupSize = (Int32)row["GroupSize"];
 			this.TargetDateTime = (DateTime)row["TargetDateTime"];
-			this.OrderDateTime = (DateTime)row["OrderDateTime"];
 			this.RoundNumber = (Int32)row["RoundNumber"];
+			this.Room = null;
 			this.ConsumableItems = null;
 		}
 	}
