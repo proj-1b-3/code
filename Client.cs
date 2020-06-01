@@ -172,7 +172,13 @@ namespace App
 				var country = ReadField("Country: ");
 				var postal_code = ReadField("Postal code: ");
 				var city = ReadField("City name: ");
-				var order = new Order(country, postal_code, city, this.Basket);
+				Int64 cardNumber;
+				if (!Int64.TryParse(ReadField("Card Number: "), out cardNumber)
+					|| cardNumber.ToString().Length != 16){
+						Console.WriteLine("Invalid Card number");
+						return;
+					}
+				var order = new Order(country, postal_code, city, cardNumber, this.Basket);
 				var pay_json = JsonSerializer.SerializeToUtf8Bytes<Order>(order);
 				stream.Write(pay_json, 0, pay_json.Length);
 				if (!Server.TryPay(CurrentUser.SessionToken, stream))
