@@ -1,9 +1,7 @@
-namespace App
-{
+namespace App {
 	using System;
 	
-	class Order
-	{
+	class Order {
 		public string Country {get;set;}
 		public string PostalCode {get;set;}
 		public string City {get;set;}
@@ -11,8 +9,7 @@ namespace App
 
 		public Order() {}
 
-		public Order(string country, string postal_code, string city, Reservation reservation)
-		{
+		public Order(string country, string postal_code, string city, Reservation reservation) {
 			this.Country = country;
 			this.PostalCode = postal_code;
 			this.City = city;

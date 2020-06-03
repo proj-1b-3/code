@@ -30,14 +30,10 @@ namespace App
 
 			Server = server;
 			while (!Stop) {
-				Console.Write("HOME\n"
-					+ "[1] go to profile\n"
-					+ "[2] go to rooms\n"
-					+ "[3] go to consumables\n"
-					+ "[4] go to reservations\n"
-					+ "[5] go to reviews\n"
-					+ "[6] go to reports\n"
-					+ "[7] pay\n"
+				Console.Write(
+					"HOME\n" + "[1] go to profile\n" + "[2] go to rooms\n"
+					+ "[3] go to consumables\n" + "[4] go to reservations\n"
+					+ "[5] go to reviews\n" + "[6] go to reports\n" + "[7] pay\n"
 					+ "[0] exit\n");
 				var n = ReadField("> ").ToLower();
 				Console.Write("\n");
@@ -81,12 +77,10 @@ namespace App
 		private void Profile()
 		{
 			while (true) {
-				Console.Write("PROFILE\n"
-					+ "[1] login\n"
-					+ "[2] logout\n"
-					+ "[3] register\n"
-					+ "[4] deregister\n"
-					+ "[0] return\n");
+				Console.Write(
+					"PROFILE\n" + "[1] login\n" + "[2] logout\n" + "[3] register\n"
+					+ "[4] deregister\n" + "[0] return\n"
+				);
 				var n = ReadField("> ");
 				Console.Write("\n");
 				switch (n) {
@@ -201,15 +195,17 @@ namespace App
 			if (CurrentUser == null)
 				Console.Write("You need to be logged in\n");
 			else while (true) {
-				Console.Write("ROOM\n"
-					+ "[1] view rooms\n" 
-					+ "[2] select room\n" 
-					+ "[3] view selected room\n" 
-					+ "[4] edit selected room\n" 
-					+ "[5] create room\n"
-					+ "[6] remove room\n"
-					+ "[7] edit room\n"
-					+ "[0] return\n");
+				Console.Write(
+					"ROOM\n" +
+					"[1] view rooms\n" +
+					"[2] select room\n" +
+					"[3] view selected room\n" +
+					"[4] edit selected room\n" +
+					"[5] create room\n" +
+					"[6] remove room\n" +
+					"[7] edit room\n" +
+					"[0] return\n"
+				);
 				var n = ReadField("> ");
 				this.FetchRooms();
 				Console.Write("\n");
@@ -248,13 +244,10 @@ namespace App
 					+ "Capacity: {3}\nMaximum duration: {5}\nNumber of rounds: {4}\n"
 					+ "Price: {6}\n", room.Name, room.Theme, room.Description,
 					room.Capacity, room.NumberOfRounds, room.MaxDuration, room.Price);
-				if (i < this.Rooms.Count - 1)
-					Console.Write("\n");
-				else {
-					Block();
-					break;
-				}
+				if (i >= this.Rooms.Count - 1) break;
+				Console.Write("\n");
 			}
+			Block();
 		}
 
 		private void ViewSelectedRoom()
@@ -262,8 +255,10 @@ namespace App
 			if (this.Basket.Room == null)
 				Console.Write("No room has been selected\n");
 			else {
-				Console.Write("Name: {0}\nGroup size: {1}\n",
-					this.Basket.Room.Name, this.Basket.GroupSize);
+				Console.Write(
+					"Name: {0}\nGroup size: {1}\n",
+					this.Basket.Room.Name, this.Basket.GroupSize
+				);
 				Block();
 			}
 		}
@@ -308,6 +303,7 @@ namespace App
 			else {
 				int capacity, numberofrounds, maxduration;
 				float price;
+
 				var name = ReadField("name: ");
 				var theme = ReadField("theme: ");
 				var desc = ReadField("description: ");
@@ -451,16 +447,11 @@ namespace App
 				Console.WriteLine("You have to be logged in");
 			else while (true) {
 				String n;
-				Console.Write("CONSUMABLE\n"
-					+ "[1] view consumables\n" 
-					+ "[2] select consumable\n" 
-					+ "[3] view selected consumables\n" 
-					+ "[4] remove selected consumable\n" 
-					+ "[5] edit selected consumable\n" 
-					+ "[6] create consumable\n" 
-					+ "[7] delete consumable\n" 
-					+ "[8] edit consumable\n"
-					+ "[0] return\n");
+				Console.Write(
+					"CONSUMABLE\n" + "[1] view consumables\n" + "[2] select consumable\n" 
+					+ "[3] view selected consumables\n" + "[4] remove selected consumable\n" 
+					+ "[5] edit selected consumable\n" + "[6] create consumable\n" 
+					+ "[7] delete consumable\n" + "[8] edit consumable\n" + "[0] return\n");
 				n = ReadField("> ");
 				Console.Write("\n");
 				this.FetchConsumables();
@@ -496,13 +487,10 @@ namespace App
 				var c = this.Consumables[i];
 				Console.Write("Name: {0}\nDescription: {1}\nPrice: {2}\nAvailable:{3}\n",
 					c.Name, c.Description, c.Price, c.Available ? "Yes" : "No");
-				if (i < this.Consumables.Count - 1)
-					Console.Write("\n");
-				else {
-					Block();
-					break;
-				}
+				if (i >= this.Consumables.Count - 1) break;
+				Console.Write("\n");
 			}
+			Block();
 		}
 
 		private void ViewSelectedConsumables()
@@ -512,13 +500,10 @@ namespace App
 			else for (int i = 0 ;; i += 1) {
 				var ci = this.Basket.ConsumableItems[i];
 				Console.Write("Name: {0}\nAmount: {1}\n", ci.Consumable.Name, ci.Amount);
-				if (i < this.Basket.ConsumableItems.Count - 1)
-					Console.Write("\n");
-				else {
-					Block();
-					break;
-				}
+				if (i >= this.Basket.ConsumableItems.Count - 1) break;
+				Console.Write("\n");
 			}
+			Block();
 		}
 
 		private void SelectConsumable()
@@ -527,6 +512,7 @@ namespace App
 				Console.WriteLine("You must be logged in to select a consumbale");
 			else {
 				int amount;
+
 				this.FetchConsumables();
 				var consumableName = ReadField("Name: ");
 				var consumable = this.Consumables.Find(c => c.Name == consumableName);
@@ -588,19 +574,14 @@ namespace App
 			}
 		}
 
-		private void RemoveSelectedConsumable()
-		{
-			String name;
-			Int32 n;
-			
-			name = ReadField("consumable name: ");
-			n = this.Basket.ConsumableItems.RemoveAll(ci => ci.Consumable.Name == name);
+		private void RemoveSelectedConsumable() {
+			var name = ReadField("consumable name: ");
+			var n = this.Basket.ConsumableItems.RemoveAll(ci => ci.Consumable.Name == name);
 			if (n < 0)
 				Console.Write("You have not selected any consumable with that name");
 		}
 
-		private void EditConsumable()
-		{
+		private void EditConsumable() {
 			if (CurrentUser == null)
 				return;
 			else if (CurrentUser.Role != Role.CafeManager)
@@ -641,8 +622,7 @@ namespace App
 			}
 		}
 		
-		private void EditSelectedConsumable()
-		{
+		private void EditSelectedConsumable() {
 			int newAmount;
 			var consumableName = ReadField("Product name: ");
 			var chosenProduct = this.Consumables.Find(c => c.Name == consumableName);
@@ -659,15 +639,14 @@ namespace App
 		}
 
 		// RESERVATION
-		private void Reservation()
-		{
+		private void Reservation() {
 			if (CurrentUser == null)
 				Console.Write("You need to be logged in\n");
 			else while (true) {
-				Console.Write("RESERVATION\n"
-					+ "[1] view all my reservations\n"
-					+ "[2] view reservations between\n"
-					+ "[0] return\n");
+				Console.Write(
+					"RESERVATION\n" + "[1] view all my reservations\n"
+					+ "[2] view reservations between\n" + "[0] return\n"
+				);
 				var n = ReadField("> ");
 				Console.Write("\n");
 				switch (n) {
@@ -680,8 +659,7 @@ namespace App
 			}
 		}
 
-		private void FetchUserReservations()
-		{
+		private void FetchUserReservations() {
 			var stream = new MemoryStream();
 			if (!Server.TryFetchUserReservations(CurrentUser.SessionToken, stream))
 				Console.Write("Error while fetching the reservations from the server\n");
@@ -690,8 +668,7 @@ namespace App
 			stream.Close();
 		}
 
-		private void FetchReservationsBetween(DateTime t1, DateTime t2)
-		{
+		private void FetchReservationsBetween(DateTime t1, DateTime t2) {
 			var stream = new MemoryStream();
 			if (!this.Server.TryFetchReservationsBetween(CurrentUser.SessionToken, stream, t1, t2))
 				Console.Write("Error while fetching the reservations from the server\n");
@@ -700,9 +677,9 @@ namespace App
 			stream.Close();
 		}
 
-		private void ViewReservationsBetween()
-		{
+		private void ViewReservationsBetween() {
 			DateTime t1, t2;
+
 			if (this.CurrentUser == null || this.CurrentUser.Role != Role.Owner)
 				Console.Write("You dont have permission to do this procces\n");
 			else if (!DateTime.TryParse(ReadField("Start date (YYYY-MM-DD): "), out t1))
@@ -717,8 +694,7 @@ namespace App
 			}
 		}
 
-		private void ViewUserReservations()
-		{
+		private void ViewUserReservations() {
 			this.FetchUserReservations();
 			if (this.Reservations.Count == 0)
 				Console.Write("No reservations have been found\n");
@@ -728,20 +704,23 @@ namespace App
 			}
 		}
 
-		private void PrintReservations()
-		{
+		private void PrintReservations() {
 			for (int i = 0 ;; i += 1) {
 				var res = this.Reservations[i];
-				Console.Write("Room name: {0}\nDescription: {1}\nPrice: {2}\nGroup size: {3}\n"
-					+ "Date: {4}\nRound: {5}\n",
-					res.Room.Name, res.Room.Description, res.Room.Price, res.GroupSize,
-					res.TargetDateTime.ToString("D"), res.RoundNumber);
+				Console.Write(
+					"Room name: {0}\nDescription: {1}\nPrice: {2}\nGroup size: {3}\nDate: {4}\n"
+					+ "Round: {5}\n", res.Room.Name, res.Room.Description, res.Room.Price,
+					res.GroupSize, res.TargetDateTime.ToString("D"), res.RoundNumber
+				);
 				if (res.ConsumableItems.Count == 0)
 					Console.Write("No consumables have been selected for this reservation\n");
 				else for (int j = 0 ;; j += 1) {
 					var con = res.ConsumableItems[j];
-					Console.Write("product name: {0}\nPrice: {1}\nDescription: {2}\nAmount: {3}\n",
-						con.Consumable.Name, con.Consumable.Price, con.Consumable.Description, con.Amount);
+					Console.Write(
+						"product name: {0}\nPrice: {1}\nDescription: {2}\nAmount: {3}\n",
+						con.Consumable.Name, con.Consumable.Price, con.Consumable.Description,
+						con.Amount
+					);
 					if (j >= res.ConsumableItems.Count - 1) break;
 					Console.Write("\n");
 				}
@@ -758,9 +737,11 @@ namespace App
 			else if (CurrentUser.Role != Role.Owner)
 				Console.Write("Access denied: insufficient permissions\n");
 			else while (true) {
-				Console.Write("REPORT\n"
-					+ "[1] view yesterday's report\n"
-					+ "[0] return\n");
+				Console.Write(
+					"REPORT\n" +
+					"[1] view yesterday's report\n" +
+					"[0] return\n"
+				);
 				var n = ReadField("> ");
 				Console.Write("\n");
 				switch (n) {
@@ -783,8 +764,10 @@ namespace App
 			else if (!Server.TryFetchReport(CurrentUser.SessionToken, out report, date))
 				Console.Write("Something went wrong while trying to get report information\n");
 			else {
-				Console.Write("Amount tickets sold: {0}\nAmount consumables sold: {1}\n Income: {2}\n",
-					report.TicketsSold, report.ConsumablesSold, report.Income);
+				Console.Write(
+					"Amount tickets sold: {0}\nAmount consumables sold: {1}\n Income: {2}\n",
+					report.TicketsSold, report.ConsumablesSold, report.Income
+				);
 				Block();
 			}
 		}
@@ -795,10 +778,12 @@ namespace App
 			if (CurrentUser == null)
 				Console.Write("You need to be logged in\n");
 			else while (true) {
-				Console.Write("REVIEW\n"
-					+ "[1] view reviews\n"
-					+ "[2] create review\n"
-					+ "[0] return\n");
+				Console.Write(
+					"REVIEW\n" +
+					"[1] view reviews\n" +
+					"[2] create review\n" +
+					"[0] return\n"
+				);
 				var n = ReadField("> ");
 				Console.Write("\n");
 				switch (n) {
@@ -825,7 +810,7 @@ namespace App
 		{
 			this.FetchRooms();
 			var roomName = ReadField("Room name: ");
-			var room = this.Rooms.Find(room => room.Name == roomName);
+			var room = this.Rooms.Find(r => r.Name == roomName);
 			if (room == null)
 				Console.Write("that room does not exist\n");
 			else {
@@ -834,16 +819,14 @@ namespace App
 					Console.Write("No reviews of this escape room have been found\n");
 				else for (int i = 0 ;; i += 1) {
 					var review = this.Reviews[i];
-					Console.Write("Name: {0}\nDate: {1}\nRating: {2}\nReview: {3}\n",
-						review.UserName, review.DateTime.ToString("D"), review.Rating,
-						review.Text);
-					if (i < this.Reviews.Count - 1)
-						Console.Write("\n");
-					else {
-						Block();
-						break;
-					}
+					Console.Write(
+						"Name: {0}\nDate: {1}\nRating: {2}\nReview: {3}\n",
+						review.UserName, review.DateTime.ToString("D"), review.Rating, review.Text
+					);
+					if (i < this.Reviews.Count - 1) break;
+					Console.Write("\n");
 				}
+				Block();
 			}
 		}
 
