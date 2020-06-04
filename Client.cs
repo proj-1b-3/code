@@ -27,10 +27,16 @@ namespace App {
 			Server = server;
 			while (!Stop) {
 				Console.Write(
-					"HOME\n" + "[1] go to profile\n" + "[2] go to rooms\n"
-					+ "[3] go to consumables\n" + "[4] go to reservations\n"
-					+ "[5] go to reviews\n" + "[6] go to reports\n" + "[7] pay\n"
-					+ "[0] exit\n");
+					"HOME\n" +
+					"[1] go to profile\n" +
+					"[2] go to rooms\n" +
+					"[3] go to consumables\n" +
+					"[4] go to reservations\n" +
+					"[5] go to reviews\n" +
+					"[6] go to reports\n" +
+					"[7] pay\n" +
+					"[0] exit\n"
+				);
 				var n = ReadField("> ").ToLower();
 				Console.Write("\n");
 				switch (n) {
@@ -150,7 +156,6 @@ namespace App {
 				return;
 			else {
 				long cardNumber;
-				var stream = new MemoryStream();
 				var country = ReadField("Country: ");
 				var postal_code = ReadField("Postal code: ");
 				var city = ReadField("City name: ");
@@ -158,6 +163,7 @@ namespace App {
 						|| cardNumber.ToString().Length != 16)
 					Console.WriteLine("Invalid Card number");
 				else {
+					var stream = new MemoryStream();
 					var order = new Order(country, postal_code, city, cardNumber, this.Basket);
 					var pay_json = JsonSerializer.SerializeToUtf8Bytes<Order>(order);
 					stream.Write(pay_json, 0, pay_json.Length);
@@ -592,7 +598,7 @@ namespace App {
 
 					var price_str = ReadField("Price: ");
 					if (price_str != "")
-						if (Single.TryParse(price_str, out price))
+						if (float.TryParse(price_str, out price))
 							copied.Price = price;
 						else {
 							Console.WriteLine("Invalid number");
@@ -625,7 +631,8 @@ namespace App {
 			}
 		}
 
-		// RESERVATION
+		// ORDERS
+		// RESERVATIONS
 		private void Reservation() {
 			if (CurrentUser == null)
 				Console.Write("You need to be logged in\n");
@@ -634,6 +641,7 @@ namespace App {
 					"RESERVATION\n" +
 					"[1] view all my reservations\n" +
 					"[2] view reservations between\n" +
+					"[3] view reservation with id?\n" +
 					"[0] return\n"
 				);
 				var n = ReadField("> ");
@@ -642,6 +650,7 @@ namespace App {
 					case "0": HomeMsg(); return;
 					case "1": this.ViewUserReservations(); break;
 					case "2": this.ViewReservationsBetween(); break;
+					case "3": this.ViewReservation(); break;
 					default: Console.WriteLine("Invalid command number"); break;
 				}
 				Console.Write("\n");
@@ -669,7 +678,7 @@ namespace App {
 		private void ViewReservationsBetween() {
 			DateTime t1, t2;
 
-			if (this.CurrentUser == null || this.CurrentUser.Role != Role.Owner)
+			if (this.CurrentUser.Role != Role.Owner && this.CurrentUser.Role != Role.Manager)
 				Console.Write("You dont have permission to do this procces\n");
 			else if (!DateTime.TryParse(ReadField("Start date (YYYY-MM-DD): "), out t1))
 				Console.Write("Invalid date\n");
@@ -693,8 +702,29 @@ namespace App {
 			}
 		}
 
+		private void ViewReservation() {
+			long reservation_id;
+
+			if (CurrentUser.Role != Role.Manager)
+				Console.Write("Insufficient permissions\n");
+			else if (!long.TryParse(ReadField("Reservation ID: "), out reservation_id))
+				Console.Write("Invalid number\n");
+			else {
+				var stream = new MemoryStream();
+				if (!this.Server.TryFetchReservationById(CurrentUser.SessionToken, stream, reservation_id))
+					Console.Write("No reservation has been found\n");
+				else {
+					this.Reservations = JsonSerializer.Deserialize<List<Reservation>>(stream.ToArray());
+					this.PrintReservations();
+				}
+				stream.Close();
+			}
+		}
+
 		private void PrintReservations() {
-			for (int i = 0 ;; i += 1) {
+			if (this.Reservations.Count == 0)
+				Console.Write("No reservations have been found in this time interval\n");
+			else for (int i = 0 ;; i += 1) {
 				var res = this.Reservations[i];
 				Console.Write(
 					"Room name: {0}\nDescription: {1}\nPrice: {2}\nGroup size: {3}\nDate: {4}\n" +
@@ -798,6 +828,7 @@ namespace App {
 			if (room == null)
 				Console.Write("that room does not exist\n");
 			else {
+				Console.Write("\n");
 				this.FetchReviews(room);
 				if (this.Reviews.Count == 0)
 					Console.Write("No reviews of this escape room have been found\n");
@@ -807,7 +838,7 @@ namespace App {
 						"Name: {0}\nDate: {1}\nRating: {2}\nReview: {3}\n",
 						review.UserName, review.DateTime.ToString("D"), review.Rating, review.Text
 					);
-					if (i < this.Reviews.Count - 1) break;
+					if (i >= this.Reviews.Count - 1) break;
 					Console.Write("\n");
 				}
 				Block();

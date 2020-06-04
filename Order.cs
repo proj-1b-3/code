@@ -2,6 +2,8 @@ namespace App {
 	using System;
 	
 	class Order {
+		// public string Forename {get;set;}
+		// public string Surname {get;set;}
 		public string Country {get;set;}
 		public string PostalCode {get;set;}
 		public string City {get;set;}

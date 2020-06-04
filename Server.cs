@@ -113,6 +113,7 @@ namespace App {
 				new DataColumn("Country", typeof(string)),
 				new DataColumn("City", typeof(string)),
 				new DataColumn("PostalCode", typeof(string)),
+				new DataColumn("CardNumber", typeof(long)),
 				new DataColumn("DateTime", typeof(DateTime))
 			});
 			orderTable.PrimaryKey = new DataColumn[] {
@@ -467,6 +468,7 @@ namespace App {
 					order_row["Country"] = order.Country;
 					order_row["PostalCode"] = order.PostalCode;
 					order_row["City"] = order.City;
+					order_row["CardNumber"] = order.CardNumber;
 					order_row["DateTime"] = DateTime.Now;
 					order_table.Rows.Add(order_row);
 
@@ -552,11 +554,12 @@ namespace App {
 			}
 		}
 
-		public bool TryFetchReservationsBetween(Guid session_token, MemoryStream stream,
-			DateTime dateTimeStart, DateTime dateTimeEnd
+		public bool TryFetchReservationsBetween(
+			Guid session_token, MemoryStream stream, DateTime dateTimeStart, DateTime dateTimeEnd
 		) {
 			var user_row = GetUserRow(session_token);
-			if (user_row == null || (Role)user_row["Role"] != Role.Owner)
+			var user_role = (Role)user_row["Role"];
+			if (user_row == null || user_role != Role.Owner && user_role != Role.Manager)
 				return false;
 			else {
 				var query = string.Format(
@@ -583,6 +586,31 @@ namespace App {
 					return false;
 				else
 					return true;
+			}
+		}
+
+		public bool TryFetchReservationById(
+			Guid session_token, MemoryStream stream, long reservation_id
+		) {
+			var user_row = this.GetUserRow(session_token);
+			if (user_row == null || (Role)user_row["Role"] != Role.Manager) {
+				return false;
+			} else {
+				// need to send the data the intern will need to validate an reservaton
+				// over the stream.
+				
+				var query = string.Format("ReservationId = {0}", reservation_id);
+				var reservation_rows = this.DataBase.Tables["Reservations"].Select(query);
+				if (reservation_rows.Length <= 0)
+					return false;
+				else {
+					var reservations = this.Reservation_Rows_To_List(reservation_rows);
+					var json_bytes = JsonSerializer.SerializeToUtf8Bytes<List<Reservation>>(reservations);
+					stream.Write(json_bytes, 0, json_bytes.Length);
+					stream.Position = 0;
+					if (stream.Length == 0) return false;
+					return true;
+				}
 			}
 		}
 
@@ -636,8 +664,8 @@ namespace App {
 			else {
 				var review_table = this.DataBase.Tables["Reviews"];
 				var query = string.Format("ProductId = {0}", review.RoomId);
-				var review_rows = this.DataBase.Tables["RoomAttrs"].Select(query);
-				if (review_rows.Length == 0)
+				var room_attr_rows = this.DataBase.Tables["RoomAttrs"].Select(query);
+				if (room_attr_rows.Length == 0)
 					return false;
 				else {
 					var review_row = review_table.NewRow();
@@ -680,18 +708,6 @@ namespace App {
 				stream.Position = 0;
 				if (stream.Length == 0) { return false; }
 				else { return true; }
-			}
-		}
-
-		public bool TryFindReservaton(Guid session_token, MemoryStream stream, long reservatoin_id) {
-			var user_row = this.GetUserRow(session_token);
-			if (user_row == null || (Role)user_row["Role"] != Role.Manager) {
-				return false;
-			} else {
-				// need to send the data the intern will need to validate an reservaton
-				// over the stream.
-
-				return true;
 			}
 		}
 	}
