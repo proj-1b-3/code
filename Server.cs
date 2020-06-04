@@ -1,5 +1,4 @@
-namespace App
-{
+namespace App {
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
@@ -7,8 +6,7 @@ namespace App
 	using System.Text;
 	using System.Text.Json;
 
-	enum Role
-	{
+	enum Role {
 		Owner,
 		CafeManager,
 		Manager,
@@ -20,8 +18,7 @@ namespace App
 		private DataSet DataBase;
 		private string DataBaseFile;
 		
-		public Server()
-		{
+		public Server() {
 			this.DataBaseFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data.xml");
 			this.ActiveUsers = new Dictionary<Guid, long>();
 			this.DataBase = new DataSet("DataBase");
@@ -72,9 +69,7 @@ namespace App
 
 			var reservationTable = new DataTable("Reservations");
 			reservationTable.Columns.AddRange(new DataColumn[] {
-				new DataColumn("ReservationId", typeof(long)) {
-					AutoIncrement = true
-				},
+				new DataColumn("ReservationId", typeof(long)) { AutoIncrement = true },
 				new DataColumn("OrderId", typeof(long)),
 				new DataColumn("RoomId", typeof(long)),
 				new DataColumn("RoundNumber", typeof(int)),
@@ -118,6 +113,7 @@ namespace App
 				new DataColumn("Country", typeof(string)),
 				new DataColumn("City", typeof(string)),
 				new DataColumn("PostalCode", typeof(string)),
+				new DataColumn("CardNumber", typeof(long)),
 				new DataColumn("DateTime", typeof(DateTime))
 			});
 			orderTable.PrimaryKey = new DataColumn[] {
@@ -125,59 +121,83 @@ namespace App
 			};
 
 			DataBase.Tables.AddRange(new DataTable[] {
-				userTable,
-				productTable,
-				roomAttrTable, 
-				reservationTable,
-				consumableAttrTable,
-				consumableItemTable,
-				reviewTable,
-				orderTable
+				userTable, productTable, roomAttrTable, reservationTable, consumableAttrTable, 
+				consumableItemTable, reviewTable, orderTable
 			});
 
 			DataBase.Relations.AddRange(new DataRelation[] {
-				new DataRelation("Product-RoomAttr", 
-					productTable.Columns["ProductId"],
-					roomAttrTable.Columns["ProductId"]),
-				new DataRelation("Product-ConsumableAttr",
-					productTable.Columns["ProductId"],
-					consumableAttrTable.Columns["ProductId"]),
-				new DataRelation("Reservation-ConsumableItem",
-					reservationTable.Columns["ReservationId"],
-					consumableItemTable.Columns["ReservationId"]),
-				new DataRelation("ConsumableAttr-ConsumableItem",
-					consumableAttrTable.Columns["ProductId"],
-					consumableItemTable.Columns["ProductId"]),
-				new DataRelation("RoomAttr-Reservation", 
-					roomAttrTable.Columns["ProductId"],
-					reservationTable.Columns["RoomId"]),
-				new DataRelation("User-Review", 
-					userTable.Columns["UserId"],
-					reviewTable.Columns["UserId"]),
-				new DataRelation("Order-Reservation",
-					orderTable.Columns["OrderId"],
-					reservationTable.Columns["OrderId"]),
-				new DataRelation("User-Order",
-					userTable.Columns["UserId"],
-					orderTable.Columns["UserId"])
+				new DataRelation(
+					"Product-RoomAttr", productTable.Columns["ProductId"], 
+					roomAttrTable.Columns["ProductId"]
+				),
+				new DataRelation(
+					"Product-ConsumableAttr", productTable.Columns["ProductId"], 
+					consumableAttrTable.Columns["ProductId"]
+				),
+				new DataRelation(
+					"Reservation-ConsumableItem", reservationTable.Columns["ReservationId"], 
+					consumableItemTable.Columns["ReservationId"]
+				),
+				new DataRelation(
+					"ConsumableAttr-ConsumableItem", consumableAttrTable.Columns["ProductId"], 
+					consumableItemTable.Columns["ProductId"]
+				),
+				new DataRelation(
+					"RoomAttr-Reservation", roomAttrTable.Columns["ProductId"],
+					reservationTable.Columns["RoomId"]
+				),
+				new DataRelation(
+					"User-Review", userTable.Columns["UserId"], reviewTable.Columns["UserId"]
+				),
+				new DataRelation(
+					"Order-Reservation", orderTable.Columns["OrderId"],
+					reservationTable.Columns["OrderId"]
+				),
+				new DataRelation(
+					"User-Order", userTable.Columns["UserId"], orderTable.Columns["UserId"]
+				)
 			});
 		}
 
-		public void LoadData()
-		{
-			if (File.Exists(this.DataBaseFile))
+		public void LoadData() {
+			if (!File.Exists(this.DataBaseFile))
+				this.AddDefaultUsers();
+			else
 				DataBase.ReadXml(this.DataBaseFile);
 		}
 
-		public void SaveData()
-		{
+		public void SaveData() {
 			if (!File.Exists(this.DataBaseFile))
 				File.Create(this.DataBaseFile).Close();
 			DataBase.WriteXml(this.DataBaseFile);
 		}
 
-		private DataRow GetUserRow(string email)
-		{
+		private void AddDefaultUsers() {
+			DataRow user_row;
+
+			user_row = this.DataBase.Tables["Users"].NewRow();
+			user_row["UserName"] = "owner";
+			user_row["Email"] = "owner@mail.com";
+			user_row["Password"] = "owner123";
+			user_row["Role"] = Role.Owner;
+			this.DataBase.Tables["Users"].Rows.Add(user_row);
+
+			user_row = this.DataBase.Tables["Users"].NewRow();
+			user_row["UserName"] = "shop";
+			user_row["Email"] = "shop@mail.com";
+			user_row["Password"] = "shop123";
+			user_row["Role"] = Role.Manager;
+			this.DataBase.Tables["Users"].Rows.Add(user_row);
+
+			user_row = this.DataBase.Tables["Users"].NewRow();
+			user_row["UserName"] = "cafe";
+			user_row["Email"] = "cafe@mail.com";
+			user_row["Password"] = "cafe123";
+			user_row["Role"] = Role.CafeManager;
+			this.DataBase.Tables["Users"].Rows.Add(user_row);
+		}
+
+		private DataRow GetUserRow(string email) {
 			var query = string.Format("Email = '{0}'", email);
 			var user_rows = this.DataBase.Tables["Users"].Select(query);
 			if (user_rows.Length == 0)
@@ -186,8 +206,7 @@ namespace App
 				return user_rows[0];
 		}
 
-		private DataRow GetUserRow(Guid session_token)
-		{
+		private DataRow GetUserRow(Guid session_token) {
 			long userId;
 
 			if (!this.ActiveUsers.TryGetValue(session_token, out userId))
@@ -196,8 +215,7 @@ namespace App
 				return this.DataBase.Tables["Users"].Rows.Find(userId);
 		}
 
-		public bool TryLogin(string userName, string password, out User user)
-		{
+		public bool TryLogin(string userName, string password, out User user) {
 			user = null;
 			var user_row = this.GetUserRow(userName);
 			if (user_row == null || (string)user_row["Password"] != password)
@@ -210,8 +228,7 @@ namespace App
 			}
 		}
 
-		public bool TryLogout(Guid session_token)
-		{
+		public bool TryLogout(Guid session_token) {
 			if (!this.ActiveUsers.ContainsKey(session_token))
 				return false;
 			else {
@@ -220,8 +237,7 @@ namespace App
 			}
 		}
 
-		public bool TryAddUser(string userName, string email, string password)
-		{
+		public bool TryAddUser(string userName, string email, string password) {
 			if (userName == "" || email == "" || password == "")
 				return false;
 			else {
@@ -241,8 +257,7 @@ namespace App
 			}
 		}
 
-		public bool TryRemoveUser(Guid session_token, string password)
-		{
+		public bool TryRemoveUser(Guid session_token, string password) {
 			if (password == "")
 				return false;
 			else {
@@ -257,8 +272,7 @@ namespace App
 			}
 		}
 
-		public bool TryAddRoom(Guid session_token, Room room)
-		{
+		public bool TryAddRoom(Guid session_token, Room room) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null || (Role)user_row["Role"] != Role.Owner)
 				return false;
@@ -287,8 +301,7 @@ namespace App
 			}
 		}
 
-		public bool TryRemoveRoom(Guid session_token, string roomName)
-		{
+		public bool TryRemoveRoom(Guid session_token, string roomName) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null || (Role)user_row["Role"] != Role.Owner)
 				return false;
@@ -299,15 +312,15 @@ namespace App
 				if (product_rows.Length == 0)
 					return false;
 				else {
-					this.DataBase.Tables["RoomAttrs"].Rows.Remove(product_rows[0].GetChildRows(rel)[0]);
+					this.DataBase.Tables["RoomAttrs"].Rows
+						.Remove(product_rows[0].GetChildRows(rel)[0]);
 					this.DataBase.Tables["Products"].Rows.Remove(product_rows[0]);
 					return true;
 				}
 			}
 		}
 
-		public bool TryEditRoom(Guid session_token, Room room)
-		{
+		public bool TryEditRoom(Guid session_token, Room room) {
 			var user_row = GetUserRow(session_token);
 			if (user_row == null || (Role)user_row["Role"] != Role.Owner)
 				return false;
@@ -335,17 +348,18 @@ namespace App
 			}
 		}
 
-		public bool TryFetchRooms(Guid session_token, MemoryStream stream)
-		{
+		public bool TryFetchRooms(Guid session_token, MemoryStream stream) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null)
 				return false;
 			else {
-				var rel = this.DataBase.Relations["Product-RoomAttr"];
-				var room_attr_table = rel.ChildTable;
+				var prod_to_room_attr = this.DataBase.Relations["Product-RoomAttr"];
+				var room_attr_table = prod_to_room_attr.ChildTable;
 				var rooms = new List<Room>();
-				foreach (DataRow room_attr_row in room_attr_table.Rows) {
-					var product_row = room_attr_row.GetParentRow(rel);
+				for (int i = 0 ;; i += 1) {
+					if (i >= room_attr_table.Rows.Count) break;
+					DataRow room_attr_row = room_attr_table.Rows[i];
+					var product_row = room_attr_row.GetParentRow(prod_to_room_attr);
 					rooms.Add(new Room(product_row, room_attr_row));
 				}
 				var json_bytes = JsonSerializer.SerializeToUtf8Bytes<List<Room>>(rooms);
@@ -358,20 +372,23 @@ namespace App
 			}
 		}
 		
-		public int CheckReservation(Reservation reservation)
-		{
+		public int CheckReservation(Reservation reservation) {
 			var query = string.Format(
 				"RoomId = {0} AND DateTime = #{1}# AND RoundNumber = {2}",
-				reservation.Room.ProductId, reservation.TargetDateTime.Date, reservation.RoundNumber);
+				reservation.Room.ProductId, reservation.TargetDateTime.Date,
+				reservation.RoundNumber
+			);
 			var rows = this.DataBase.Tables["Reservations"].Select(query);
 			int n = 0;
-			foreach (var row in rows)
+			for (int i = 0 ;; i += 1) {
+				if (i >= rows.Length) break;
+				var row = rows[i];
 				n += (int)row["GroupSize"];
+			}
 			return n;
 		}
 
-		public bool TryAddConsumable(Guid session_token, Consumable consumable)
-		{
+		public bool TryAddConsumable(Guid session_token, Consumable consumable) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null || (Role)user_row["Role"] != Role.CafeManager)
 				return false;
@@ -387,16 +404,17 @@ namespace App
 					product_row["Price"] = consumable.Price;
 					product_row["Available"] = consumable.Available;
 					this.DataBase.Tables["Products"].Rows.Add(product_row);
+
 					var consumable_attr_row = this.DataBase.Tables["ConsumableAttrs"].NewRow();
 					consumable_attr_row["ProductId"] = product_row["ProductId"];
 					this.DataBase.Tables["ConsumableAttrs"].Rows.Add(consumable_attr_row);
+
 					return true;
 				}
 			}
 		}
 
-		public bool TryRemoveConsumable(Guid session_token, Consumable consumable)
-		{
+		public bool TryRemoveConsumable(Guid session_token, Consumable consumable) {
 			var user_row = GetUserRow(session_token);
 			if (user_row == null || (Role)user_row["Role"] != Role.CafeManager)
 				return false;
@@ -411,8 +429,7 @@ namespace App
 			}
 		}
 
-		public bool TryEditConsumable(Guid session_token, Consumable consumable)
-		{
+		public bool TryEditConsumable(Guid session_token, Consumable consumable) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null || (Role)user_row["Role"] != Role.CafeManager)
 				return false;
@@ -432,8 +449,7 @@ namespace App
 			}
 		}
 
-		public bool TryFetchConsumables(Guid session_token, MemoryStream stream)
-		{
+		public bool TryFetchConsumables(Guid session_token, MemoryStream stream) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null)
 				return false;
@@ -441,8 +457,11 @@ namespace App
 				var rel = this.DataBase.Relations["Product-ConsumableAttr"];
 				var consumable_attr_table = rel.ChildTable;
 				var consumables = new List<Consumable>();
-				foreach (DataRow consumable_row in consumable_attr_table.Rows)
+				for (int i = 0 ;; i += 1) {
+					if (i >= consumable_attr_table.Rows.Count) break;
+					DataRow consumable_row = consumable_attr_table.Rows[i];
 					consumables.Add(new Consumable(consumable_row.GetParentRow(rel)));
+				}
 				var json_bytes = JsonSerializer.SerializeToUtf8Bytes<List<Consumable>>(consumables);
 				stream.Write(json_bytes, 0, json_bytes.Length);
 				stream.Position = 0;
@@ -453,8 +472,7 @@ namespace App
 			}
 		}
 
-		public bool TryPay(Guid session_token, MemoryStream stream) 
-		{
+		public bool TryPay(Guid session_token, MemoryStream stream) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null)
 				return false;
@@ -477,6 +495,7 @@ namespace App
 					order_row["Country"] = order.Country;
 					order_row["PostalCode"] = order.PostalCode;
 					order_row["City"] = order.City;
+					order_row["CardNumber"] = order.CardNumber;
 					order_row["DateTime"] = DateTime.Now;
 					order_table.Rows.Add(order_row);
 
@@ -502,8 +521,7 @@ namespace App
 			}
 		}
 
-		private List<Reservation> Reservation_Rows_To_List(IList<DataRow> res_rows)
-		{
+		private List<Reservation> Reservation_Rows_To_List(IList<DataRow> res_rows) {
 			var ress = new List<Reservation>();
 			var res_to_cons_item = this.DataBase.Relations["Reservation-ConsumableItem"];
 			var cons_attr_to_cons_item = this.DataBase.Relations["ConsumableAttr-ConsumableItem"];
@@ -535,8 +553,7 @@ namespace App
 			return ress;
 		}
 
-		public bool TryFetchUserReservations(Guid session_token, MemoryStream stream)
-		{
+		public bool TryFetchUserReservations(Guid session_token, MemoryStream stream) {
 			var user_row = GetUserRow(session_token);
 			if (user_row == null)
 				return false;
@@ -564,14 +581,18 @@ namespace App
 			}
 		}
 
-		public bool TryFetchReservationsBetween(Guid session_token, MemoryStream stream,
-			DateTime dateTimeStart, DateTime dateTimeEnd)
-		{
+		public bool TryFetchReservationsBetween(
+			Guid session_token, MemoryStream stream, DateTime dateTimeStart, DateTime dateTimeEnd
+		) {
 			var user_row = GetUserRow(session_token);
-			if (user_row == null || (Role)user_row["Role"] != Role.Owner)
+			var user_role = (Role)user_row["Role"];
+			if (user_row == null || user_role != Role.Owner && user_role != Role.Manager)
 				return false;
 			else {
-				var query = string.Format("DateTime >= #{0}# AND DateTime < #{1}#", dateTimeStart, dateTimeEnd);
+				var query = string.Format(
+					"DateTime >= #{0}# AND DateTime < #{1}#",
+					dateTimeStart, dateTimeEnd
+				);
 				var order_to_reservation = this.DataBase.Relations["Order-Reservation"];
 				var order_rows = this.DataBase.Tables["Orders"].Select(query);
 				var reservation_rows = new List<DataRow>();
@@ -584,7 +605,8 @@ namespace App
 					}
 				}
 				var reservations = this.Reservation_Rows_To_List(reservation_rows);
-				var json_bytes = JsonSerializer.SerializeToUtf8Bytes<List<Reservation>>(reservations);
+				var json_bytes = JsonSerializer
+					.SerializeToUtf8Bytes<List<Reservation>>(reservations);
 				stream.Write(json_bytes, 0, json_bytes.Length);
 				stream.Position = 0;
 				if (stream.Length == 0)
@@ -594,17 +616,44 @@ namespace App
 			}
 		}
 
-		public bool TryFetchReport(Guid session_token, out Report report, DateTime date)
-		{
+		public bool TryFetchReservationById(
+			Guid session_token, MemoryStream stream, long reservation_id
+		) {
+			var user_row = this.GetUserRow(session_token);
+			if (user_row == null || (Role)user_row["Role"] != Role.Manager) {
+				return false;
+			} else {
+				// need to send the data the intern will need to validate an reservaton
+				// over the stream.
+				
+				var query = string.Format("ReservationId = {0}", reservation_id);
+				var reservation_rows = this.DataBase.Tables["Reservations"].Select(query);
+				if (reservation_rows.Length <= 0)
+					return false;
+				else {
+					var reservations = this.Reservation_Rows_To_List(reservation_rows);
+					var json_bytes = JsonSerializer.SerializeToUtf8Bytes<List<Reservation>>(reservations);
+					stream.Write(json_bytes, 0, json_bytes.Length);
+					stream.Position = 0;
+					if (stream.Length == 0) return false;
+					return true;
+				}
+			}
+		}
+
+		public bool TryFetchReport(Guid session_token, out Report report, DateTime date) {
 			report = null;
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null || (Role)user_row["Role"] != Role.Owner)
 				return false;
 			else {
 				var order_to_reservation = this.DataBase.Relations["Order-Reservation"];
-				string end_date = date.Date.AddDays(1.0).ToString("O");
-				string start_date = date.Date.ToString("O");
-				var query = string.Format("DateTime >= #{0}# AND DateTime < #{1}#", start_date, end_date);
+				var end_date = date.Date.AddDays(1.0).ToString("O");
+				var start_date = date.Date.ToString("O");
+				var query = string.Format(
+					"DateTime >= #{0}# AND DateTime < #{1}#",
+					start_date, end_date
+				);
 				var order_rows = this.DataBase.Tables["Orders"].Select(query);
 				var reservation_rows = new List<DataRow>();
 				for (int i = 0 ;; i += 1) {
@@ -618,12 +667,16 @@ namespace App
 				var reservations = this.Reservation_Rows_To_List(reservation_rows);
 				int tickets_sold = 0, consumables_sold = 0;
 				float income = 0;
-				foreach (Reservation reservation in reservations) {
+				for (int i = 0 ;; i += 1) {
+					if (i >= reservations.Count) break;
+					var reservation = reservations[i];
 					tickets_sold += reservation.GroupSize;
 					income += reservation.Room.Price * reservation.GroupSize;
-					foreach (ConsumableItem item in reservation.ConsumableItems) {
-						consumables_sold += item.Amount;
-						income += item.Consumable.Price * item.Amount;
+					for (int j = 0 ;; j += 1) {
+						if (j >= reservation.ConsumableItems.Count) break;
+						var ci = reservation.ConsumableItems[j];
+						consumables_sold += ci.Amount;
+						income += ci.Consumable.Price * ci.Amount;
 					}
 				}
 				report = new Report(tickets_sold, consumables_sold, income);
@@ -631,16 +684,15 @@ namespace App
 			}
 		}
 
-		public bool TryAddReview(Guid session_token, Review review)
-		{
+		public bool TryAddReview(Guid session_token, Review review) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null)
 				return false;
 			else {
 				var review_table = this.DataBase.Tables["Reviews"];
 				var query = string.Format("ProductId = {0}", review.RoomId);
-				var review_rows = this.DataBase.Tables["RoomAttrs"].Select(query);
-				if (review_rows.Length == 0)
+				var room_attr_rows = this.DataBase.Tables["RoomAttrs"].Select(query);
+				if (room_attr_rows.Length == 0)
 					return false;
 				else {
 					var review_row = review_table.NewRow();
@@ -650,13 +702,13 @@ namespace App
 					review_row["Text"] = review.Text;
 					review_row["Rating"] = review.Rating;
 					review_table.Rows.Add(review_row);
+
 					return true;
 				}
 			}
 		}
 
-		public bool TryFetchReviews(Guid session_token, MemoryStream stream, Room room)
-		{
+		public bool TryFetchReviews(Guid session_token, MemoryStream stream, Room room) {
 			var user_row = this.GetUserRow(session_token);
 			if (user_row == null)
 				return false;
@@ -664,9 +716,11 @@ namespace App
 				var query = string.Format("RoomId = {0}", room.ProductId);
 				var review_rows = this.DataBase.Tables["Reviews"].Select(query);
 				var reviews = new List<Review>();
-				var rel0 = this.DataBase.Relations["User-Review"];
-				foreach (var review_row in review_rows) {
-					var auther_row = review_row.GetParentRow(rel0);
+				var user_to_review = this.DataBase.Relations["User-Review"];
+				for (int i = 0 ;; i += 1) {
+					if (i >= review_rows.Length) break;
+					var review_row = review_rows[i];
+					var auther_row = review_row.GetParentRow(user_to_review);
 					reviews.Add(new Review() {
 						RoomId = room.ProductId,
 						RoomName = room.Name,
@@ -679,10 +733,8 @@ namespace App
 				var json_bytes = JsonSerializer.SerializeToUtf8Bytes<List<Review>>(reviews);
 				stream.Write(json_bytes, 0, json_bytes.Length);
 				stream.Position = 0;
-				if (stream.Length == 0)
-					return false;
-				else
-					return true;
+				if (stream.Length == 0) { return false; }
+				else { return true; }
 			}
 		}
 	}

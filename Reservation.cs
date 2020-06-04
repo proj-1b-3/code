@@ -32,7 +32,7 @@ namespace App
 		{
 			this.ReservationId = (Int64)row["ReservationId"];
 			this.GroupSize = (Int32)row["GroupSize"];
-			this.TargetDateTime = (DateTime)row["TargetDateTime"];
+			this.TargetDateTime = (DateTime)row["DateTime"];
 			this.RoundNumber = (Int32)row["RoundNumber"];
 			this.Room = null;
 			this.ConsumableItems = null;
