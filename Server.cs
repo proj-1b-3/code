@@ -160,7 +160,9 @@ namespace App {
 		}
 
 		public void LoadData() {
-			if (File.Exists(this.DataBaseFile))
+			if (!File.Exists(this.DataBaseFile))
+				this.AddDefaultUsers();
+			else
 				DataBase.ReadXml(this.DataBaseFile);
 		}
 
@@ -168,6 +170,31 @@ namespace App {
 			if (!File.Exists(this.DataBaseFile))
 				File.Create(this.DataBaseFile).Close();
 			DataBase.WriteXml(this.DataBaseFile);
+		}
+
+		private void AddDefaultUsers() {
+			DataRow user_row;
+
+			user_row = this.DataBase.Tables["Users"].NewRow();
+			user_row["UserName"] = "owner";
+			user_row["Email"] = "owner@mail.com";
+			user_row["Password"] = "owner123";
+			user_row["Role"] = Role.Owner;
+			this.DataBase.Tables["Users"].Rows.Add(user_row);
+
+			user_row = this.DataBase.Tables["Users"].NewRow();
+			user_row["UserName"] = "shop";
+			user_row["Email"] = "shop@mail.com";
+			user_row["Password"] = "shop123";
+			user_row["Role"] = Role.Manager;
+			this.DataBase.Tables["Users"].Rows.Add(user_row);
+
+			user_row = this.DataBase.Tables["Users"].NewRow();
+			user_row["UserName"] = "cafe";
+			user_row["Email"] = "cafe@mail.com";
+			user_row["Password"] = "cafe123";
+			user_row["Role"] = Role.CafeManager;
+			this.DataBase.Tables["Users"].Rows.Add(user_row);
 		}
 
 		private DataRow GetUserRow(string email) {

@@ -23,7 +23,6 @@ namespace App {
 
 		public void Begin(Server server) {
 			Console.Write("Go to profile to login and registering\n\n");
-
 			Server = server;
 			while (!Stop) {
 				Console.Write(
