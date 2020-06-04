@@ -293,7 +293,7 @@ namespace App {
 			if (CurrentUser == null)
 				Console.WriteLine("You need to be logged in");
 			else if (CurrentUser.Role != Role.Owner)
-				Console.WriteLine("You do not have the permissions to perform this action");
+				Console.WriteLine("Insufficient permissions");
 			else {
 				int capacity, numberofrounds, maxduration;
 				float price;
@@ -324,7 +324,7 @@ namespace App {
 
 		private void RemoveRoom() {
 			if (CurrentUser.Role != Role.Owner)
-				Console.Write("You do not have the permissions to perform this action\n");
+				Console.Write("Insufficient permissions\n");
 			else {
 				var roomName = ReadField("Room name: ");
 				var room = this.Rooms.Find(r => r.Name == roomName);
@@ -339,7 +339,7 @@ namespace App {
 			if (CurrentUser == null)
 				return;
 			else if (CurrentUser.Role != Role.Owner)
-				Console.WriteLine("You do not have the permissions to perform this action");
+				Console.WriteLine("Insufficient permissions");
 			else {
 				var roomName = ReadField("Room name: ");
 				var room = this.Rooms.Find(r => r.Name == roomName);
@@ -524,7 +524,7 @@ namespace App {
 			if (CurrentUser == null)
 				return;
 			else if (CurrentUser.Role != Role.CafeManager)
-				Console.WriteLine("You do not have the permissions to perform this action");
+				Console.WriteLine("Insufficient permissions");
 			else {
 				Single price;
 				var name = ReadField("name: ");
@@ -556,7 +556,7 @@ namespace App {
 			if (this.CurrentUser == null)
 				Console.WriteLine("You have to be logged in");
 			else if (this.CurrentUser.Role != Role.CafeManager)
-				Console.WriteLine("You do not have the permissions to perform this action");
+				Console.WriteLine("Insufficient permissions");
 			else {
 				String consumableName = ReadField("Product name: ");
 				var consumable = this.Consumables.Find(c => c.Name == consumableName);
@@ -578,7 +578,7 @@ namespace App {
 			if (CurrentUser == null)
 				return;
 			else if (CurrentUser.Role != Role.CafeManager)
-				Console.WriteLine("You do not have the permissions to perform this action");
+				Console.WriteLine("Insufficient permissions");
 			else {
 				var chosenConsumable = ReadField("Product name: ");
 				var consumable = this.Consumables.Find(c => c.Name == chosenConsumable);
@@ -679,7 +679,7 @@ namespace App {
 			DateTime t1, t2;
 
 			if (this.CurrentUser.Role != Role.Owner && this.CurrentUser.Role != Role.Manager)
-				Console.Write("You dont have permission to do this procces\n");
+				Console.Write("Insufficient permissions\n");
 			else if (!DateTime.TryParse(ReadField("Start date (YYYY-MM-DD): "), out t1))
 				Console.Write("Invalid date\n");
 			else if (!DateTime.TryParse(ReadField("End date (YYYY-MM-DD): "), out t2))
